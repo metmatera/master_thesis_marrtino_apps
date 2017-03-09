@@ -57,11 +57,14 @@ Available commands (implemented in robot_cmd.py):
 * Run the server
 
 ```
-$ ./robot_program_server.py
+$ ./robot_program_server.py <PORT>
 ```
 
-* Sends the commands from a client. Commands separated by new lines or ;
-(see robot_program_client.py for an example).
+* Send the commands from a client. Commands separated by new lines or ;.
+Use robot_program_client.py for example.
+```
+$ ./robot_program_server.py <HOST> <PORT>
+```
 
 
 
