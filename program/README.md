@@ -9,6 +9,18 @@ and compile it (preferred method catkin).
 
 * Make sure the library 'librobot_program.so' is in your LD_LIBRAY_PATH
 
+* Install libraries for speech and sound
+```
+$ sudo apt install sox
+$ sudo pip install pyttsx
+```
+In case of 'locale.Error: unsupported locale setting' set 
+```
+export LC_ALL=C
+```
+
+
+
 * Write and run your Python program (see robot_program_1.py as an example).
 
 ```

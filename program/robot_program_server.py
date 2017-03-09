@@ -9,7 +9,7 @@ robot_cmd_mod = importlib.import_module("robot_cmd")
 
 
 
-TCP_IP = '127.0.0.1'
+TCP_IP = ''
 TCP_PORT = 5000
 BUFFER_SIZE = 200
 
@@ -50,7 +50,7 @@ def start_server():
 	global BUFFER_SIZE
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	s.bind((TCP_IP, TCP_PORT))
+	s.bind((TCP_IP,TCP_PORT))
 	s.listen(1)
 
 	run=True

@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-#sudo apt install sox
-#sudo pip install pyttsx
-
 import time
 import pyttsx
 import os
