@@ -1,0 +1,67 @@
+<launch>
+	<arg name="baseframe" default="base_frame" />
+	<arg name="cameraframe" default="camera_frame_depth" />
+	<arg name="laserframe" default="laser_frame" />
+	<arg name="lasertopic" default="/scan" />
+	<arg name="use_joystick" default="true" />
+	
+  	<!-- robot node -->
+  	<node pkg="arduino_robot" type="arduino_robot_node" name="robot" output="screen">
+  	</node>
+
+
+  	<!-- transforms -->
+  	<node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
+	    args="-base_link_frame_id $(arg baseframe) $(find depth2laser)/config/transforms.txt" output="screen">
+  	</node>
+
+
+  	<!-- thin_xtion node -->
+  	<node pkg="thin_xtion" type="thin_xtion_node" name="xtion" output="screen">
+      <param name="device_num" value="0"/>
+      <param name="rgb_mode" value="-1"/>
+      <param name="depth_mode" value="0"/>
+  	</node>
+
+
+	<!-- depth2laser node -->
+	<node pkg="depth2laser" type="depth2laser_node" name="depth2laser" output="screen">
+		<param name="publish_pointcloud" value="0" />
+		<param name="base_frame_id" value="$(arg baseframe)" />
+		<param name="laser_frame_id" value="$(arg laserframe)" />
+		<param name="laser_topic" value="$(arg lasertopic)" /> 
+	</node>
+	
+		
+	<!-- gradient_based_navigation -->	
+	<node pkg="gradient_based_navigation" type="gradient_based_navigation" args="40" name="gradientBasedNavigation" output="screen">
+		<param name="GUI" value="false" />
+		<param name="obstaclesDistanceInfluence_m" value="0.6" />
+		<param name="force_scale" value="0.3" />
+		<param name="momentum_scale" value="0.1" />
+		<remap from="base_scan" to="$(arg lasertopic)" />
+	</node>
+
+
+	<!-- joystick -->
+	<group if="$(arg use_joystick)">
+	    <node pkg="joy" type="joy_node" name="joy" output="screen">
+		  <param name="dev" type="string" value="/dev/input/js0" />
+		  <param name="deadzone" value="0.12" />		  
+	    </node>
+
+	    <node pkg="gradient_based_navigation" type="joystick_control" name="joystick" output="screen">
+                  <param name="max_vel_x" value="0.25" />
+                  <param name="max_vel_th" value="1.0" />
+		</node>
+	</group>
+
+
+    <!-- keyboard -->
+	<group unless="$(arg use_joystick)">
+	    <node pkg="gradient_based_navigation" type="keyboard_control" name="keyboard" output="screen">
+		</node>
+	</group>
+		
+</launch>
+
