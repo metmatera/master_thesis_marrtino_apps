@@ -14,7 +14,7 @@ MARRtino teleoperation (joystick and keyboard) with obstacle avoidance.
 
 ## program ##
 
-MARRtino Python programmming with basic actions.
+MARRtino Python programming with basic actions.
 
 
 ## mapping ##
