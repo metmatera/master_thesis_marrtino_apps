@@ -39,17 +39,17 @@ end()
 Available commands (implemented in robot_cmd.py):
 
 ```
-	begin()
-	end()
-	stop()
-	forward(r=1)
-	backward(r=1)
-	left(r=1)
-	right(r=1)
-	wait(r=1)
-	hello()
-	bip(r=1)
-	bop(r=1)
+begin()
+end()
+stop()
+forward(r=1)
+backward(r=1)
+left(r=1)
+right(r=1)
+wait(r=1)
+hello()
+bip(r=1)
+bop(r=1)
 ```
 
 == Client/Server ==
@@ -63,7 +63,7 @@ $ ./robot_program_server.py <PORT>
 * Send the commands from a client. Commands separated by new lines or ;.
 Use robot_program_client.py for example.
 ```
-$ ./robot_program_server.py <HOST> <PORT>
+$ ./robot_program_client.py <HOST> <PORT>
 ```
 
 
