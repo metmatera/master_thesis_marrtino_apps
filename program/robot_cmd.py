@@ -37,27 +37,23 @@ def stop():
 
 
 def forward(r=1):
-	for i in range(0,r):
-		print 'forward'
-		lib.forward()
+	print 'forward',r
+	lib.forward(r)
 
 
 def backward(r=1):
-	for i in range(0,r):
-		print 'backward'
-		lib.backward()
+	print 'backward'
+	lib.backward(r)
 
 
 def left(r=1):
-	for i in range(0,r):
-		print 'left'
-		lib.left()
+	print 'left'
+	lib.left(r)
 
 
 def right(r=1):
-	for i in range(0,r):
-		print 'right'
-		lib.right()
+	print 'right'
+	lib.right(r)
 
 
 def wait(r=1):
@@ -97,14 +93,15 @@ def start():
 def bip(r=1):
 	for i in range(0,r):
 		print 'bip'
-		os.system("aplay -Dhw:0,0 ~/Music/bip.wav")
+		os.system("aplay ~/Music/bip.wav")
 		time.sleep(0.5)
 
 
 def bop(r=1):
 	for i in range(0,r):
 		print 'bop'
-		os.system("aplay -Dhw:0,0 ~/Music/bop.wav")
+		os.system("aplay ~/Music/bop.wav")
+		#os.system("aplay -Dhw:0,0 ~/Music/bop.wav")
 		time.sleep(0.5)
 
 

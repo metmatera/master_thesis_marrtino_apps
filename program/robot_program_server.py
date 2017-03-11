@@ -16,7 +16,7 @@ BUFFER_SIZE = 200
 
 
 def exec_fn(fn,vd):
-	largs = []				
+	largs = []
 	for i in range(1,len(vd)):
 		if (vd[i]!=''):
 			largs += [ vd[i] ]
@@ -78,8 +78,10 @@ def start_server():
 				if (vdata[i]=="quit"):
 					connected=False
 					break
-				elif (len(vdata[i])>0):
-					exec_cmd(vdata[i].strip())
+				else:
+					com = vdata[i].strip()
+					if (len(com)>0):
+						exec_cmd(com)
 
 		conn.close()
 		print "Closed connection"
