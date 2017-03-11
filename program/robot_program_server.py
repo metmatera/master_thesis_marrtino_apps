@@ -61,8 +61,13 @@ def start_server():
 		print "Connection address:", addr
 		connected = True
 		while connected:
-			data = conn.recv(BUFFER_SIZE)
+			try:
+				data = conn.recv(BUFFER_SIZE)
+			except:
+				print "Connection closed."
+				break
 			if not data: break
+			print "Received: ",data
 			conn.send("OK\n")
 			vdata = re.split("[\r\n;]",data)
 			for i in range(0,len(vdata)):
@@ -70,7 +75,7 @@ def start_server():
 					connected=False
 					break
 				elif (len(vdata[i])>0):
-					exec_cmd(vdata[i])
+					exec_cmd(vdata[i].strip())
 
 		conn.close()
 		print "Closed connection"

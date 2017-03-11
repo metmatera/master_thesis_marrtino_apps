@@ -6,10 +6,10 @@ import sys
 
 
 TCP_IP = '127.0.0.1'
-TCP_PORT = 5000
+TCP_PORT = 5001
 BUFFER_SIZE = 200
 
-MESSAGE = "bip;wait;bop(2)"
+MESSAGE = "begin; hello; wait; start; wait; bip; wait; bop; end"
 
 # Use: ./robot_program_client.py <HOST> <PORT>
 
