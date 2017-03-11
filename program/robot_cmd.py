@@ -8,16 +8,17 @@ import os
 from ctypes import cdll
 lib = cdll.LoadLibrary('librobot_program.so')
 
-tts_enging = None
+tts_engine = None
+userobot = True
 
 def begin():
 	global tts_engine
 	print 'begin'
-	#lib.start_robot_thread()
-	#lib.waitfor_connected()
 
-	cmd = 'xterm -e "play --no-show-progress --null -c2 synth sin gain -100" &'
-	os.system(cmd)
+	if (userobot):
+		print "Robot enabled"
+		lib.start_robot_thread()
+		lib.waitfor_connected()
 
 	tts_engine = pyttsx.init()
 	voices = tts_engine.setProperty('voice','italian')

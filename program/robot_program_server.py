@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import sys
+import os
 import socket
 import importlib
 import re
+import robot_cmd
 
 robot_cmd_mod = importlib.import_module("robot_cmd")
-
 
 
 TCP_IP = ''
@@ -53,6 +54,9 @@ def start_server():
 	s.bind((TCP_IP,TCP_PORT))
 	s.listen(1)
 
+	cmd = "play --no-show-progress --null -c2 synth sin gain -100 &"
+	os.system(cmd)
+
 	run=True
 
 	while run:
@@ -82,10 +86,17 @@ def start_server():
 
 
 
-if __name__ == "__main__":
 
-	if (len(sys.argv)>1):
+if __name__ == "__main__":
+	if (len(sys.argv)==2):
 		TCP_PORT = int(sys.argv[1])
+	elif (len(sys.argv)==3):
+		TCP_PORT = int(sys.argv[2])
+		if (sys.argv[1]=="-norobot"):
+			robot_cmd.userobot = False
+	else:
+		print "Use: robot_program_server [-norobot] <TCP_port>"
+		sys.exit(1)
 
 	start_server()
 
