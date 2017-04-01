@@ -6,15 +6,17 @@ begin()
 
 #hello()
 
-forward()
+bip()
 
-bip(3)
+forward()
 
 wait()
 
 left(2)
 
 forward()
+
+right(2)
 
 bop()
 

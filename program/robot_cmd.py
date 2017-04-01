@@ -11,6 +11,7 @@ lib = cdll.LoadLibrary('librobot_program.so')
 tts_engine = None
 userobot = True
 
+
 def begin():
 	global tts_engine
 	print 'begin'
@@ -42,24 +43,25 @@ def forward(r=1):
 
 
 def backward(r=1):
-	print 'backward'
+	print 'backward',r
 	lib.backward(r)
 
 
 def left(r=1):
-	print 'left'
+	print 'left',r
 	lib.left(r)
 
 
 def right(r=1):
-	print 'right'
+	print 'right',r
 	lib.right(r)
 
 
 def wait(r=1):
+	print 'wait',r
 	for i in range(0,r):
-		print 'wait'
 		time.sleep(3)
+
 
 # generate wav with:
 # pico2wave -l "it-IT" -w start.wav "Bene! Si Parte!"
