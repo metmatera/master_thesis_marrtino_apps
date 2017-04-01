@@ -6,7 +6,7 @@ MARRtino Python programming with basic actions.
 
 Download the following packages in your catkin workspace and compile them with catkin_make:
 
-* https://gitlab.com/srrg-software/srrg_orazio_core
+* https://gitlab.com/srrg-software/srrg_cmake_modules
 * https://gitlab.com/srrg-software/srrg_orazio_core
 * https://bitbucket.org/iocchi/marrtino_programming
 
@@ -25,6 +25,7 @@ export LC_ALL=C
 ```
 
 
+## Proramming ##
 
 * Write and run your Python program (see robot_program_1.py as an example).
 
@@ -57,7 +58,7 @@ bip(r=1)
 bop(r=1)
 ```
 
-== Client/Server ==
+## Client/Server ##
 
 * Run the server
 
