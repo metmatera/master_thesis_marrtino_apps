@@ -4,10 +4,15 @@ MARRtino Python programming with basic actions.
 
 ## Install ##
 
-* Download arduino_robot https://bitbucket.org/ggrisetti/arduino_robot 
-and compile it (preferred method catkin).
+Download the following packages in your catkin workspace and compile them with catkin_make:
+
+* https://gitlab.com/srrg-software/srrg_orazio_core
+* https://gitlab.com/srrg-software/srrg_orazio_core
+* https://bitbucket.org/iocchi/marrtino_programming
+
 
 * Make sure the library 'librobot_program.so' is in your LD_LIBRAY_PATH
+(if you use standard catkin build system, the library will be in <catkin_ws>/devel/lib)
 
 * Install libraries for speech and sound
 ```
