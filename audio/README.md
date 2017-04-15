@@ -48,6 +48,8 @@ $ python AudioServer [PORT]
 
 ```
 
+Note: to run it from a remote shell set 'export DISPLAY=:0'
+
 * Connect with a TCP client sending the name of the sound to play (i.e., filename without ".wav")
 
 

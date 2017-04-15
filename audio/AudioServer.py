@@ -11,6 +11,8 @@
 # Voices
 # pico2wave -l "it-IT" -w start.wav "Bene! Si Parte!"
 
+# To run this from a remote shell use:  'ssh -X ubuntu@<IP>'
+
 
 import pyglet
 import threading
