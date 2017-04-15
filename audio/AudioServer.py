@@ -2,8 +2,14 @@
 
 # Only PCM 16 bit wav 44100 Hz - Use audacity to convert audio files.
 
+# WAV generation
+
+# Synth
 # sox -n --no-show-progress -G --channels 1 -r 44100 -b 16 -t wav bip.wav synth 0.25 sine 800 
 # sox -n --no-show-progress -G --channels 1 -r 44100 -b 16 -t wav bop.wav synth 0.25 sine 400 
+
+# Voices
+# pico2wave -l "it-IT" -w start.wav "Bene! Si Parte!"
 
 
 import pyglet

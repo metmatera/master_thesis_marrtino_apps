@@ -14,15 +14,7 @@ Download the following packages in your catkin workspace and compile them with c
 * Make sure the library 'librobot_program.so' is in your LD_LIBRAY_PATH
 (if you use standard catkin build system, the library will be in <catkin_ws>/devel/lib)
 
-* Install libraries for speech and sound
-```
-$ sudo apt install sox
-$ sudo pip install pyttsx
-```
-In case of 'locale.Error: unsupported locale setting' set 
-```
-export LC_ALL=C
-```
+
 
 
 ## Programming ##
@@ -71,6 +63,13 @@ Use robot_program_client.py for example.
 ```
 $ ./robot_program_client.py <HOST> <PORT>
 ```
+
+## Audio ##
+
+* Run the AudioServer (see audio app) to play sounds
+
+* To add new sounds, add a WAV file in the audio app directory (see the README file in audio app)
+and add a command in robot_cmd.py (similarly to bip and bop functions).
 
 
 

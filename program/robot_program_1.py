@@ -4,8 +4,6 @@ from robot_cmd import *
 
 begin()
 
-#hello()
-
 bip()
 
 forward()
