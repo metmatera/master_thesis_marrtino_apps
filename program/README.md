@@ -25,7 +25,7 @@ export LC_ALL=C
 ```
 
 
-## Proramming ##
+## Programming ##
 
 * Write and run your Python program (see robot_program_1.py as an example).
 
