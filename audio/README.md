@@ -1,6 +1,6 @@
 # MARRtino AudioServer program #
 
-MARRtino Python AudioServer program to play sounds saved as uncompressed PCM 16 bit WAV files.
+MARRtino Python AudioServer program to play sounds saved as uncompressed PCM 16 bit 44100 Hz WAV files.
 
 ## Install ##
 
@@ -26,6 +26,6 @@ $ python AudioServer [PORT]
 
 - WAV files must be placed in the same directory of the server.
 
-- Suggestion: to generate uncompressed PCM 16 bit WAV files, use audacity.
+- Suggestion: to generate uncompressed PCM 16 bit 44100 Hz WAV files, use audacity.
 
 

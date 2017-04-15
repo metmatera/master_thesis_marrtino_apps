@@ -1,6 +1,9 @@
 # sudo -H pip install pyglet
 
-# Only PCM 16 bit wav - Use audacity to convert audio files.
+# Only PCM 16 bit wav 44100 Hz - Use audacity to convert audio files.
+
+# sox -n --no-show-progress -G --channels 1 -r 44100 -b 16 -t wav bip.wav synth 0.25 sine 800 
+# sox -n --no-show-progress -G --channels 1 -r 44100 -b 16 -t wav bop.wav synth 0.25 sine 400 
 
 
 import pyglet
@@ -34,8 +37,8 @@ class AudioServer(threading.Thread):
 
 		# Dictionary of sounds
 		self.Sounds = {}
-		self.Sounds["beep"] = pyglet.resource.media("beep.wav", streaming=False)  # load in memory
-		self.Sounds["beep"].play()
+		#self.Sounds["bip"] = pyglet.resource.media("bip.wav", streaming=False)  # load in memory
+		#self.Sounds["bip"].play()
 
 	def stop(self):
 		self.dorun = False
@@ -68,12 +71,12 @@ class AudioServer(threading.Thread):
 					except:
 						data = None
 					
-					if (data != None and data != "***"):
+					if (data!=None and data !="" and data!="***"):
 						print 'Received "%s"' % data
 						self.play(data)
 						#print 'sending data back to the client'
 						#self.connection.sendall("OK")
-					elif (data == None):
+					elif (data == None or data==""):
 						break     
 			finally:
 				print 'Connection closed.'
@@ -86,8 +89,13 @@ class AudioServer(threading.Thread):
 	def play(self, name):
 		print "Playing ",name
 		if (not name in self.Sounds):
-			self.Sounds[name] = pyglet.resource.media(name+".wav", streaming=False)  # False: load in memory
-		self.Sounds[name].play()
+			try:
+				self.Sounds[name] = pyglet.resource.media(name+".wav", streaming=False)  # False: load in memory
+			except:
+				print "File %s.wav not found." %(name)
+
+		if (name in self.Sounds):
+			self.Sounds[name].play()
 
 
 
