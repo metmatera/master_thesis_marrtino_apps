@@ -1,21 +1,24 @@
-= Using stage simulator for MARRtino =
+# Using stage simulator for MARRtino #
 
 * Download stage_environments package in your ROS catkin workspace and compile it
 
+```
 https://bitbucket.org/iocchi/stage_environments.git
+```
 
 
 
-
-=== simrobot.launch ===
+## simrobot.launch ##
 
 Launch the simulator
 
+```
 $ roslaunch simrobot.launch
+```
 
+Topics services and frames used by the simulator
 
-Topics and srvices used by the simulator
-
+```
 Node [/stageros]
 Publications: 
  * /rosout [rosgraph_msgs/Log]
@@ -38,7 +41,7 @@ Frames:
 - base_footprint_frame 
 - base_frame
 - laser_frame
-
+```
 
 
 === Testing ===
