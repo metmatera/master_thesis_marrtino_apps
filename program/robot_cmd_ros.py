@@ -77,22 +77,22 @@ def move(lx,az,tm):
 def forward(r=1):
 	global tv_good
 	print 'forward',r
-	move(tv_good,0.0,move_step/tv_good)
+	move(tv_good,0.0,r*move_step/tv_good)
 	
 
 def backward(r=1):
 	print 'backward',r
-	move(-tv_good,0.0,move_step/tv_good)
+	move(-tv_good,0.0,r*move_step/tv_good)
 
 
 def left(r=1):
 	print 'left',r
-	move(0.0,rv_good,(math.pi/4)/tv_good)
+	move(0.0,rv_good,r*(math.pi/2)/rv_good)
 
 
 def right(r=1):
 	print 'right',r
-	move(0.0,-rv_good,(math.pi/4)/tv_good)
+	move(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
 
 # Wait
