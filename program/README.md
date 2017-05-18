@@ -71,5 +71,33 @@ $ ./robot_program_client.py <HOST> <PORT>
 * To add new sounds, add a WAV file in the audio app directory (see the README file in audio app)
 and add a command in robot_cmd.py (similarly to bip and bop functions).
 
+## ROS ##
+
+* Run a ROS node to control the robot
+
+Real MARRtino
+```
+rosrun srrg_orazio_ros orazio_robot_node <parameters...>
+```
+
+Simulator
+```
+$ cd <..>/marrtino_apps/stage/launch
+$ roslaunch simrobot.launch
+```
+
+* Write and run your Python program (see robot_program_ros_1.py as an example).
+
+```
+#!/usr/bin/env python
+
+from robot_cmd_ros import *
+
+begin()
+
+<your program>
+
+end()
+```
 
 
