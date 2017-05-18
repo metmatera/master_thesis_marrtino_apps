@@ -20,7 +20,7 @@ Test RGBD xtion camera and laser2depth node.
 
 Support for audio generation.
 
-## stage ##
+## [stage](https://bitbucket.org/iocchi/marrtino_apps/src/e81b8ee7994763b111429b8c03b4ae59109919e3/stage/?at=master) ##
 
 2D simulation with Stage
 
