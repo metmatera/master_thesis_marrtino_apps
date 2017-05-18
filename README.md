@@ -2,6 +2,7 @@
 
 Apps for MARRtino robot. See http://tinyurl.com/marrtino for more info about MARRtino.
 
+Please follow the instructions in the README files in each folder.
 
 ## teleop ##
 
