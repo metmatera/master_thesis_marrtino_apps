@@ -24,6 +24,17 @@ rv_good = 0.8
 move_step = 0.5;
 
 
+def setMoveStep(x):
+	global move_step
+	move_step=x
+
+
+def setMaxSpeed(x,r):
+	global tv_good
+	global rv_good
+	tv_good=x
+	rv_good=r
+
 
 # Begin/end
 
@@ -35,7 +46,7 @@ def begin():
 	if (userobot):
 		print "Robot enabled"
 		rospy.init_node('robot_cmd')
-		cmd_pub = rospy.Publisher('cmd_vel', Twist)
+		cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
 
 	assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
@@ -55,12 +66,7 @@ def end():
 
 # Robot motion
 
-def stop():
-	print 'stop'
-	#lib.stop()
-
-
-def move(lx,az,tm):
+def setSpeed(lx,az,tm):
 	global cmd_pub
 	delay = 0.1 # sec
 	rate = rospy.Rate(1/delay) # Hz
@@ -74,25 +80,31 @@ def move(lx,az,tm):
 		cnt = cnt + delay
 		rate.sleep()
 
+
+def stop():
+	print 'stop'
+	setSpeed(0,0,0.5)
+
+
 def forward(r=1):
 	global tv_good
 	print 'forward',r
-	move(tv_good,0.0,r*move_step/tv_good)
+	setSpeed(tv_good,0.0,r*move_step/tv_good)
 	
 
 def backward(r=1):
 	print 'backward',r
-	move(-tv_good,0.0,r*move_step/tv_good)
+	setSpeed(-tv_good,0.0,r*move_step/tv_good)
 
 
 def left(r=1):
 	print 'left',r
-	move(0.0,rv_good,r*(math.pi/2)/rv_good)
+	setSpeed(0.0,rv_good,r*(math.pi/2)/rv_good)
 
 
 def right(r=1):
 	print 'right',r
-	move(0.0,-rv_good,r*(math.pi/2)/rv_good)
+	setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
 
 # Wait
