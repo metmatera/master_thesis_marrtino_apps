@@ -39,8 +39,8 @@ def setMaxSpeed(x,r):
 # Condition Variables and Functions
 
 tag_trigger_ = False
-tag_id = 0
-tag_distance = 0
+tag_id_ = -1
+tag_distance_ = 0
 tag_count = 25
 
 def tag_trigger():
@@ -55,7 +55,7 @@ def tag_distance():
 	global tag_distance_
 	return tag_distance_
 
-laser_center_dist_ = 0
+laser_center_dist_ = 10
 
 def laser_center_distance():
 	global laser_center_dist_
