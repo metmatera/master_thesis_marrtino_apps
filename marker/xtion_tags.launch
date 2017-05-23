@@ -1,0 +1,33 @@
+<launch>
+
+  <arg name="baseframe" default="base_frame" />
+  <arg name="cameraframe" default="camera_frame_depth" />
+  <arg name="laserframe" default="laser_frame" />
+  <arg name="lasertopic" default="/scan" />
+
+  <!-- transforms -->
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
+	    args="$(find depth2laser)/config/transforms.txt" output="screen">
+  </node>
+
+  <!-- thin_xtion node -->
+  <node pkg="thin_xtion" type="thin_xtion_node" name="xtion" output="screen">
+      <param name="device_num" value="0"/>
+      <param name="rgb_mode" value="9"/>
+      <param name="depth_mode" value="0"/>
+  </node>
+
+  <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen">
+    <rosparam param="tag_descriptions">[
+      {id: 0, size: 0.064},
+      {id: 1, size: 0.064, frame_id: tag1_frame},
+      {id: 2, size: 0.064},
+      {id: 3, size: 0.162, frame_id: tag2_frame},
+      {id: 4, size: 0.162},
+      {id: 5, size: 0.162}]
+    </rosparam>
+    <remap from="/camera_info" to="/camera/rgb/camera_info"/>
+    <remap from="/image_rect" to="/camera/rgb/image_raw"/>
+  </node>
+
+</launch>
