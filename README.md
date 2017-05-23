@@ -24,6 +24,11 @@ Support for audio generation.
 
 2D simulation with Stage
 
+## marker ##
+
+Marker detection using [Apriltags](https://april.eecs.umich.edu/software/apriltag.html)
+
+
 ## mapping ##
 
 TODO
