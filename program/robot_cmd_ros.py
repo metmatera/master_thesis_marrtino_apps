@@ -38,8 +38,6 @@ def setMaxSpeed(x,r):
 
 # Condition Variables and Functions
 
-
-
 tag_trigger_ = False
 tag_id = 0
 tag_distance = 0
@@ -57,6 +55,12 @@ def tag_distance():
 	global tag_distance_
 	return tag_distance_
 
+laser_center_dist_ = 0
+
+def laser_center_distance():
+	global laser_center_dist_
+	return laser_center_dist_
+
 
 # ROS publishers/subscribers
 cmd_pub = None # cmd_vel publisher
@@ -65,8 +69,6 @@ laser_sub = None # laser subscriber
 
 # ROS Callback functions
 
-def laser_cb(data):
-	pass
 
 def tag_cb(data):
 	global tag_trigger_, tag_count, tag_id_, tag_distance_
@@ -85,6 +87,11 @@ def tag_cb(data):
 			if (tag_count==0):
 				tag_trigger_ = False
 
+
+def laser_cb(data):
+	global laser_center_dist_
+	n = len(data.ranges)
+	laser_center_dist_ = data.ranges[n/2]
 
 
 
