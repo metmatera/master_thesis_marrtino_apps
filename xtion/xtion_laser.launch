@@ -1,0 +1,29 @@
+<launch>
+  <arg name="baseframe" default="base_frame" />
+  <arg name="cameraframe" default="camera_frame_depth" />
+  <arg name="laserframe" default="laser_frame" />
+  <arg name="lasertopic" default="/scan" />
+
+  <!-- transforms -->
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
+	    args="$(find depth2laser)/config/transforms.txt" output="screen">
+  </node>
+
+  <!-- thin_xtion node -->
+  <node pkg="thin_xtion" type="thin_xtion_node" name="xtion" output="screen">
+      <param name="device_num" value="0"/>
+      <param name="rgb_mode" value="-1"/>
+      <param name="depth_mode" value="0"/>
+  </node>
+
+  <!-- depth2laser node -->
+  <node pkg="depth2laser" type="depth2laser_node" name="depth2laser" output="screen">
+  	<param name="publish_pointcloud" value="1" />
+	<param name="base_frame_id" value="$(arg baseframe)" />
+	<param name="laser_frame_id" value="$(arg laserframe)" />
+    <param name="laser_topic" value="$(arg lasertopic)" /> 
+  </node>
+
+		
+</launch>
+

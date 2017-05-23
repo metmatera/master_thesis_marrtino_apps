@@ -7,8 +7,8 @@ import math
 
 import rospy
 from geometry_msgs.msg import Twist
-
-cmd_pub = None
+from sensor_msgs.msg import LaserScan
+from apriltags_ros.msg import AprilTagDetectionArray
 
 AUDIO_SERVER_IP = '127.0.0.1'
 AUDIO_SERVER_PORT = 9001
@@ -36,17 +36,72 @@ def setMaxSpeed(x,r):
 	rv_good=r
 
 
+# Condition Variables and Functions
+
+
+
+tag_trigger_ = False
+tag_id = 0
+tag_distance = 0
+tag_count = 25
+
+def tag_trigger():
+	global tag_trigger_
+	return tag_trigger_
+
+def tag_id():
+	global tag_id_
+	return tag_id_
+
+def tag_distance():
+	global tag_distance_
+	return tag_distance_
+
+
+# ROS publishers/subscribers
+cmd_pub = None # cmd_vel publisher
+tag_sub = None # tag_detection subscriber
+laser_sub = None # laser subscriber
+
+# ROS Callback functions
+
+def laser_cb(data):
+	pass
+
+def tag_cb(data):
+	global tag_trigger_, tag_count, tag_id_, tag_distance_
+	v = data.detections
+	if (len(v)>0):
+		tag_id_ = v[0].id
+		tag_distance_ = v[0].pose.pose.position.z
+		tag_trigger_ = True
+		tag_count = 3 # about seconds
+		# print 'tag ',tag_id_,' distance ',tag_distance_
+		# print 'tag trigger = ',tag_trigger_
+	else:
+		if (tag_trigger):
+			tag_count = tag_count - 1
+			# print 'tag count = ',tag_count
+			if (tag_count==0):
+				tag_trigger_ = False
+
+
+
+
+
 # Begin/end
 
 def begin():
 	global assock
-	global cmd_pub
+	global cmd_pub, tag_sub, laser_sub
 	print 'begin'
 
 	if (userobot):
 		print "Robot enabled"
 		rospy.init_node('robot_cmd')
 		cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+		tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
+		laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
 
 	assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
@@ -111,8 +166,11 @@ def right(r=1):
 
 def wait(r=1):
 	print 'wait',r
-	for i in range(0,r):
-		time.sleep(3)
+	if (r==0):
+		time.sleep(0.1)
+	else:
+		for i in range(0,r):
+			time.sleep(1)
 
 
 # Sounds
