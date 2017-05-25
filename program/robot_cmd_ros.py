@@ -6,16 +6,19 @@ import socket
 import math
 
 import rospy
+import tf
+
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
+from nav_msgs.msg import Odometry
 from apriltags_ros.msg import AprilTagDetectionArray
 
 AUDIO_SERVER_IP = '127.0.0.1'
 AUDIO_SERVER_PORT = 9001
 assock = None
 
-userobot = True
-
+use_robot = True
+use_obstacle_avoidance = False
 
 # Good values
 tv_good = 0.2
@@ -35,6 +38,9 @@ def setMaxSpeed(x,r):
 	tv_good=x
 	rv_good=r
 
+def enableObstacleAvoidance():
+	global use_obstacle_avoidance
+	use_obstacle_avoidance = True
 
 # Condition Variables and Functions
 
@@ -61,11 +67,20 @@ def laser_center_distance():
 	global laser_center_dist_
 	return laser_center_dist_
 
+robot_pose_ = [0,0,0]
+
+def get_robot_pose():
+	return robot_pose_
+
+
 
 # ROS publishers/subscribers
 cmd_pub = None # cmd_vel publisher
 tag_sub = None # tag_detection subscriber
 laser_sub = None # laser subscriber
+odom_sub = None  # odom subscriber
+
+
 
 # ROS Callback functions
 
@@ -94,6 +109,18 @@ def laser_cb(data):
 	laser_center_dist_ = data.ranges[n/2]
 
 
+def odom_cb(data):
+	global robot_pose_
+	robot_pose_[0] = data.pose.pose.position.x
+	robot_pose_[1] = data.pose.pose.position.y
+	o = data.pose.pose.orientation
+	q = (o.x, o.y, o.z, o.w)
+	euler = tf.transformations.euler_from_quaternion(q)
+	robot_pose_[2] = euler[2] # yaw
+
+
+
+
 
 
 # Begin/end
@@ -103,12 +130,17 @@ def begin():
 	global cmd_pub, tag_sub, laser_sub
 	print 'begin'
 
-	if (userobot):
+	if (use_robot):
 		print "Robot enabled"
 		rospy.init_node('robot_cmd')
-		cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+		cmd_vel_topic = 'cmd_vel'
+		if (use_obstacle_avoidance):
+			cmd_vel_topic = 'desired_cmd_vel'
+
+		cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
 		tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
 		laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
+		odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
 
 	assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
