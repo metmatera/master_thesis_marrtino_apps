@@ -36,13 +36,15 @@ roslaunch robot_teleop.launch use_joystick:=true
 
 
 ```
-$ roslaunch robot_teleop_nav.launch  (keyboard control)
-$ roslaunch robot_teleop_nav.launch use_joystick:=true (joystick control)
+roslaunch robot_teleop_nav.launch  (keyboard control)
+roslaunch robot_teleop_nav.launch use_joystick:=true (joystick control)
 ```
 
 * Visualizing the sensor data
 
-$ rosrun rviz rviz -d robot_nav.rviz
+```
+rosrun rviz rviz -d robot_nav.rviz
+```
 
 
 

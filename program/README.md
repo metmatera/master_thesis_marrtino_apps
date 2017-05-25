@@ -82,7 +82,7 @@ rosrun srrg_orazio_ros orazio_robot_node <parameters...>
 
 Simulator
 ```
-$ cd <..>/marrtino_apps/stage/launch
+$ cd <..>/marrtino_apps/stage/
 $ roslaunch simrobot.launch
 ```
 
