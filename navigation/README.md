@@ -5,10 +5,9 @@
 
 Download the following packages in your catkin workspace and compile them with catkin_make:
 
-* https://bitbucket.org/iocchi/apriltags_ros
-
-gradient_based_navigation
-
+```
+https://github.com/Imperoli/gradient_based_navigation
+```
 
 ## Run ##
 

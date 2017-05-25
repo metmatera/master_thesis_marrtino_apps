@@ -169,7 +169,7 @@ def setSpeed(lx,az,tm):
 	msg.linear.x = lx
 	msg.angular.z = az
 	msg.linear.y = msg.linear.z = msg.angular.x = msg.angular.y =  0
-	while not rospy.is_shutdown() and cnt<tm:		
+	while not rospy.is_shutdown() and cnt<=tm:
 		cmd_pub.publish(msg)
 		cnt = cnt + delay
 		rate.sleep()

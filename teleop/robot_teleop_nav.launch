@@ -3,7 +3,7 @@
 	<arg name="cameraframe" default="camera_frame_depth" />
 	<arg name="laserframe" default="laser_frame" />
 	<arg name="lasertopic" default="/scan" />
-	<arg name="use_joystick" default="true" />
+	<arg name="use_joystick" default="false" />
 	
   	<!-- robot node -->
   	<node pkg="srrg_orazio_ros" type="orazio_robot_node" name="robot" output="screen">

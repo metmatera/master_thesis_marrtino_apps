@@ -5,8 +5,9 @@
 
 Download the following packages in your catkin workspace and compile them with catkin_make:
 
-* https://bitbucket.org/iocchi/apriltags_ros
-
+```
+https://bitbucket.org/iocchi/apriltags_ros
+```
 
 
 ## Run ##
