@@ -17,6 +17,14 @@
       <param name="depth_mode" value="0"/>
   </node>
 
+  <!-- depth2laser node -->
+  <node pkg="depth2laser" type="depth2laser_node" name="depth2laser" output="screen">
+  	<param name="publish_pointcloud" value="1" />
+	<param name="base_frame_id" value="$(arg baseframe)" />
+	<param name="laser_frame_id" value="$(arg laserframe)" />
+    <param name="laser_topic" value="$(arg lasertopic)" /> 
+  </node>
+
   <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen">
     <rosparam param="tag_descriptions">[
       {id: 0, size: 0.064},
