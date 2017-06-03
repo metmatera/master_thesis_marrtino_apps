@@ -1,0 +1,8 @@
+<launch>
+
+  	<!-- robot node -->
+  	<node pkg="srrg_orazio_ros" type="orazio_robot_node" name="robot" output="screen">
+  	</node>
+		
+</launch>
+

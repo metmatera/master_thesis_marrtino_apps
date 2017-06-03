@@ -4,6 +4,10 @@ Apps for MARRtino robot. See http://tinyurl.com/marrtino for more info about MAR
 
 Please follow the instructions in the README files in each folder.
 
+## [robot](https://bitbucket.org/iocchi/marrtino_apps/src/master/robot/) ##
+
+Robot base. 
+
 ## [teleop](https://bitbucket.org/iocchi/marrtino_apps/src/master/teleop/) ##
 
 Teleoperation (joystick and keyboard) with obstacle avoidance. 
@@ -28,12 +32,12 @@ Support for audio generation.
 
 Marker detection using [Apriltags](https://april.eecs.umich.edu/software/apriltag.html)
 
+## [navigation](https://bitbucket.org/iocchi/marrtino_apps/src/master/navigation/) ##
+
+Obstacle avoidance
+
 
 ## mapping ##
 
 TODO
-
-## [navigation](https://bitbucket.org/iocchi/marrtino_apps/src/master/navigation/) ##
-
-Obstacle avoidance
 
