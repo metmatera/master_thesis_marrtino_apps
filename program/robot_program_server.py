@@ -54,8 +54,8 @@ def start_server():
 	s.bind((TCP_IP,TCP_PORT))
 	s.listen(1)
 
-	cmd = "play --no-show-progress --null -c2 synth sin gain -100 &"
-	os.system(cmd)
+	#cmd = "play --no-show-progress --null -c2 synth sin gain -100 &"
+	#os.system(cmd)
 
 	run=True
 
