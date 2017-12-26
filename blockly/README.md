@@ -8,10 +8,12 @@ Follow installation instructions in MARRtino Python program.
 
 * Blockly
 
-From marrtin_apps/blockly folder:
+Blockly code is installed as a git submodule. Install with
 
 ```
-git submodule add https://github.com/google/blockly.git
+git submodule init
+git submodule update
+
 ```
 
 * Websocket 
