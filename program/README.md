@@ -9,6 +9,9 @@ Download the following packages in your catkin workspace and compile them with c
 * https://gitlab.com/srrg-software/srrg_cmake_modules
 * https://gitlab.com/srrg-software/srrg_orazio_core
 * https://bitbucket.org/iocchi/marrtino_programming
+* https://gitlab.com/srrg-software/srrg_core
+* https://gitlab.com/srrg-software/srrg_core_ros
+* https://gitlab.com/srrg-software/srrg_orazio_ros
 
 
 * Make sure the library 'librobot_program.so' is in your LD_LIBRAY_PATH
