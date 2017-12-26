@@ -18,7 +18,10 @@ AUDIO_SERVER_PORT = 9001
 assock = None
 
 use_robot = True
+use_audio = False
 use_obstacle_avoidance = False
+
+robot_initialized = False
 
 # Good values
 tv_good = 0.2
@@ -121,41 +124,46 @@ def odom_cb(data):
 
 
 
-
-
 # Begin/end
 
 def begin():
-	global assock
-	global cmd_pub, tag_sub, laser_sub
-	print 'begin'
+    global assock
+    global cmd_pub, tag_sub, laser_sub
+    global robot_initialized
 
-	if (use_robot):
-		print "Robot enabled"
-		rospy.init_node('robot_cmd')
-		cmd_vel_topic = 'cmd_vel'
-		if (use_obstacle_avoidance):
-			cmd_vel_topic = 'desired_cmd_vel'
+    print 'begin'
 
-		cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
-		tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
-		laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
-		odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
+    if (robot_initialized):
+        return
 
-	assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	try:
-		assock.connect((AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
-	except:
-		print "Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT)
+    if (use_robot):
+        print("Robot enabled")
+        rospy.init_node('robot_cmd',  disable_signals=True)
+        cmd_vel_topic = 'cmd_vel'
+        if (use_obstacle_avoidance):
+            cmd_vel_topic = 'desired_cmd_vel'
+        cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
+        tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
+        laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
+        odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
+    if (use_audio):
+        print "Audio enabled"
+        assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            assock.connect((AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
+        except:
+            print "Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT)
+    robot_initialized = True
 
 
 def end():
-	global assock
-	print 'end'
-	#lib.stop()
-	assock.close()
-	assock=None
-	time.sleep(0.5) # make sure stuff ends
+    global assock
+    stop()
+    print 'end'    
+    if (use_audio):
+        assock.close()
+        assock=None
+    time.sleep(0.5) # make sure stuff ends
 
 
 # Robot motion

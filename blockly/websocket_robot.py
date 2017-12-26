@@ -34,7 +34,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
        
     def on_message(self, message):
         global code
-        print('Code received:\n %s' % message)
+        print('Code received:\n%s' % message)
         t = Thread(target=run_code, args=(message,))
         t.start()
   
@@ -86,6 +86,8 @@ if __name__ == "__main__":
     #t = Thread(target=main_loop, args=(None,))
     #t.start()
 
+    # Run robot
+    begin()
 
     # Run web server
     application = tornado.web.Application([
@@ -99,6 +101,8 @@ if __name__ == "__main__":
         print(" -- Keyboard interrupt --")
 
     # Quit
+    end() # quit robot
+
     if (not websocket_server is None):
         websocket_server.close()
     print("Web server quit.")

@@ -1,10 +1,20 @@
-append = function(text){
-  document.getElementById("websocket_events").insertAdjacentHTML('beforeend', 
-                          "<li>" + text + ";</li>");
+// log display function
+function append(text) {
+  // document.getElementById("websocket_events").insertAdjacentHTML('beforeend', "<li>" + text + ";</li>");
+  // log.console(text);
 } 
 
-var websocket = new WebSocket("ws://127.0.0.1:9000/websocketserver");
+// websocket global variable
+var websocket = null;
 
+
+function wsrobot_init() {
+    var ip = document.getElementById("IP").value
+    var url = "ws://"+ip+":9000/websocketserver"
+    console.log(url)
+    websocket = new WebSocket(url);
+}
+ 
 window.onload = function(){
 
     websocket.onmessage = function(event){
@@ -13,7 +23,6 @@ window.onload = function(){
 
     websocket.onopen = function(){
       append("connection received") 
-      websocket.send("hello!");
     } 
 
     websocket.onclose = function(){
@@ -26,14 +35,14 @@ window.onload = function(){
 
 }
 
-function ws_send(data) {
+function wsrobot_send(data) {
   websocket.send(data);
 }
 
 
 function button_fn(data) {
   // console.log('websocket button...')
-  websocket.send(data);
+  wsrobot_send(data);
 }
 
 

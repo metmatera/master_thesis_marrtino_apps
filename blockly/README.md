@@ -27,17 +27,40 @@ sudo pip install tornado
 
 ## Blocky programming ##
 
-* Run the websocket server
+
+* Run a robot
+
+Simulator
+
+```
+cd marrtino_apps/stage
+roslaunch simrobot.launch 
+```
+
+Real robot
+
+```
+cd marrtino_apps/robot
+roslaunch robot.launch 
+```
+
+
+
+* Run the websocket server (on the robot machine)
 
 ```
 python websocket_robot.py
 ```
 
-* Run the Blockly Robot app
+* Run the Blockly Robot app (on the client machine)
 
 ```
 firefox blockly_robot.html
 ```
 
-Use blockly to program the robot and Run it through the Run button on the web page.
+Set IP of the robot (i.e., IP of the machine running the websocket server).
+
+Use blockly to program the robot and run it through the ```Run code``` button on the web page.
+
+
 

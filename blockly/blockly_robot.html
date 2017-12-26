@@ -25,7 +25,9 @@
 <body>
   <h1>Blockly robot</h1>
 
-  <p>This is a simple demo of generating robot code from blocks.</p>
+  <p>Generating robot code from blocks.</p>
+
+  <p>Robot IP: <input type="text" name="IP" id="IP" value="127.0.0.1" width="80">
 
   <p>
     <button onclick="showCode()">Show code</button>
@@ -134,6 +136,9 @@
   </xml -->
 
   <script>
+
+    wsrobot_init();  // init websocket robot
+
     var demoWorkspace = Blockly.inject('blocklyDiv',
         {media: 'blockly/media/',
          toolbox: document.getElementById('toolbox')});
@@ -154,7 +159,7 @@
           'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
       var code = Blockly.Python.workspaceToCode(demoWorkspace);
       Blockly.Python.INFINITE_LOOP_TRAP = null;
-      ws_send(code)
+      wsrobot_send(code)
     }
   </script>
 
