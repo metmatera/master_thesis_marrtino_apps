@@ -58,9 +58,13 @@ python websocket_robot.py
 firefox blockly_robot.html
 ```
 
-Set IP of the robot (i.e., IP of the machine running the websocket server).
+Set IP of the robot (i.e., IP of the machine running the websocket server) and connect to it.
 
-Use blockly to program the robot and run it through the ```Run code``` button on the web page.
+Use Blockly to build a program and run it through the ```Run``` button.
+
+Use the ```Stop``` button at any time to stop the program and the robot.
+
+
 
 
 

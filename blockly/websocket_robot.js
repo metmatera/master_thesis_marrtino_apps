@@ -1,28 +1,36 @@
 // log display function
 function append(text) {
   // document.getElementById("websocket_events").insertAdjacentHTML('beforeend', "<li>" + text + ";</li>");
-  // log.console(text);
+  console.log(text);
 } 
 
 // websocket global variable
 var websocket = null;
 
+function wsrobot_connected() {
+  var connected = false;
+  if (websocket!=null)
+    console.log("websocket.readyState: "+websocket.readyState)
+  if (websocket!=null && websocket.readyState==1) {
+    connected = true;
+  }
+  console.log("connected: "+connected)
+  return connected;
+}
 
 function wsrobot_init() {
-    var ip = document.getElementById("IP").value
-    var url = "ws://"+ip+":9000/websocketserver"
-    console.log(url)
+    var ip = document.getElementById("IP").value;
+    var url = "ws://"+ip+":9000/websocketserver";
+    console.log(url);
     websocket = new WebSocket(url);
-}
- 
-window.onload = function(){
 
     websocket.onmessage = function(event){
-      append("message received: "+event.data) 
+      append("message received: "+event.data);
+      document.getElementById("status").innerHTML = event.data;
     } 
 
     websocket.onopen = function(){
-      append("connection received") 
+      append("connection received");
     } 
 
     websocket.onclose = function(){
@@ -34,9 +42,15 @@ window.onload = function(){
     }
 
 }
+ 
+function wsrobot_quit() {
+    websocket.close();
+    websocket = null;
+}
 
 function wsrobot_send(data) {
-  websocket.send(data);
+  if (websocket!=null)
+    websocket.send(data);
 }
 
 

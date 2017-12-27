@@ -27,13 +27,33 @@
 
   <p>Generating robot code from blocks.</p>
 
-  <p>Robot IP: <input type="text" name="IP" id="IP" value="127.0.0.1" width="80">
+  <p>
+    <table border=0>
+    <tr height=40>
+      <td>Robot IP</td>
+      <td><input type="text" name="IP" id="IP" value="127.0.0.1" width=240></td>
+      <td width=100><button onclick="connect()">Connect</button></td>
+      <td width=120><button onclick="disconnect()">Disconnect</button></td>
+      <td><div id="connection"><font color='red'>Not Connected</font></div></td>
+    </tr>
+    <tr height=40>
+      <td>Status</td>
+      <td><div id="status" style="color: blue;" >Idle</div></td>
+    </tr>
+    </table>
+  </p>
 
   <p>
     <button onclick="showCode()">Show code</button>
-    <button onclick="runCode()">Run code</button>
+    <button id="run_btn" onclick="runCode()">Run</button>
+    <button id="stop_btn" onclick="stopCode()">Stop</button>
   </p>
 
+  <table border=0>
+  <tr>
+  <th>Blockly workspace</th><th></th><th>Python code</th></tr>
+  <tr>
+  <td>
   <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
 
     <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
@@ -135,21 +155,46 @@
     </block>
   </xml -->
 
+  </td>
+
+  <td width=20>
+  </td>
+
+  <td>
+    <div id="codeDiv" style="height: 480px; width: 240px; background-color: #DDDDDD"></div>
+    
+  </td>
+  </tr>
+  </table>
+
   <script>
 
-    wsrobot_init();  // init websocket robot
-
     var demoWorkspace = Blockly.inject('blocklyDiv',
+        // options
         {media: 'blockly/media/',
-         toolbox: document.getElementById('toolbox')});
+         toolbox: document.getElementById('toolbox'),
+         scrollbars : true,
+         grid : {
+		        spacing : 20, 
+		        length : 1, 
+		        colour : '#888', 
+		        snap : false
+	        }
+        });
+
     Blockly.Xml.domToWorkspace(document.getElementById('startBlocks'),
                                demoWorkspace);
+
+    document.getElementById("run_btn").disabled = true;
+    document.getElementById("stop_btn").disabled = true;
+
 
     function showCode() {
       // Generate Python code and display it.
       Blockly.Python.INFINITE_LOOP_TRAP = null;
       var code = Blockly.Python.workspaceToCode(demoWorkspace);
-      alert(code);
+      //alert(code);
+      document.getElementById("codeDiv").innerHTML = "<pre>"+code+"</pre>";
     }
 
     function runCode() {
@@ -159,8 +204,43 @@
           'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
       var code = Blockly.Python.workspaceToCode(demoWorkspace);
       Blockly.Python.INFINITE_LOOP_TRAP = null;
-      wsrobot_send(code)
+      document.getElementById("codeDiv").innerHTML = "<pre>"+code+"</pre>";
+      wsrobot_send(code);
     }
+
+    function stopCode() {
+      // quit the program and stop the robot
+      wsrobot_send("stop"); 
+    }
+
+    function check_connection() {
+        console.log("check connection")
+        if (wsrobot_connected()) {
+            console.log("wsrobot_connected true")
+            document.getElementById("connection").innerHTML = "<font color='green'>Connected</font>";
+            document.getElementById("run_btn").disabled = false;
+            document.getElementById("stop_btn").disabled = false;
+        }
+        else {
+            console.log("wsrobot_connected false")
+            document.getElementById("connection").innerHTML = "<font color='red'>Not Connected</font>";
+            document.getElementById("run_btn").disabled = true;
+            document.getElementById("stop_btn").disabled = true;
+        }
+    }
+
+    function connect() {
+        wsrobot_init();  // init websocket robot
+        setTimeout(check_connection, 1000);
+    }
+
+    function disconnect() {
+        wsrobot_quit();  // init websocket robot
+        setTimeout(check_connection, 1000);
+    }
+
+
+
   </script>
 
 </body>

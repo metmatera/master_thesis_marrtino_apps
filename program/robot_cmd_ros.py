@@ -22,12 +22,14 @@ use_audio = False
 use_obstacle_avoidance = False
 
 robot_initialized = False
+stop_request = False
 
 # Good values
 tv_good = 0.2
 rv_good = 0.8
 
-move_step = 0.5;
+move_step = 0.5
+
 
 
 def setMoveStep(x):
@@ -41,9 +43,17 @@ def setMaxSpeed(x,r):
 	tv_good=x
 	rv_good=r
 
+
 def enableObstacleAvoidance():
 	global use_obstacle_avoidance
 	use_obstacle_avoidance = True
+
+
+def robot_stop_request(): # stop until next begin()
+    global stop_request
+    stop_request = True
+    print("stop request")
+
 
 # Condition Variables and Functions
 
@@ -129,9 +139,11 @@ def odom_cb(data):
 def begin():
     global assock
     global cmd_pub, tag_sub, laser_sub
-    global robot_initialized
+    global robot_initialized, stop_request
 
     print 'begin'
+
+    stop_request = False
 
     if (robot_initialized):
         return
@@ -169,7 +181,7 @@ def end():
 # Robot motion
 
 def setSpeed(lx,az,tm):
-	global cmd_pub
+	global cmd_pub, stop_request
 	delay = 0.1 # sec
 	rate = rospy.Rate(1/delay) # Hz
 	cnt = 0.0
@@ -177,10 +189,14 @@ def setSpeed(lx,az,tm):
 	msg.linear.x = lx
 	msg.angular.z = az
 	msg.linear.y = msg.linear.z = msg.angular.x = msg.angular.y =  0
-	while not rospy.is_shutdown() and cnt<=tm:
+	while not rospy.is_shutdown() and cnt<=tm and not stop_request:
 		cmd_pub.publish(msg)
 		cnt = cnt + delay
 		rate.sleep()
+	msg.linear.x = 0
+	msg.angular.z = 0
+	cmd_pub.publish(msg)
+	rate.sleep()
 
 
 def stop():

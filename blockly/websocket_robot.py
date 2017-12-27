@@ -22,21 +22,27 @@ websocket_server = None     # websocket handler
 run = True                  # main_loop run flag
 server_port = 9000          # web server port
 code = None
+status = "Idle"             # robot status sent to websocket
 
 # Websocket server handler
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def open(self):
-        global websocket_server
+        global websocket_server, run
         websocket_server = self
         print('New connection')
        
     def on_message(self, message):
         global code
-        print('Code received:\n%s' % message)
-        t = Thread(target=run_code, args=(message,))
-        t.start()
+        if (message=='stop'):
+            print('Stop code and robot')
+            robot_stop_request()
+        else:
+            print('Code received:\n%s' % message)
+            t = Thread(target=run_code, args=(message,))
+            t.start()
+        self.write_message('OK')
   
     def on_close(self):
         print('Connection closed')
@@ -48,7 +54,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         print('pong received: %s' %(data))
   
     def check_origin(self, origin):
-        print("-- Request from %s" %(origin))
+        #print("-- Request from %s" %(origin))
         return True
 
 
@@ -56,25 +62,50 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 # Main loop (asynchrounous thread)
 
 def main_loop(data):
-    global run, websocket_server
+    global run, websocket_server, status
     while (run):
-        time.sleep(5)
+        time.sleep(1)
         if (run and not websocket_server is None):
-            print("++ping")
-            websocket_server.write_message("ping")
+            try:
+                websocket_server.write_message(status)
+                #print(status)
+            except tornado.websocket.WebSocketClosedError:
+                #print('Connection closed.')
+                websocket_server = None
     print("Main loop quit.")
 
 
+def beginend(code):
+    r = ""
+    v = code.split("\n")
+    incode = False
+    for i in v:
+        if (i=='begin()'):
+            r = r+i+'\n'
+            incode = True
+        elif (i=='end()'):
+            r = r+i+'\n'
+            incode = False
+        elif (incode):
+            r = r+i+'\n'
+    return r            
+
 
 def run_code(code):
+    global status
     if (code is None):
         return
     print("=== Start code run ===")
+    code = beginend(code)
+    print("Executing")
+    print(code)
     try:
+        status = "Executing program"
         exec(code)
     except Exception as e:
         print("CODE EXECUTION ERROR")
         print e
+    status = "Idle"
     print("=== End code run ===")
 
 
@@ -83,8 +114,8 @@ def run_code(code):
 if __name__ == "__main__":
 
     # Run main thread
-    #t = Thread(target=main_loop, args=(None,))
-    #t.start()
+    t = Thread(target=main_loop, args=(None,))
+    t.start()
 
     # Run robot
     begin()
