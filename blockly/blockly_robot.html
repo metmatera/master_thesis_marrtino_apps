@@ -57,103 +57,77 @@
   <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
 
     <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+
+    <category colour="120" name="Robot">
+
       <block type="begin"></block>
-      <block type="forward"></block>
-      <block type="backward"></block>
-      <block type="left"></block>
-      <block type="right"></block>
+      <block type="end"></block>
+      <block type="forward">
+        <value name="steps">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="backward">
+        <value name="steps">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="left">
+        <value name="steps">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="right">
+        <value name="steps">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+
+    </category>
+
+    <category colour="200" name="Controls">
+
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+
       <block type="math_number">
         <field name="NUM">1</field>
       </block>
-      <block type="end"></block>
+
+
+
+      <block type="controls_whileUntil"></block>
+
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+
+
+    </category>
+
+    <category name="Variables" colour="330" custom="VARIABLE"></category>
+    <category name="Functions" colour="290" custom="PROCEDURE"></category>
+
     </xml>
 
     <xml xmlns="http://www.w3.org/1999/xhtml" id="startBlocks" style="display:none">
       <variables></variables>
-      <block type="begin" id="begin0" x="60" y="20"></block>
-      <block type="end" id="end0" x="60" y="120"></block>
+      <block type="begin" id="begin0" x="100" y="20"></block>
+      <block type="end" id="end0" x="100" y="140"></block>
     </xml>
 
-
-
-  <!-- xml id="toolbox" style="display: none">
-    <category name="Logic">
-      <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_negate"></block>
-      <block type="logic_boolean"></block>
-    </category>
-    <category name="Loops">
-      <block type="controls_repeat_ext">
-        <value name="TIMES">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-      </block>
-      <block type="controls_whileUntil"></block>
-    </category>
-    <category name="Math">
-      <block type="math_number"></block>
-      <block type="math_arithmetic"></block>
-      <block type="math_single"></block>
-    </category>
-    <category name="Text">
-      <block type="text"></block>
-      <block type="text_length"></block>
-      <block type="text_print"></block>
-    </category>
-  </xml>
-
-  <xml id="startBlocks" style="display: none">
-    <block type="controls_if" inline="false" x="20" y="20">
-      <mutation else="1"></mutation>
-      <value name="IF0">
-        <block type="logic_compare" inline="true">
-          <field name="OP">EQ</field>
-          <value name="A">
-            <block type="math_arithmetic" inline="true">
-              <field name="OP">MULTIPLY</field>
-              <value name="A">
-                <block type="math_number">
-                  <field name="NUM">6</field>
-                </block>
-              </value>
-              <value name="B">
-                <block type="math_number">
-                  <field name="NUM">7</field>
-                </block>
-              </value>
-            </block>
-          </value>
-          <value name="B">
-            <block type="math_number">
-              <field name="NUM">42</field>
-            </block>
-          </value>
-        </block>
-      </value>
-      <statement name="DO0">
-        <block type="text_print" inline="false">
-          <value name="TEXT">
-            <block type="text">
-              <field name="TEXT">Don't panic</field>
-            </block>
-          </value>
-        </block>
-      </statement>
-      <statement name="ELSE">
-        <block type="text_print" inline="false">
-          <value name="TEXT">
-            <block type="text">
-              <field name="TEXT">Panic</field>
-            </block>
-          </value>
-        </block>
-      </statement>
-    </block>
-  </xml -->
 
   </td>
 
@@ -161,11 +135,36 @@
   </td>
 
   <td>
-    <div id="codeDiv" style="height: 480px; width: 240px; background-color: #DDDDDD"></div>
+    <div id="codeDiv" style="height: 480px; width: 240px; background-color: #DDDDDD; font-size: 120%;"></div>
     
   </td>
   </tr>
   </table>
+
+  <hr>
+
+  <h3> Blockly XML code </h3>
+
+  <p>  <button onclick="saveCode()">Export block code</button> </p>
+
+  <p>
+     <textarea id="xmlSave" rows="6" cols="108"></textarea> 
+  <!--- div id="xmlDiv" style="height: 120px; width: 800px; background-color: #DDDDDD; font-size: 80%;"></div --->
+  </p>
+
+  <br>
+
+  <p>  <button onclick="loadCode()">Import block code</button> </p>
+
+  <p>
+    <textarea id="xmlLoad" rows="6" cols="108"></textarea> 
+  </p>
+
+  <br>
+
+
+
+                <!-- ****** SCRIPTS ****** -->
 
   <script>
 
@@ -200,10 +199,10 @@
     function runCode() {
       // Generate JavaScript code and run it.
       window.LoopTrap = 1000;
-      Blockly.Python.INFINITE_LOOP_TRAP =
-          'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
-      var code = Blockly.Python.workspaceToCode(demoWorkspace);
+      //Blockly.Python.INFINITE_LOOP_TRAP =
+      //    'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
       Blockly.Python.INFINITE_LOOP_TRAP = null;
+      var code = Blockly.Python.workspaceToCode(demoWorkspace);
       document.getElementById("codeDiv").innerHTML = "<pre>"+code+"</pre>";
       wsrobot_send(code);
     }
@@ -211,6 +210,21 @@
     function stopCode() {
       // quit the program and stop the robot
       wsrobot_send("stop"); 
+    }
+
+    function saveCode() {
+        var xml = Blockly.Xml.workspaceToDom(demoWorkspace);
+        var xml_text = Blockly.Xml.domToText(xml); 
+        //console.log('save block code')
+        //console.log(xml_text)
+        document.getElementById("xmlSave").innerText = xml_text;
+    }
+
+    function loadCode() {
+        var xml_text = document.getElementById("xmlLoad").value;
+        var xml = Blockly.Xml.textToDom(xml_text);
+        demoWorkspace.clear()
+        Blockly.Xml.domToWorkspace(xml, demoWorkspace);
     }
 
     function check_connection() {

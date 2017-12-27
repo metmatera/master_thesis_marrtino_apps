@@ -96,7 +96,7 @@ def run_code(code):
     if (code is None):
         return
     print("=== Start code run ===")
-    code = beginend(code)
+    #code = beginend(code)
     print("Executing")
     print(code)
     try:
