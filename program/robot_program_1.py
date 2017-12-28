@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 
-from robot_cmd import *
+from robot_cmd_ros import *
 
 begin()
 
 bip()
 
-forward()
-
+forward(3)
 wait()
-
+backward()
 left(2)
-
-forward()
-
+forward(2)
 right(2)
 
 bop()

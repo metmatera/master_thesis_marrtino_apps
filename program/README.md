@@ -7,27 +7,18 @@ MARRtino Python programming with basic actions.
 Download the following packages in your catkin workspace and compile them with catkin_make:
 
 * https://gitlab.com/srrg-software/srrg_cmake_modules
-* https://gitlab.com/srrg-software/srrg_orazio_core
-* https://bitbucket.org/iocchi/marrtino_programming
 * https://gitlab.com/srrg-software/srrg_core
 * https://gitlab.com/srrg-software/srrg_core_ros
-* https://gitlab.com/srrg-software/srrg_orazio_ros
+* https://gitlab.com/srrg-software/srrg2_orazio_core
+* https://gitlab.com/srrg-software/srrg2_orazio_ros
 
 
-* Make sure the library 'librobot_program.so' is in your LD_LIBRAY_PATH
-(if you use standard catkin build system, the library will be in <catkin_ws>/devel/lib)
+## Program ##
 
-
-
-
-## Programming ##
-
-* Write and run your Python program (see robot_program_1.py as an example).
+* Write your Python program (see robot_program_1.py as an example).
 
 ```
-#!/usr/bin/env python
-
-from robot_cmd import *
+from robot_cmd_ros import *
 
 begin()
 
@@ -37,7 +28,7 @@ end()
 ```
 
 
-Available commands (implemented in robot_cmd.py):
+Some available commands (implemented in robot_cmd_ros.py):
 
 ```
 begin()
@@ -48,21 +39,49 @@ backward(r=1)
 left(r=1)
 right(r=1)
 wait(r=1)
-hello()
 bip(r=1)
 bop(r=1)
 ```
 
+
+## Run ##
+
+* Start the robot
+
+Real MARRtino
+```
+$ cd <..>/marrtino_apps/robot/
+$ roslaunch robot.launch
+
+```
+
+Simulator
+```
+$ cd <..>/marrtino_apps/stage/
+$ roslaunch simrobot.launch
+```
+
+
+* Run your program
+
+```
+$ cd <..>/marrtino_apps/program
+$ python <your_program>.py
+```
+
+
 ## Client/Server ##
 
-* Run the server
+To run a program from a remote machine, use the client server mode.
+
+* Run the server (on the robot machine)
 
 ```
 $ ./robot_program_server.py <PORT>
 ```
 
-* Send the commands from a client. Commands separated by new lines or ;.
-Use robot_program_client.py for example.
+* Send a Python program from a client (see robot_program_client.py for example).
+
 ```
 $ ./robot_program_client.py <HOST> <PORT>
 ```
@@ -74,33 +93,13 @@ $ ./robot_program_client.py <HOST> <PORT>
 * To add new sounds, add a WAV file in the audio app directory (see the README file in audio app)
 and add a command in robot_cmd.py (similarly to bip and bop functions).
 
-## ROS ##
+## Old version ##
 
-* Run a ROS node to control the robot
 
-Real MARRtino
-```
-rosrun srrg_orazio_ros orazio_robot_node <parameters...>
-```
-
-Simulator
-```
-$ cd <..>/marrtino_apps/stage/
-$ roslaunch simrobot.launch
-```
-
-* Write and run your Python program (see robot_program_ros_1.py as an example).
+Programming the robot using ```srrg_orazio_core``` and ```marrtino_programming``` (i.e., without ROS) was supported with until commit
 
 ```
-#!/usr/bin/env python
-
-from robot_cmd_ros import *
-
-begin()
-
-<your program>
-
-end()
+commit 1a7cffe3fada05390c74d07b62244df7a484352a
+Date:   Wed Dec 27 12:12:31 2017 +0100
 ```
-
 
