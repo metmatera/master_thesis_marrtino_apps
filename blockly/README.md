@@ -21,7 +21,7 @@ git submodule update
 Install tornado websocket library
 
 ```
-sudo pip install tornado
+sudo -H easy_install tornado
 ```
 
 

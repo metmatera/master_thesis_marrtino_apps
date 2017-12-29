@@ -1,5 +1,5 @@
 # http://www.html.it/pag/53419/websocket-server-con-python/
-# pip install tornado
+# sudo -H easy_install tornado
 
 import tornado.httpserver
 import tornado.websocket
