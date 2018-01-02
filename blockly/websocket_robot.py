@@ -34,14 +34,17 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         print('New connection')
        
     def on_message(self, message):
-        global code
+        global code, status
         if (message=='stop'):
             print('Stop code and robot')
             robot_stop_request()
         else:
             print('Code received:\n%s' % message)
-            t = Thread(target=run_code, args=(message,))
-            t.start()
+            if (status=='Idle'):
+                t = Thread(target=run_code, args=(message,))
+                t.start()
+            else:
+                print('Program running. This code is discarded.')
         self.write_message('OK')
   
     def on_close(self):
@@ -132,7 +135,7 @@ if __name__ == "__main__":
         print(" -- Keyboard interrupt --")
 
     # Quit
-    end() # quit robot
+    end()
 
     if (not websocket_server is None):
         websocket_server.close()

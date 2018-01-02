@@ -83,8 +83,18 @@ def laser_center_distance():
 robot_pose_ = [0,0,0]
 
 def get_robot_pose():
-	return robot_pose_
+	return list(robot_pose_)
 
+def obstacle_distance():
+	global laser_center_dist_
+	return laser_center_dist_
+
+def distance(p1,p2):
+    dx = p1[0]-p2[0]
+    dy = p1[1]-p2[1]
+    dx2 = dx*dx
+    dy2 = dy*dy
+    return math.sqrt(dx2+dy2)
 
 
 # ROS publishers/subscribers
@@ -118,8 +128,8 @@ def tag_cb(data):
 
 def laser_cb(data):
 	global laser_center_dist_
-	n = len(data.ranges)
-	laser_center_dist_ = data.ranges[n/2]
+	n = len(data.ranges)        
+	laser_center_dist_ = min(data.ranges[n/2-10:n/2+10])
 
 
 def odom_cb(data):
@@ -182,6 +192,10 @@ def end():
 
 def setSpeed(lx,az,tm):
 	global cmd_pub, stop_request
+
+	if (stop_request):
+		raise Exception("setSpeed called in stop_request mode")
+
 	delay = 0.1 # sec
 	rate = rospy.Rate(1/delay) # Hz
 	cnt = 0.0
@@ -201,7 +215,13 @@ def setSpeed(lx,az,tm):
 
 def stop():
 	print 'stop'
-	setSpeed(0,0,0.5)
+	msg = Twist()
+	msg.linear.x = 0
+	msg.angular.z = 0
+	cmd_pub.publish(msg)
+	delay = 0.1 # sec
+	rospy.Rate(10).sleep() # 0.1 sec
+
 
 
 def forward(r=1):

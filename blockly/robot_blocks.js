@@ -1,3 +1,5 @@
+// User defined blocks
+
 Blockly.Blocks['begin'] = {
   init: function() {
     this.appendDummyInput()
@@ -72,6 +74,45 @@ Blockly.Blocks['right'] = {
     this.setNextStatement(true, null);
     this.setColour(120);
  this.setTooltip("robot turns left");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['get_pose'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("get_pose()");
+    this.setOutput(true, null);
+    this.setColour(0);
+ this.setTooltip("returns the pose of the robot [x,y,theta]");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['obstacle_distance'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("obstacle_distance()");
+    this.setInputsInline(false);
+    this.setOutput(true, null);
+    this.setColour(0);
+ this.setTooltip("distance of frontal obstable");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['distance'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("distance");
+    this.appendValueInput("P1")
+        .setCheck(null);
+    this.appendValueInput("P2")
+        .setCheck(null);
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(0);
+ this.setTooltip("returns distance between two poses");
  this.setHelpUrl("");
   }
 };
