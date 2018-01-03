@@ -1,15 +1,15 @@
 <launch>
-	<arg name="use_joystick" default="false" />
+	<arg name="use_joystick" default="true" />
 		
 	<!-- robot node -->
-	<node pkg="srrg_orazio_ros" type="orazio_robot_node" name="robot" output="screen">
+	<node pkg="srrg2_orazio_ros" type="orazio_robot_node" name="robot" output="screen">
 	   <param name="serial_device" value="/dev/orazio" />
 	</node>
 
-	<node pkg="srrg_core_ros" type="srrg_state_publisher_node" name="state_pub" args="-base_link_frame_id base_frame $(find spqrel_navigation)/config/transforms.txt" >
-        </node>
+	<!-- node pkg="srrg_core_ros" type="srrg_state_publisher_node" name="state_pub" args="-base_link_frame_id base_frame $(find spqrel_navigation)/config/transforms.txt" >
+        </node -->
 
-    <!-- keyboard -->
+        <!-- keyboard -->
 	<group unless="$(arg use_joystick)">
 	    <node pkg="gradient_based_navigation" type="keyboard_control" name="keyboard" output="screen">
 			<remap from="joystick_cmd_vel" to="cmd_vel" />
@@ -31,4 +31,3 @@
 	</group>
 		
 </launch>
-

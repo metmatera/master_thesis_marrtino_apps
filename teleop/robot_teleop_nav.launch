@@ -3,25 +3,25 @@
 	<arg name="cameraframe" default="camera_frame_depth" />
 	<arg name="laserframe" default="laser_frame" />
 	<arg name="lasertopic" default="/scan" />
-	<arg name="use_joystick" default="false" />
+	<arg name="use_joystick" default="true" />
 	
-  	<!-- robot node -->
-  	<node pkg="srrg_orazio_ros" type="orazio_robot_node" name="robot" output="screen">
-  	</node>
+	<!-- robot node -->
+	<node pkg="srrg2_orazio_ros" type="orazio_robot_node" name="robot" output="screen">
+	</node>
 
 
-  	<!-- transforms -->
-  	<node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
+	<!-- transforms -->
+	<node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
 	    args="-base_link_frame_id $(arg baseframe) $(find depth2laser)/config/transforms.txt" output="screen">
-  	</node>
+	</node>
 
 
-  	<!-- thin_xtion node -->
-  	<node pkg="thin_xtion" type="thin_xtion_node" name="xtion" output="screen">
-      <param name="device_num" value="0"/>
-      <param name="rgb_mode" value="-1"/>
-      <param name="depth_mode" value="0"/>
-  	</node>
+	<!-- thin_xtion node -->
+        <node pkg="thin_xtion" type="thin_xtion_node" name="xtion" output="screen">
+          <param name="device_num" value="0"/>
+          <param name="rgb_mode" value="-1"/>
+          <param name="depth_mode" value="0"/>
+        </node>
 
 
 	<!-- depth2laser node -->

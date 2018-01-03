@@ -19,25 +19,25 @@ For obstacle avoidance, you also need xtion and depth2laser (see xtion app).
 
 ## Run ##
 
-* Keyboard control
+* Joystick control
 
 ```
 roslaunch robot_teleop.launch
 ```
 
 
-* Joystick control
+* Keyboard control
 
 ```
-roslaunch robot_teleop.launch use_joystick:=true
+roslaunch robot_teleop.launch use_joystick:=false
 ```
 
 * Keyboard/Joystick control with obstacle avoidance
 
 
 ```
-roslaunch robot_teleop_nav.launch  (keyboard control)
-roslaunch robot_teleop_nav.launch use_joystick:=true (joystick control)
+roslaunch robot_teleop_nav.launch  (joystick control)
+roslaunch robot_teleop_nav.launch use_joystick:=false (keyboard control)
 ```
 
 * Visualizing the sensor data
@@ -45,6 +45,4 @@ roslaunch robot_teleop_nav.launch use_joystick:=true (joystick control)
 ```
 rosrun rviz rviz -d robot_nav.rviz
 ```
-
-
 
