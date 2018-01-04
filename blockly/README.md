@@ -33,15 +33,15 @@ sudo -H easy_install tornado
 Simulator
 
 ```
-cd marrtino_apps/stage
-roslaunch simrobot.launch 
+$ cd marrtino_apps/stage
+$ roslaunch simrobot.launch 
 ```
 
 Real robot
 
 ```
-cd marrtino_apps/robot
-roslaunch robot.launch 
+$ cd marrtino_apps/robot
+$ roslaunch robot.launch 
 ```
 
 
@@ -49,13 +49,15 @@ roslaunch robot.launch
 * Run the websocket server (on the robot machine)
 
 ```
-python websocket_robot.py
+$ cd marrtino_apps/blockly
+$ python websocket_robot.py
 ```
 
 * Run the Blockly Robot app (on the client machine)
 
 ```
-firefox blockly_robot.html
+$ cd marrtino_apps/blockly
+$ firefox blockly_robot.html
 ```
 
 Set IP of the robot (i.e., IP of the machine running the websocket server) and connect to it.

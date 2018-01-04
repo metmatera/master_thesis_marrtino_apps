@@ -1,0 +1,9 @@
+load_config marrtino2017_firmware_params.cfg
+send system_params
+send joint_params
+send drive_params
+store system_params
+store joint_params
+store drive_params
+quit
+
