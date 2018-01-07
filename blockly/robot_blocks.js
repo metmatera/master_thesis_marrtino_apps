@@ -24,6 +24,8 @@ Blockly.Blocks['end'] = {
 
 Blockly.Blocks['forward'] = {
   init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("img/up.png", 20, 20, "Forward"));
     this.appendValueInput("steps")
         .setCheck("Number")
         .appendField("forward");
@@ -38,6 +40,8 @@ Blockly.Blocks['forward'] = {
 
 Blockly.Blocks['backward'] = {
   init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("img/down.png", 20, 20, "Forward"));
     this.appendValueInput("steps")
         .setCheck("Number")
         .appendField("backward");
@@ -52,6 +56,8 @@ Blockly.Blocks['backward'] = {
 
 Blockly.Blocks['left'] = {
   init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("img/rotleft.png", 20, 20, "Left"));
     this.appendValueInput("steps")
         .setCheck("Number")
         .appendField("left");
@@ -66,6 +72,8 @@ Blockly.Blocks['left'] = {
 
 Blockly.Blocks['right'] = {
   init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("img/rotright.png", 20, 20, "Left"));
     this.appendValueInput("steps")
         .setCheck("Number")
         .appendField("right");

@@ -68,6 +68,12 @@ Use the ```Stop``` button at any time to stop the program and the robot.
 
 Use the ```Export/Import block code``` buttons to save and load blockly code in XML format. Copy and paste xml code on files to store them permanently.
 
+----
+
+## Develop new blocks ##
+
+https://blockly-demo.appspot.com/static/demos/blockfactory/index.html
+
 
 
 
