@@ -27,26 +27,28 @@ stop_request = False
 # Good values
 tv_good = 0.2
 rv_good = 0.8
+tv_min = 0.1
+rv_min = 0.3
 
 move_step = 0.5
 
 
 
 def setMoveStep(x):
-	global move_step
-	move_step=x
+    global move_step
+    move_step=x
 
 
 def setMaxSpeed(x,r):
-	global tv_good
-	global rv_good
-	tv_good=x
-	rv_good=r
+    global tv_good
+    global rv_good
+    tv_good=x
+    rv_good=r
 
 
 def enableObstacleAvoidance():
-	global use_obstacle_avoidance
-	use_obstacle_avoidance = True
+    global use_obstacle_avoidance
+    use_obstacle_avoidance = True
 
 
 def robot_stop_request(): # stop until next begin()
@@ -63,31 +65,32 @@ tag_distance_ = 0
 tag_count = 25
 
 def tag_trigger():
-	global tag_trigger_
-	return tag_trigger_
+    global tag_trigger_
+    return tag_trigger_
 
 def tag_id():
-	global tag_id_
-	return tag_id_
+    global tag_id_
+    return tag_id_
 
 def tag_distance():
-	global tag_distance_
-	return tag_distance_
+    global tag_distance_
+    return tag_distance_
 
 laser_center_dist_ = 10
 
 def laser_center_distance():
-	global laser_center_dist_
-	return laser_center_dist_
+    global laser_center_dist_
+    return laser_center_dist_
 
-robot_pose_ = [0,0,0]
+robot_pose = None
 
 def get_robot_pose():
-	return list(robot_pose_)
+    global robot_pose
+    return list(robot_pose)
 
 def obstacle_distance():
-	global laser_center_dist_
-	return laser_center_dist_
+    global laser_center_dist_
+    return laser_center_dist_
 
 def distance(p1,p2):
     dx = p1[0]-p2[0]
@@ -109,37 +112,39 @@ odom_sub = None  # odom subscriber
 
 
 def tag_cb(data):
-	global tag_trigger_, tag_count, tag_id_, tag_distance_
-	v = data.detections
-	if (len(v)>0):
-		tag_id_ = v[0].id
-		tag_distance_ = v[0].pose.pose.position.z
-		tag_trigger_ = True
-		tag_count = 3 # about seconds
-		# print 'tag ',tag_id_,' distance ',tag_distance_
-		# print 'tag trigger = ',tag_trigger_
-	else:
-		if (tag_trigger):
-			tag_count = tag_count - 1
-			# print 'tag count = ',tag_count
-			if (tag_count==0):
-				tag_trigger_ = False
+    global tag_trigger_, tag_count, tag_id_, tag_distance_
+    v = data.detections
+    if (len(v)>0):
+        tag_id_ = v[0].id
+        tag_distance_ = v[0].pose.pose.position.z
+        tag_trigger_ = True
+        tag_count = 3 # about seconds
+        # print 'tag ',tag_id_,' distance ',tag_distance_
+        # print 'tag trigger = ',tag_trigger_
+    else:
+        if (tag_trigger):
+            tag_count = tag_count - 1
+            # print 'tag count = ',tag_count
+            if (tag_count==0):
+                tag_trigger_ = False
 
 
 def laser_cb(data):
-	global laser_center_dist_
-	n = len(data.ranges)        
-	laser_center_dist_ = min(data.ranges[n/2-10:n/2+10])
+    global laser_center_dist_
+    n = len(data.ranges)        
+    laser_center_dist_ = min(data.ranges[n/2-10:n/2+10])
 
 
 def odom_cb(data):
-	global robot_pose_
-	robot_pose_[0] = data.pose.pose.position.x
-	robot_pose_[1] = data.pose.pose.position.y
-	o = data.pose.pose.orientation
-	q = (o.x, o.y, o.z, o.w)
-	euler = tf.transformations.euler_from_quaternion(q)
-	robot_pose_[2] = euler[2] # yaw
+    global robot_pose
+    if (robot_pose is None):
+        robot_pose = [0,0,0]
+    robot_pose[0] = data.pose.pose.position.x
+    robot_pose[1] = data.pose.pose.position.y
+    o = data.pose.pose.orientation
+    q = (o.x, o.y, o.z, o.w)
+    euler = tf.transformations.euler_from_quaternion(q)
+    robot_pose[2] = euler[2] # yaw
 
 
 
@@ -169,12 +174,18 @@ def begin():
         laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
         odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
     if (use_audio):
-        print "Audio enabled"
+        print("Audio enabled")
         assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             assock.connect((AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
         except:
-            print "Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT)
+            print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
+
+    delay = 0.25 # sec
+    rate = rospy.Rate(1/delay) # Hz
+    rate.sleep()
+    while (robot_pose is None):
+        rate.sleep()
     robot_initialized = True
 
 
@@ -191,96 +202,175 @@ def end():
 # Robot motion
 
 def setSpeed(lx,az,tm):
-	global cmd_pub, stop_request
+    global cmd_pub, stop_request
 
-	if (stop_request):
-		raise Exception("setSpeed called in stop_request mode")
+    if (stop_request):
+        raise Exception("setSpeed called in stop_request mode")
 
-	delay = 0.1 # sec
-	rate = rospy.Rate(1/delay) # Hz
-	cnt = 0.0
-	msg = Twist()
-	msg.linear.x = lx
-	msg.angular.z = az
-	msg.linear.y = msg.linear.z = msg.angular.x = msg.angular.y =  0
-	while not rospy.is_shutdown() and cnt<=tm and not stop_request:
-		cmd_pub.publish(msg)
-		cnt = cnt + delay
-		rate.sleep()
-	msg.linear.x = 0
-	msg.angular.z = 0
-	cmd_pub.publish(msg)
-	rate.sleep()
+    delay = 0.1 # sec
+    rate = rospy.Rate(1/delay) # Hz
+    cnt = 0.0
+    msg = Twist()
+    msg.linear.x = lx
+    msg.angular.z = az
+    msg.linear.y = msg.linear.z = msg.angular.x = msg.angular.y =  0
+    while not rospy.is_shutdown() and cnt<=tm and not stop_request:
+        cmd_pub.publish(msg)
+        cnt = cnt + delay
+        rate.sleep()
+    msg.linear.x = 0
+    msg.angular.z = 0
+    cmd_pub.publish(msg)
+    rate.sleep()
 
 
 def stop():
-	print 'stop'
-	msg = Twist()
-	msg.linear.x = 0
-	msg.angular.z = 0
-	cmd_pub.publish(msg)
-	delay = 0.1 # sec
-	rospy.Rate(10).sleep() # 0.1 sec
+    print 'stop'
+    msg = Twist()
+    msg.linear.x = 0
+    msg.angular.z = 0
+    cmd_pub.publish(msg)
+    delay = 0.1 # sec
+    rospy.Rate(10).sleep() # 0.1 sec
 
 
 
 def forward(r=1):
-	global tv_good
-	print 'forward',r
-	setSpeed(tv_good,0.0,r*move_step/tv_good)
-	
+    global tv_good
+    print 'forward',r
+    exec_move_REL(move_step*r)
+    #setSpeed(tv_good,0.0,r*move_step/tv_good)
+    
 
 def backward(r=1):
-	print 'backward',r
-	setSpeed(-tv_good,0.0,r*move_step/tv_good)
+    print 'backward',r
+    exec_move_REL(-move_step*r)
+    #setSpeed(-tv_good,0.0,r*move_step/tv_good)
 
 
 def left(r=1):
-	print 'left',r
-	setSpeed(0.0,rv_good,r*(math.pi/2)/rv_good)
+    print 'left',r
+    exec_turn_REL(90*r)
+    # setSpeed(0.0,rv_good,r*(math.pi/2)/rv_good)
 
 
 def right(r=1):
-	print 'right',r
-	setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
+    print 'right',r
+    exec_turn_REL(-90*r)
+    #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
 
 # Wait
 
 def wait(r=1):
-	print 'wait',r
-	if (r==0):
-		time.sleep(0.1)
-	else:
-		for i in range(0,r):
-			time.sleep(1)
+    print 'wait',r
+    if (r==0):
+        time.sleep(0.1)
+    else:
+        for i in range(0,r):
+            time.sleep(1)
 
 
 # Sounds
 
 def bip(r=1):
-	global assock
-	for i in range(0,r):
-		print 'bip'
-		try:
-			assock.send('bip')
-		except:
-			pass
-		time.sleep(0.5)
+    global assock
+    for i in range(0,r):
+        print 'bip'
+        try:
+            assock.send('bip')
+        except:
+            pass
+        time.sleep(0.5)
 
 
 def bop(r=1):
-	global assock
-	for i in range(0,r):
-		print 'bop'
-		try:
-			assock.send('bop')
-		except:
-			pass
-		time.sleep(0.5)
+    global assock
+    for i in range(0,r):
+        print 'bop'
+        try:
+            assock.send('bop')
+        except:
+            pass
+        time.sleep(0.5)
+
+
+# Precise move and turn
+
+# Angle functions
+
+def DEG2RAD(a):
+    return a*math.pi/180.0
+
+def RAD2DEG(a):
+    return a/math.pi*180.0
+
+
+def NORM_PI(a):
+    if (a>math.pi):
+        return a-2*math.pi
+    elif (a<-math.pi):
+        return a+2*math.pi
+    else:
+        return a
+
+def norm_target_angle(a):
+    if (abs(NORM_PI(a-0))<0.15):
+        return 0;
+    elif (abs(NORM_PI(a-math.pi/2.0))<0.15):
+        return math.pi/2;
+    elif (abs(NORM_PI(a-math.pi))<0.15):
+        return math.pi;
+    elif (abs(NORM_PI(a-3*math.pi/2.0))<0.15):
+        return -math.pi/2;
+    else:
+        return a;
 
 
 
-	
+def exec_turn_REL(th_deg):
+    global robot_pose, rv_good
+    current_th = robot_pose[2]
+    target_th = norm_target_angle(current_th + DEG2RAD(th_deg))
+    rv_nom = rv_good 
+    if (th_deg < 0):
+        rv_nom *= -1
+    dth = abs(NORM_PI(current_th-target_th))
+    while (dth>0.03):
+        rv = rv_nom
+        if (dth<0.5):
+            rv = rv_nom*dth/0.5
+        if (abs(rv)<rv_min):
+            rv = rv_min*rv/abs(rv)
+        tv = 0.0
+        setSpeed(tv, rv, 0.1)
+        current_th = robot_pose[2]
+        dth = abs(NORM_PI(current_th-target_th))
+        # print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(current_th), target_th, dth, tv, rv))
+    setSpeed(0.0,0.0,0.1)
+
+
+
+
+
+
+def exec_move_REL(tx):
+    global robot_pose, tv_good
+    start_pose = list(robot_pose)
+    tv_nom = tv_good 
+    if (tx < 0):
+        tv_nom *= -1
+    dx = abs(distance(start_pose,robot_pose) - tx)
+    while (dx>0.05):
+        tv = tv_nom
+        if (dx<0.5):
+            tv = tv_nom*dx/0.5
+        if (abs(tv)<tv_min):
+            tv = tv_min*tv/abs(tv)
+        rv = 0.0
+        setSpeed(tv, rv, 0.1)
+        dx = abs(distance(start_pose,robot_pose) - tx)
+        # print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(robot_pose[2]), tx, dx, tv, rv))
+    setSpeed(0.0,0.0,0.1)
 
 
