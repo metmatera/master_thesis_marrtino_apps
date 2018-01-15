@@ -116,6 +116,29 @@ Blockly.Blocks['turn'] = {
   }
 };
 
+Blockly.Blocks['setSpeed'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("setSpeed");
+    this.appendValueInput("tv")
+        .setCheck("Number")
+        .appendField("tv");
+    this.appendValueInput("rv")
+        .setCheck("Number")
+        .appendField("rv");
+    this.appendValueInput("time")
+        .setCheck("Number")
+        .appendField("time");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(120);
+ this.setTooltip("robot turns [angle in degrees]");
+ this.setHelpUrl("");
+  }
+};
+
+
 Blockly.Blocks['get_pose'] = {
   init: function() {
     this.appendDummyInput()
