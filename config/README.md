@@ -22,8 +22,8 @@ Note: change file names in the .script files if needed.
 ## Manual version ##
 
 ```
-$ cd marrtino_apps/config
-$ rosrun srrg2_orazio_core orazio -serial-device /dev/orazio
+$ cd ~/config
+$ run_orazio_server.bash
 [press Enter]
 orazio> load_config marrtino2017_firmware_params.cfg
 orazio> send system_params
