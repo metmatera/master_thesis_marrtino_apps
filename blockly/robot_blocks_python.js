@@ -34,6 +34,19 @@ Blockly.Python['right'] = function(block) {
   return code;
 };
 
+Blockly.Python['wait'] = function(block) {
+  var value_seconds = Blockly.Python.valueToCode(block, 'seconds', Blockly.Python.ORDER_ATOMIC);
+  var code = 'wait('+value_seconds+')\n';
+  return code;
+};
+
+Blockly.Python['turn'] = function(block) {
+  var value_deg = Blockly.Python.valueToCode(block, 'degrees', Blockly.Python.ORDER_ATOMIC);
+  var code = 'turn('+value_deg+')\n';
+  return code;
+};
+
+
 Blockly.Python['get_pose'] = function(block) {
   var code = 'get_robot_pose()';
   return [code, Blockly.Python.ORDER_NONE];

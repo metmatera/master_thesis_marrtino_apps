@@ -41,7 +41,7 @@ Blockly.Blocks['forward'] = {
 Blockly.Blocks['backward'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldImage("img/down.png", 20, 20, "Forward"));
+        .appendField(new Blockly.FieldImage("img/down.png", 20, 20, "Backward"));
     this.appendValueInput("steps")
         .setCheck("Number")
         .appendField("backward");
@@ -49,7 +49,7 @@ Blockly.Blocks['backward'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(120);
- this.setTooltip("robot moves forward");
+ this.setTooltip("robot moves backward");
  this.setHelpUrl("");
   }
 };
@@ -73,7 +73,7 @@ Blockly.Blocks['left'] = {
 Blockly.Blocks['right'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldImage("img/rotright.png", 20, 20, "Left"));
+        .appendField(new Blockly.FieldImage("img/rotright.png", 20, 20, "Right"));
     this.appendValueInput("steps")
         .setCheck("Number")
         .appendField("right");
@@ -81,7 +81,37 @@ Blockly.Blocks['right'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(120);
- this.setTooltip("robot turns left");
+ this.setTooltip("robot turns right");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['wait'] = {
+  init: function() {
+    /*this.appendDummyInput().appendField(new Blockly.FieldImage("img/rotright.png", 20, 20, "Wait"));*/
+    this.appendValueInput("seconds")
+        .setCheck("Number")
+        .appendField("wait");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(120);
+ this.setTooltip("robot waits [seconds]");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['turn'] = {
+  init: function() {
+    /*this.appendDummyInput().appendField(new Blockly.FieldImage("img/rotright.png", 20, 20, "Turn"));*/
+    this.appendValueInput("degrees")
+        .setCheck("Number")
+        .appendField("turn");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(120);
+ this.setTooltip("robot turns [angle in degrees]");
  this.setHelpUrl("");
   }
 };

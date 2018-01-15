@@ -28,9 +28,9 @@ stop_request = False
 tv_good = 0.2
 rv_good = 0.8
 tv_min = 0.1
-rv_min = 0.3
+rv_min = 0.2
 
-move_step = 0.5
+move_step = 1.0
 
 
 
@@ -260,6 +260,13 @@ def right(r=1):
     #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
 
+# Turn
+
+def turn(deg):
+    print 'turn',deg
+    exec_turn_REL(deg)
+
+
 # Wait
 
 def wait(r=1):
@@ -315,13 +322,13 @@ def NORM_PI(a):
         return a
 
 def norm_target_angle(a):
-    if (abs(NORM_PI(a-0))<0.15):
+    if (abs(NORM_PI(a-0))<0.3):
         return 0;
-    elif (abs(NORM_PI(a-math.pi/2.0))<0.15):
+    elif (abs(NORM_PI(a-math.pi/2.0))<0.3):
         return math.pi/2;
-    elif (abs(NORM_PI(a-math.pi))<0.15):
+    elif (abs(NORM_PI(a-math.pi))<0.3):
         return math.pi;
-    elif (abs(NORM_PI(a-3*math.pi/2.0))<0.15):
+    elif (abs(NORM_PI(a-3*math.pi/2.0))<0.3):
         return -math.pi/2;
     else:
         return a;
@@ -336,16 +343,20 @@ def exec_turn_REL(th_deg):
     if (th_deg < 0):
         rv_nom *= -1
     dth = abs(NORM_PI(current_th-target_th))
-    while (dth>0.03):
+    last_dth = dth
+    while (dth>rv_min/8.0 and last_dth>=dth):
         rv = rv_nom
-        if (dth<0.5):
-            rv = rv_nom*dth/0.5
+        if (dth<0.8):
+            rv = rv_nom*dth/0.8
         if (abs(rv)<rv_min):
             rv = rv_min*rv/abs(rv)
         tv = 0.0
         setSpeed(tv, rv, 0.1)
         current_th = robot_pose[2]
         dth = abs(NORM_PI(current_th-target_th))
+        if (dth < last_dth):
+            last_dth = dth
+
         # print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(current_th), target_th, dth, tv, rv))
     setSpeed(0.0,0.0,0.1)
 
@@ -360,6 +371,7 @@ def exec_move_REL(tx):
     tv_nom = tv_good 
     if (tx < 0):
         tv_nom *= -1
+        tx *= -1
     dx = abs(distance(start_pose,robot_pose) - tx)
     while (dx>0.05):
         tv = tv_nom
