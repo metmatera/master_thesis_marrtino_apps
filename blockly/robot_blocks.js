@@ -150,17 +150,20 @@ Blockly.Blocks['get_pose'] = {
   }
 };
 
+
 Blockly.Blocks['obstacle_distance'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("obstacle_distance()");
-    this.setInputsInline(false);
+        .appendField("obstacle_distance")
+        .appendField(new Blockly.FieldDropdown([["front","OPTIONFRONT"], ["left","OPTIONLEFT"], ["right","OPTIONRIGHT"]]), "direction");
+    this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(0);
- this.setTooltip("distance of frontal obstable");
+ this.setTooltip("distance of obstable");
  this.setHelpUrl("");
   }
 };
+
 
 Blockly.Blocks['distance'] = {
   init: function() {

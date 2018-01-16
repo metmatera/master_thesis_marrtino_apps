@@ -50,7 +50,7 @@ Blockly.Python['setSpeed'] = function(block) {
   var value_tv = Blockly.Python.valueToCode(block, 'tv', Blockly.Python.ORDER_ATOMIC);
   var value_rv = Blockly.Python.valueToCode(block, 'rv', Blockly.Python.ORDER_ATOMIC);
   var value_time = Blockly.Python.valueToCode(block, 'time', Blockly.Python.ORDER_ATOMIC);
-  var code = 'setSpeed('+value_tv+','+value_rv+','+value_time+')\n';
+  var code = 'setSpeed('+value_tv+','+value_rv+','+value_time+',False)\n';
   return code;
 };
 
@@ -61,9 +61,15 @@ Blockly.Python['get_pose'] = function(block) {
 };
 
 Blockly.Python['obstacle_distance'] = function(block) {
-  var code = 'obstacle_distance()';
+  var dropdown_direction = block.getFieldValue('direction');
+  var v=0
+  if (dropdown_direction == "OPTIONLEFT") { v = 1; }
+  else if (dropdown_direction == "OPTIONRIGHT") { v = -1; }
+  var code = 'obstacle_distance('+v+')';
   return [code, Blockly.Python.ORDER_NONE];
 };
+
+
 
 Blockly.Python['distance'] = function(block) {
   var value_p1 = Blockly.Python.valueToCode(block, 'P1', Blockly.Python.ORDER_ATOMIC);

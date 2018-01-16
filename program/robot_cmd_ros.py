@@ -76,11 +76,13 @@ def tag_distance():
     global tag_distance_
     return tag_distance_
 
-laser_center_dist_ = 10
+laser_center_dist = 10
+laser_left_dist = 10
+laser_right_dist = 10
 
 def laser_center_distance():
-    global laser_center_dist_
-    return laser_center_dist_
+    global laser_center_dist
+    return laser_center_dist
 
 robot_pose = None
 
@@ -88,9 +90,14 @@ def get_robot_pose():
     global robot_pose
     return list(robot_pose)
 
-def obstacle_distance():
-    global laser_center_dist_
-    return laser_center_dist_
+def obstacle_distance(direction=0):
+    global laser_center_dist, laser_left_dist, laser_right_dist
+    if (direction==0):
+        return laser_center_dist
+    elif (direction==1):
+        return laser_left_dist
+    elif (direction==-1):
+        return laser_right_dist
 
 def distance(p1,p2):
     dx = p1[0]-p2[0]
@@ -130,9 +137,17 @@ def tag_cb(data):
 
 
 def laser_cb(data):
-    global laser_center_dist_
-    n = len(data.ranges)        
-    laser_center_dist_ = min(data.ranges[n/2-10:n/2+10])
+    global laser_center_dist, laser_left_dist, laser_right_dist
+    nc = len(data.ranges)/2
+    nr = int((data.angle_max - math.pi/2)/data.angle_increment)
+    nl = len(data.ranges) - nr
+    laser_center_dist = min(data.ranges[nc-10:nc+10])
+    laser_left_dist = min(data.ranges[nl-10:nl+10])
+    laser_right_dist = min(data.ranges[nr-10:nr+10])
+    #print("angle min %.3f max %.3f inc %.6f" %(data.angle_min, data.angle_max, data.angle_increment))
+    #print("center %.3f left %.3f right %.3f" %(laser_center_dist, laser_left_dist, laser_right_dist))
+
+
 
 
 def odom_cb(data):
