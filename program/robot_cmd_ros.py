@@ -201,7 +201,7 @@ def end():
 
 # Robot motion
 
-def setSpeed(lx,az,tm):
+def setSpeed(lx,az,tm,stopend=True):
     global cmd_pub, stop_request
 
     if (stop_request):
@@ -218,10 +218,11 @@ def setSpeed(lx,az,tm):
         cmd_pub.publish(msg)
         cnt = cnt + delay
         rate.sleep()
-    msg.linear.x = 0
-    msg.angular.z = 0
-    cmd_pub.publish(msg)
-    rate.sleep()
+    if (stopend):
+        msg.linear.x = 0
+        msg.angular.z = 0
+        cmd_pub.publish(msg)
+        rate.sleep()
 
 
 def stop():
@@ -351,12 +352,11 @@ def exec_turn_REL(th_deg):
         if (abs(rv)<rv_min):
             rv = rv_min*rv/abs(rv)
         tv = 0.0
-        setSpeed(tv, rv, 0.1)
+        setSpeed(tv, rv, 0.1, False)
         current_th = robot_pose[2]
         dth = abs(NORM_PI(current_th-target_th))
         if (dth < last_dth):
             last_dth = dth
-
         # print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(current_th), target_th, dth, tv, rv))
     setSpeed(0.0,0.0,0.1)
 
@@ -380,9 +380,9 @@ def exec_move_REL(tx):
         if (abs(tv)<tv_min):
             tv = tv_min*tv/abs(tv)
         rv = 0.0
-        setSpeed(tv, rv, 0.1)
+        setSpeed(tv, rv, 0.1, False)
         dx = abs(distance(start_pose,robot_pose) - tx)
-        # print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(robot_pose[2]), tx, dx, tv, rv))
+        #print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(robot_pose[2]), tx, dx, tv, rv))
     setSpeed(0.0,0.0,0.1)
 
 
