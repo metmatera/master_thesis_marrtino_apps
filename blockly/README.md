@@ -8,21 +8,20 @@ Follow installation instructions in MARRtino Python program.
 
 * Blockly
 
-Blockly code is installed as a git submodule. Install with
+  Blockly code is installed as a git submodule. Install with
 
-```
-git submodule init
-git submodule update
-
-```
+  ```
+  git submodule init
+  git submodule update
+  ```
 
 * Websocket 
 
-...Install tornado websocket library
+  Install tornado websocket library
 
-```
-...sudo -H easy_install tornado
-```
+  ```
+  sudo -H easy_install tornado
+  ```
 
 
 ## Blocky programming ##
@@ -30,55 +29,52 @@ git submodule update
 
 * Run a robot
 
-...Simulator
+  Simulator
 
-```
-...$ cd marrtino_apps/stage
-...$ roslaunch simrobot.launch 
-```
+  ```
+  $ cd marrtino_apps/stage
+  $ roslaunch simrobot.launch 
+  ```
 
-...Real robot
+  Real robot
 
-...```
-$ cd marrtino_apps/robot
-$ roslaunch robot.launch 
-...```
+  ```
+  $ cd marrtino_apps/robot
+  $ roslaunch robot.launch 
+  ```
 
 
 
 * Run the websocket server (on the robot machine)
 
-```
-$ cd marrtino_apps/blockly
-$ python websocket_robot.py
-```
+  ```
+  $ cd marrtino_apps/blockly
+  $ python websocket_robot.py
+  ```
 
 * Run the Blockly Robot app (on the client machine)
 
-...**Option 1**. If you are on a Linux machine with marrtino_apps installed,
-just execute these commands:
+  **Option 1**. If you are on a Linux machine with marrtino_apps installed, just execute these commands:
 
-...```
-...$ cd marrtino_apps/blockly
-...$ firefox blockly_robot.html
-...```
+  ```
+  $ cd marrtino_apps/blockly
+  $ firefox blockly_robot.html
+  ```
 
-...**Opyion 2**. If you set up a web server on the machine connected to the robot,
-you can use any browser on any machine (including tablet, smartphone, etc.)
-and connect to the IP of the robot with the URL ```http://<IP_robot>/```
+  **Opyion 2**. If you set up a web server on the machine connected to the robot, you can use any browser on any machine (including tablet, smartphone, etc.) and connect to the IP of the robot with the URL ```http://<IP_robot>/```
 
-..._Note_: to set up a web server follow instructions 'Web server update for Raspberry' in the Software page of MARRtino web site.
+  _Note_: to set up a web server follow instructions 'Web server update for Raspberry' in the Software page of MARRtino web site.
 
 
 * Use the Blockly Robot app
 
-...Set IP of the robot (i.e., IP of the machine running the websocket server) and connect to it.
+  Set IP of the robot (i.e., IP of the machine running the websocket server) and connect to it.
 
-...Use Blockly to build a program and run it through the ```Run``` button.
+  Use Blockly to build a program and run it through the ```Run``` button.
 
-...Use the ```Stop``` button at any time to stop the program and the robot.
+  Use the ```Stop``` button at any time to stop the program and the robot.
 
-...Use the ```Export/Import block code``` buttons to save and load blockly code in XML format. Copy and paste xml code on files to store them permanently.
+  Use the ```Export/Import block code``` buttons to save and load blockly code in XML format. Copy and paste xml code on files to store them permanently.
 
 ----
 
