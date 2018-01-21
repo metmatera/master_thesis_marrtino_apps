@@ -8,8 +8,7 @@ Follow installation instructions in MARRtino Python program.
 
 * Blockly
 
-  Blockly code is installed as a git submodule. Install with
-
+  Blockly code is installed as a git submodule. Install with  
   ```
   git submodule init
   git submodule update
@@ -17,8 +16,7 @@ Follow installation instructions in MARRtino Python program.
 
 * Websocket 
 
-  Install tornado websocket library
-
+  Install tornado websocket library  
   ```
   sudo -H easy_install tornado
   ```
