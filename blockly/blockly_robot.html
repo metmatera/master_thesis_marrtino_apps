@@ -134,15 +134,6 @@
     <category colour="200" name="Controls">
 
       <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-
-      <block type="distance"></block>
-
-      <block type="math_number">
-        <field name="NUM">1</field>
-      </block>
-
-      <block type="math_arithmetic"></block>
 
       <block type="controls_whileUntil"></block>
 
@@ -154,6 +145,32 @@
         </value>
       </block>
 
+    </category>
+
+    <category colour="200" name="Op & Fn">
+
+      <block type="logic_compare"></block>
+
+      <block type="distance"></block>
+
+      <block type="math_number">
+        <field name="NUM">1</field>
+      </block>
+
+      <block type="math_arithmetic"></block>
+
+
+      <block type="text">
+        <field name="TEXT"></field>
+      </block>
+
+      <block type="text_print">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
 
     </category>
 
