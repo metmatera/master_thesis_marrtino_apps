@@ -32,8 +32,7 @@ MARRtino Blockly programming.
     Simulator
 
     ```
-    $ cd marrtino_apps/stage
-
+    $ cd marrtino_apps/stage  
     $ roslaunch simrobot.launch 
     ```
 
