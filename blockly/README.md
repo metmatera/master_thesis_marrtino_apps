@@ -31,10 +31,9 @@ MARRtino Blockly programming.
 
     Simulator
 
-```
-    $ cd marrtino_apps/stage  
-    $ roslaunch simrobot.launch 
-```
+        cd marrtino_apps/stage  
+        roslaunch simrobot.launch 
+
 
     Real robot
 
