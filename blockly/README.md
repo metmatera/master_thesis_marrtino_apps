@@ -15,6 +15,8 @@ MARRtino Blockly programming.
         git submodule init
         git submodule update
 
+    
+
 * Websocket 
 
     Install tornado websocket library  
@@ -38,14 +40,14 @@ MARRtino Blockly programming.
         cd marrtino_apps/robot
         roslaunch robot.launch 
 
-
+    
 
 2. Run the websocket server (on the robot machine)
 
         cd marrtino_apps/blockly
         python websocket_robot.py
 
-
+    
 
 3. Run the Blockly Robot app (on the client machine)
 
