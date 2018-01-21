@@ -4,7 +4,9 @@ MARRtino Blockly programming.
 
 ## Install ##
 
-Follow installation instructions in MARRtino Python program.
+1. Follow installation instructions in MARRtino Python program.
+
+2. Install blockly and websocket libraries.
 
 * Blockly
 
@@ -25,12 +27,13 @@ Follow installation instructions in MARRtino Python program.
 ## Blocky programming ##
 
 
-* Run a robot
+1. Run a robot
 
     Simulator
 
     ```
     $ cd marrtino_apps/stage
+
     $ roslaunch simrobot.launch 
     ```
 
@@ -43,14 +46,15 @@ Follow installation instructions in MARRtino Python program.
 
 
 
-* Run the websocket server (on the robot machine)
+2. Run the websocket server (on the robot machine)
 
     ```
     $ cd marrtino_apps/blockly
     $ python websocket_robot.py
     ```
 
-* Run the Blockly Robot app (on the client machine)
+
+3. Run the Blockly Robot app (on the client machine)
 
     **Option 1**. If you are on a Linux machine with marrtino_apps installed, just execute these commands:
 
@@ -64,7 +68,7 @@ Follow installation instructions in MARRtino Python program.
     _Note_: to set up a web server follow instructions 'Web server update for Raspberry' in the Software page of MARRtino web site.
 
 
-* Use the Blockly Robot app
+4. Use the Blockly Robot app
 
     Set IP of the robot (i.e., IP of the machine running the websocket server) and connect to it.
 
