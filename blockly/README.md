@@ -55,10 +55,22 @@ $ python websocket_robot.py
 
 * Run the Blockly Robot app (on the client machine)
 
+Option 1. If you are on a Linux machine with marrtino_apps installed,
+just execute these commands:
+
 ```
 $ cd marrtino_apps/blockly
 $ firefox blockly_robot.html
 ```
+
+Oprion 2. If you set up a web server on the machine connected to the robot,
+you can use any browser on any machine (including tablet, smartphone, etc.)
+and connect to the IP of the robot.
+
+Note: to set up a web server follow instructions 'Web server update for Raspberry' in the Software page of MARRtino web site.
+
+
+* Use the Blockly Robot app
 
 Set IP of the robot (i.e., IP of the machine running the websocket server) and connect to it.
 
