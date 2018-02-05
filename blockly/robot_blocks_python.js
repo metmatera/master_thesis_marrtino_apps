@@ -69,11 +69,20 @@ Blockly.Python['obstacle_distance'] = function(block) {
   return [code, Blockly.Python.ORDER_NONE];
 };
 
-
-
 Blockly.Python['distance'] = function(block) {
   var value_p1 = Blockly.Python.valueToCode(block, 'P1', Blockly.Python.ORDER_ATOMIC);
   var value_p2 = Blockly.Python.valueToCode(block, 'P2', Blockly.Python.ORDER_ATOMIC);
   var code = 'distance('+value_p1+','+value_p2+')';
   return [code, Blockly.Python.ORDER_NONE];
 };
+
+Blockly.Python['random'] = function(block) {
+  Blockly.Python.definitions_.import_random="import random";
+  var value_1 = Blockly.Python.valueToCode(block, 'min', Blockly.Python.ORDER_ATOMIC);
+  var value_2 = Blockly.Python.valueToCode(block, 'max', Blockly.Python.ORDER_ATOMIC);
+  var code = 'random.randint('+value_1+','+value_2+')';
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
+
+

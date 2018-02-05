@@ -153,12 +153,24 @@
 
       <block type="distance"></block>
 
+      <block type="random">
+        <value name="min">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="max">
+          <block type="math_number">
+            <field name="NUM">90</field>
+          </block>
+        </value>
+      </block>
+
       <block type="math_number">
         <field name="NUM">1</field>
       </block>
 
       <block type="math_arithmetic"></block>
-
 
       <block type="text">
         <field name="TEXT"></field>

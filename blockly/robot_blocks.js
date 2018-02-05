@@ -151,6 +151,23 @@ Blockly.Blocks['get_pose'] = {
 };
 
 
+Blockly.Blocks['random'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("random");
+    this.appendValueInput("min")
+        .setCheck("Number");
+    this.appendValueInput("max")
+        .setCheck("Number");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(0);
+ this.setTooltip("returns the pose of the robot [x,y,theta]");
+ this.setHelpUrl("");
+  }
+};
+
+
 Blockly.Blocks['obstacle_distance'] = {
   init: function() {
     this.appendDummyInput()
