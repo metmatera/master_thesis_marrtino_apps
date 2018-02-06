@@ -80,4 +80,15 @@ https://blockly-demo.appspot.com/static/demos/blockfactory/index.html
 
 
 
+## Tile command programming ##
+
+Same as Blocky programming, but using the HTML file
+```tile_robot.html``` instead of  ```blockly_robot.html```.
+
+
+
+## Python programming ##
+
+Same as Blocky programming, but using the HTML file
+```python_robot.html``` instead of  ```blockly_robot.html```.
 
