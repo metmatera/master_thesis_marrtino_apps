@@ -9,6 +9,11 @@ Download the following packages in your catkin workspace and compile them with c
 https://bitbucket.org/iocchi/apriltags_ros
 ```
 
+For USB camera, install ROS node
+
+```
+sudo apt-get install ros-kinetic-usb-cam
+```
 
 ## Run ##
 
