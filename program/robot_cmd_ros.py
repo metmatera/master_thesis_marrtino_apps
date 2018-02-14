@@ -18,7 +18,7 @@ AUDIO_SERVER_PORT = 9001
 assock = None
 
 use_robot = True
-use_audio = False
+use_audio = True
 use_obstacle_avoidance = False
 
 robot_initialized = False

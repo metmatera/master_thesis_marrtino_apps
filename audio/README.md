@@ -13,11 +13,44 @@ $ sudo -H pip install pyglet
 * Libraries for speech and sound
 ```
 $ sudo apt install sox
+$ sudo apt install libttspico-utils
 ```
 In case of 'locale.Error: unsupported locale setting' set 
 ```
 export LC_ALL=C
 ```
+
+
+
+## Run ##
+
+* Run the server
+
+```
+$ python audio_server.py [PORT]
+
+```
+
+Note: to run it from a remote shell set 'export DISPLAY=:0'
+
+* Run the client
+
+Connect with a TCP client sending the name of the sound to play (i.e., filename without ".wav")
+or a string to say beginning with TTS (e.g., 'TTS hello, how are you?')
+
+Example:
+
+```
+$ python audio_client.py [IP] [PORT]
+
+```
+
+
+
+## Adding new sounds ##
+
+WAV (PCM 16 bit 44100 Hz) files must be placed in the 'sounds' directory.
+
 
 * Synth generation
 
@@ -31,32 +64,9 @@ $ sox -n --no-show-progress -G --channels 1 -r 44100 -b 16 -t wav bop.wav synth 
 $ pico2wave -l "it-IT" -w start.wav "Bene! Si Parte!"
 ```
 
-* Notes:
+* Record souund
 
-- WAV files must be placed in the same directory of the server.
+Use audacity.
 
-- Suggestion: to generate uncompressed PCM 16 bit 44100 Hz WAV files, use audacity.
-
-
-
-## Run ##
-
-* Run the server
-
-```
-$ python AudioServer [PORT]
-
-```
-
-Note: to run it from a remote shell set 'export DISPLAY=:0'
-
-* Connect with a TCP client sending the name of the sound to play (i.e., filename without ".wav")
-
-
-## Adding new sounds ##
-
-* Record a sound and write the dile in the AudioServer.py directory (WAV, PCM 16 bit 44100 Hz)
-
-* Send a string with the name of the file (without ".wav") from a TCP client
 
 
