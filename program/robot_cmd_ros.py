@@ -301,10 +301,12 @@ def bip(r=1):
     for i in range(0,r):
         print 'bip'
         try:
-            assock.send('bip')
+            assock.send('bip\n\r')
         except:
             pass
         time.sleep(0.5)
+        data = assock.recv(80)
+        print data
 
 
 def bop(r=1):
@@ -312,10 +314,24 @@ def bop(r=1):
     for i in range(0,r):
         print 'bop'
         try:
-            assock.send('bop')
+            assock.send('bop\n\r')
         except:
             pass
         time.sleep(0.5)
+
+
+
+def say(text):
+    global assock
+    print 'say ',text
+    try:
+        assock.send('TTS '+text+'\n\r')
+    except:
+        pass
+    time.sleep(0.5)
+    data = assock.recv(80)
+    print data
+
 
 
 # Precise move and turn

@@ -2,4 +2,4 @@
 *.bak
 *.pyc
 *.bag
-
+cache*

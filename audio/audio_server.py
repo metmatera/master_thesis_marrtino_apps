@@ -50,6 +50,8 @@ class AudioServer(threading.Thread):
         # Dictionary of sounds
         self.Sounds = {}
         self.Sounds['bip'] = pyglet.resource.media(SOUNDS_DIR+'bip.wav', streaming=False)  # load in memory
+
+        self.idcache = 0
     
     def stop(self):
         self.dorun = False
@@ -72,7 +74,7 @@ class AudioServer(threading.Thread):
         for i in range(0,1):
             print 'bip'
             self.Sounds["bip"].play()
-            time.sleep(1)
+            time.sleep(self.Sounds["bip"].duration+1)
         while (self.dorun):
             self.connect()
             try:
@@ -105,21 +107,30 @@ class AudioServer(threading.Thread):
 
     def say(self, data):
         print 'Say ',data
-        cmd = 'pico2wave -l "it-IT" -w '+SOUNDS_DIR+'cache.wav "'+data+'"'
+        cachefile = 'cache'+str(self.idcache)
+        self.idcache = (self.idcache+1)%10
+        cmd = 'pico2wave -l "it-IT" -w %s%s.wav " , %s"' %(SOUNDS_DIR, cachefile, data)
+        print cmd
         os.system(cmd)
-        time.sleep(1)
-        self.play('cache')
+        time.sleep(0.5)
+        self.play(cachefile)
 
 
     def play(self, name):
         print 'Play ',name
-        if (not name in self.Sounds):
-            try:
-                self.Sounds[name] = pyglet.resource.media(SOUNDS_DIR+name+".wav", streaming=False)  # False: load in memory
-            except:
-                print "File %s%s.wav not found." %(SOUNDS_DIR,name)
+        i = 0
+        while (i<3):
+            if (not name in self.Sounds):
+                try:
+                    self.Sounds[name] = pyglet.resource.media(SOUNDS_DIR+name+".wav", streaming=False)  # False: load in memory
+                except:
+                    print "File %s%s.wav not found." %(SOUNDS_DIR,name)
+            i += 1
+            time.sleep(1)
         if (name in self.Sounds):
             self.Sounds[name].play()
+            time.sleep(self.Sounds[name].duration+1)
+        self.connection.send('OK')
 
 
 if __name__ == "__main__":
@@ -131,9 +142,7 @@ if __name__ == "__main__":
     server.start()
 
     try:
-        while True:
-            time.sleep(1)
-        #pyglet.app.run()
+        pyglet.app.run()
     except:
         print "Exit"
         server.stop()
