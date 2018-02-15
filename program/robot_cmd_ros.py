@@ -302,11 +302,11 @@ def bip(r=1):
         print 'bip'
         try:
             assock.send('bip\n\r')
+            time.sleep(0.5)
+            data = assock.recv(80)
+            print data
         except:
             pass
-        time.sleep(0.5)
-        data = assock.recv(80)
-        print data
 
 
 def bop(r=1):
@@ -315,6 +315,9 @@ def bop(r=1):
         print 'bop'
         try:
             assock.send('bop\n\r')
+            time.sleep(0.5)
+            data = assock.recv(80)
+            print data
         except:
             pass
         time.sleep(0.5)
@@ -326,11 +329,11 @@ def say(text):
     print 'say ',text
     try:
         assock.send('TTS '+text+'\n\r')
+        time.sleep(0.5)
+        data = assock.recv(80)
+        print data
     except:
         pass
-    time.sleep(0.5)
-    data = assock.recv(80)
-    print data
 
 
 
