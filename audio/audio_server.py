@@ -25,7 +25,13 @@ import pyglet
 
 SOUNDS_DIR = "sounds/"
 
-class AudioServer(threading.Thread):
+from asr_server import ASRServer
+
+tts_server = None
+asr_server = None
+
+
+class TTSServer(threading.Thread):
 
     def __init__(self, port):
         threading.Thread.__init__(self)
@@ -63,14 +69,15 @@ class AudioServer(threading.Thread):
                 # print 'Waiting for a connection ...'
                 # Wait for a connection
                 self.connection, client_address = self.sock.accept()
-                self.connection.settimeout(3)
+                self.connection.settimeout(3) # timeout when listening (exit with CTRL+C)
                 connected = True
-                print 'Connection from ', client_address
+                print 'TTS Server Connection from ', client_address
             except:
                 pass #print "Listen again ..."    
 
 
     def run(self):
+        global asr_server
         for i in range(0,1):
             print 'bip'
             self.Sounds["bip"].play()
@@ -89,9 +96,15 @@ class AudioServer(threading.Thread):
                         data = None
                     
                     if (data!=None and data !="" and data!="***"):
-                        print 'Received "%s"' % data
+                        print 'TTS Received "%s"' % data
                         if (data[0:3]=='TTS'):
                             self.say(data[4:])
+                        elif (data=="ASR"):
+                            print('asr request')
+                            bh = asr_server.get_asr()
+                            self.connection.send(bh+'\n\r')
+                            print('asr sent %s' %bh)
+
                         else:
                             self.play(data)
                         #print 'sending data back to the client'
@@ -99,7 +112,7 @@ class AudioServer(threading.Thread):
                     elif (data == None or data==""):
                         break     
             finally:
-                print 'Connection closed.'
+                print 'TTS Server Connection closed.'
                 # Clean up the connection
                 if (self.connection != None):
                     self.connection.close()
@@ -133,20 +146,32 @@ class AudioServer(threading.Thread):
         self.connection.send('OK')
 
 
-if __name__ == "__main__":
-    port = 9001
-    if (len(sys.argv)>1):
-        port = int(sys.argv[1]);
 
-    server = AudioServer(port)
-    server.start()
+
+
+if __name__ == "__main__":
+
+    TTS_SERVER_PORT = 9001
+    ASR_SERVER_PORT = 9002
+    if (len(sys.argv)>1):
+        TTS_SERVER_PORT = int(sys.argv[1]);
+    if (len(sys.argv)>2):
+        ASR_SERVER_PORT = int(sys.argv[2]);
+
+    tts_server = TTSServer(TTS_SERVER_PORT)
+    tts_server.start()
+
+    asr_server = ASRServer(ASR_SERVER_PORT)
+    asr_server.start()
 
     try:
         pyglet.app.run()
     except:
         print "Exit"
-        server.stop()
-        sys.exit(0)
+
+    tts_server.stop()
+    asr_server.stop()
+    sys.exit(0)
 
 
 

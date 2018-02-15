@@ -27,7 +27,7 @@ export LC_ALL=C
 * Run the server
 
 ```
-$ python audio_server.py [PORT]
+$ python audio_server.py [TTSPORT] [ASRPORT]
 
 ```
 

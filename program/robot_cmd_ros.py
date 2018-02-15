@@ -4,7 +4,7 @@ import time
 import os
 import socket
 import math
-
+import sys
 import rospy
 import tf
 
@@ -12,6 +12,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
 from apriltags_ros.msg import AprilTagDetectionArray
+
 
 AUDIO_SERVER_IP = '127.0.0.1'
 AUDIO_SERVER_PORT = 9001
@@ -322,7 +323,7 @@ def bop(r=1):
             pass
         time.sleep(0.5)
 
-
+# TTS
 
 def say(text):
     global assock
@@ -335,7 +336,20 @@ def say(text):
     except:
         pass
 
+# ASR
 
+def asr():
+    global assock
+    print 'asr ',
+    try:
+        assock.send('ASR\n\r')  # ask fr ASR results
+        time.sleep(0.5)
+        data = assock.recv(160)
+        data = data.strip()
+        print data
+        return data
+    except:
+        pass
 
 # Precise move and turn
 
@@ -393,9 +407,6 @@ def exec_turn_REL(th_deg):
             last_dth = dth
         # print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(current_th), target_th, dth, tv, rv))
     setSpeed(0.0,0.0,0.1)
-
-
-
 
 
 

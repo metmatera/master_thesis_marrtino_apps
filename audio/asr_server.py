@@ -3,7 +3,7 @@ import time
 import socket
 import sys
 import os
-
+import json
 
 class ASRServer(threading.Thread):
 
@@ -13,7 +13,7 @@ class ASRServer(threading.Thread):
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.settimeout(3)
+        self.sock.settimeout(3) # timeout when listening (exit with CTRL+C)
         # Bind the socket to the port
         server_address = ('', port)
         self.sock.bind(server_address)
@@ -22,8 +22,10 @@ class ASRServer(threading.Thread):
         
         self.dorun = True
         self.connection = None
-        self.received = ''  # last string received from ASR
-    
+        self.received = ''  # transcriptions received from ASR
+        self.best_hypo = '' # best hypothesis from transcriptions
+        self.rcv_time = 0
+
     def stop(self):
         self.dorun = False
 
@@ -34,9 +36,9 @@ class ASRServer(threading.Thread):
                 # print 'Waiting for a connection ...'
                 # Wait for a connection
                 self.connection, client_address = self.sock.accept()
-                #self.connection.settimeout(3)
+                self.connection.settimeout(3)
                 connected = True
-                print 'Connection from ', client_address
+                print 'ASR Server Connection from ', client_address
             except:
                 pass #print "Listen again ..."    
 
@@ -55,17 +57,32 @@ class ASRServer(threading.Thread):
                     except:
                         data = None
                     
-                    if (data!=None and data !="" and data!="***"):
-                        print 'Received "%s"' % data
+                    if (data!=None and data !="" and data!="***" and data[0]!='$' and data!='KEEP_AWAKE'):
+                        print 'ASR Received %s' % data
                         self.received = data
+                        if (data[0]=='{'): # json string                        
+                            transcriptions = json.loads(data)
+                            self.best_hypo = transcriptions['hypotheses'][0]['transcription']
+                            self.rcv_time = time.time()
+                    
+
                     elif (data == None or data==""):
                         break
             finally:
-                print 'Connection closed.'
+                print 'ASR Server Connection closed.'
                 # Clean up the connection
                 if (self.connection != None):
                     self.connection.close()
                     self.connection = None
+
+
+    def get_asr(self):
+        dt = time.time() - self.rcv_time
+        print "dtime ",dt
+        if (dt < 3):
+            return self.best_hypo
+        else:
+            return ''
 
 
 if __name__ == "__main__":
