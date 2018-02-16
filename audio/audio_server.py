@@ -21,7 +21,11 @@ import time
 import socket
 import sys
 import os
-import pyglet
+try:
+	import pyglet
+except:
+	print('pyglet required. Install with:   sudo -H pip install pyglet')
+	sys.exit(0)
 
 SOUNDS_DIR = "sounds/"
 
@@ -48,7 +52,7 @@ class TTSServer(threading.Thread):
         server_address = ('localhost', port)
         self.sock.bind(server_address)
         self.sock.listen(1)
-        print "AudioServer running on port ", port, " ..."
+        print "TTS Server running on port ", port, " ..."
         
         self.dorun = True
         self.connection = None
