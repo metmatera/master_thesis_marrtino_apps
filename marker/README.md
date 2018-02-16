@@ -9,11 +9,14 @@ Download the following packages in your catkin workspace and compile them with c
 https://bitbucket.org/iocchi/apriltags_ros
 ```
 
-For USB camera, install ROS node
+For USB camera, install ROS nodes
 
 ```
-sudo apt-get install ros-kinetic-usb-cam
+sudo apt-get install ros-kinetic-usb-cam ros-kinetic-image-view ros-kinetic-cv-bridge 
 ```
+
+Note: if you get errors in linked libraries, you may need to recompile ros packages, since this update may change the version of OpenCV libraries.
+
 
 ## Run ##
 
