@@ -31,7 +31,10 @@
     <table border=0>
     <tr height=40>
       <td>Robot IP</td>
-      <td><input type="text" name="IP" id="IP" value="127.0.0.1" width=240></td>
+<script>
+      document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
+            window.location.hostname + "\" width=240></td>")
+</script>
       <td width=100><button onclick="connect()">Connect</button></td>
       <td width=120><button onclick="disconnect()">Disconnect</button></td>
       <td><div id="connection"><font color='red'>Not Connected</font></div></td>
