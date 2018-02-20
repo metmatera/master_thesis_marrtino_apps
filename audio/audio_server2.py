@@ -29,6 +29,10 @@ except:
 	print('pyaudio required. Install with:   sudo apt install python-pyaudio')
 	sys.exit(0)
 
+import sox
+#sudo -H pip install sox
+
+
 from asr_server import ASRServer
 
 
@@ -151,10 +155,20 @@ class TTSServer(threading.Thread):
         print 'Say ',data
         cachefile = 'cache'+str(self.idcache)
         self.idcache = (self.idcache+1)%10
-        cmd = 'pico2wave -l "it-IT" -w %s%s.wav " , %s"' %(SOUNDS_DIR, cachefile, data)
+        tmpfile = "/tmp/cache.wav"
+        cmd = 'pico2wave -l "it-IT" -w %s " , %s"' %(tmpfile, data)
         print cmd
         os.system(cmd)
         time.sleep(0.5)
+
+        # convert samplerate
+        tfm = sox.Transformer()
+        tfm.rate(samplerate=44100)
+        ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
+        tfm.build(tmpfile, ofile)
+        f = wave.open("file44100.wav","rb")  
+
+
         self.play(cachefile)
 
 
@@ -185,6 +199,7 @@ class TTSServer(threading.Thread):
     def playwav2(self, sfile):
         global soundfile
         soundfile = sfile
+        soundfile.setpos(0)
         self.stream.start_stream()
         while self.stream.is_active():
             time.sleep(1.0)
