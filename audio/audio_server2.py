@@ -43,9 +43,12 @@ asr_server = None
 
 def TTS_callback(in_data, frame_count, time_info, status):
     global soundfile
-    chunk=2048
-    data = soundfile.readframes(chunk)
-    return (data, pyaudio.paContinue)
+    if (soundfile==None):
+        return (None, True)
+    else:
+        chunk=2048
+        data = soundfile.readframes(chunk)
+        return (data, pyaudio.paContinue)
 
 
 class TTSServer(threading.Thread):
@@ -185,7 +188,7 @@ class TTSServer(threading.Thread):
         self.stream.start_stream()
         while self.stream.is_active():
             time.sleep(1.0)
-        stream.stop_stream()  
+        self.stream.stop_stream()  
 
 
 
