@@ -7,9 +7,10 @@
 
   <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="log" >
     <param name="video_device" value="/dev/video0" />
-    <param name="image_width" value="640" />
-    <param name="image_height" value="480" />
-    <param name="pixel_format" value="mjpeg" />
+    <param name="image_width" value="1280" />
+    <param name="image_height" value="720" />
+    <!-- param name="pixel_format" value="mjpeg" / -->
+    <param name="pixel_format" value="yuyv" />
     <param name="camera_frame_id" value="usb_cam" />
     <param name="io_method" value="mmap"/>
   </node>
@@ -19,12 +20,14 @@
     <param name="autosize" value="true" />
   </node>
 
-  <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen">
+  <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen"
+    _launch-prefix="xterm -e gdb --args"   
+  >
     <rosparam param="tag_descriptions">[
-      {id: 0, size: 0.064},
+      {id: 0, size: 0.064, frame_id: tag0_frame},
       {id: 1, size: 0.064, frame_id: tag1_frame},
-      {id: 2, size: 0.064},
-      {id: 3, size: 0.162, frame_id: tag2_frame},
+      {id: 2, size: 0.064, frame_id: tag2_frame},
+      {id: 3, size: 0.162, frame_id: tag3_frame},
       {id: 4, size: 0.162},
       {id: 5, size: 0.162}]
     </rosparam>
