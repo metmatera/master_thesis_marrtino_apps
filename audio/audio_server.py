@@ -49,7 +49,7 @@ class TTSServer(threading.Thread):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.settimeout(3)
         # Bind the socket to the port
-        server_address = ('localhost', port)
+        server_address = ('', port)
         self.sock.bind(server_address)
         self.sock.listen(1)
         print "TTS Server running on port ", port, " ..."
