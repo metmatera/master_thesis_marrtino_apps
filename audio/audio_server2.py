@@ -160,9 +160,6 @@ class TTSServer(threading.Thread):
         tfm.rate(samplerate=44100)
         ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
         tfm.build(tmpfile, ofile)
-        f = wave.open("file44100.wav","rb")  
-
-
         self.play(cachefile)
 
 
