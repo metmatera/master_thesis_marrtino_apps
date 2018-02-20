@@ -29,8 +29,11 @@ except:
 	print('pyaudio required. Install with:   sudo apt install python-pyaudio')
 	sys.exit(0)
 
-import sox
-#sudo -H pip install sox
+try:
+    import sox
+except:
+	print('sox required. Install with:   sudo -H pip install sox')
+	sys.exit(0)
 
 
 from asr_server import ASRServer
@@ -50,8 +53,7 @@ def TTS_callback(in_data, frame_count, time_info, status):
     if (soundfile==None):
         return (None, True)
     else:
-        chunk=2048
-        data = soundfile.readframes(chunk)
+        data = soundfile.readframes(frame_count)
         return (data, pyaudio.paContinue)
 
 
@@ -66,14 +68,6 @@ class TTSServer(threading.Thread):
         for dd in range(self.pa.get_device_count()):
             for di in [self.pa.get_device_info_by_index(dd)]:
                 print dd,di['name']
-
-        #open stream  
-        self.stream = self.pa.open(format = 8, #self.pa.get_format_from_width(f.getsampwidth()),  
-                channels = 1, #f.getnchannels(),  
-                rate = 44100, #f.getframerate(),  
-                output = True,
-                stream_callback = TTS_callback,
-                output_device_index = 3) # 3 ???  
 
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -198,12 +192,19 @@ class TTSServer(threading.Thread):
 
     def playwav2(self, sfile):
         global soundfile
+        self.stream = self.pa.open(format = 8, #self.pa.get_format_from_width(f.getsampwidth()),  
+                channels = 1, #f.getnchannels(),  
+                rate = 44100, #f.getframerate(),  
+                output = True,
+                stream_callback = TTS_callback,
+                output_device_index = 3) # 3 ???  
         soundfile = sfile
         soundfile.setpos(0)
         self.stream.start_stream()
         while self.stream.is_active():
             time.sleep(1.0)
         self.stream.stop_stream()  
+        self.stream.close()  
 
 
 
