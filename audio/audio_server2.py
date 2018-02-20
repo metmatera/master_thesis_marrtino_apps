@@ -29,21 +29,23 @@ except:
 	print('pyaudio required. Install with:   sudo apt install python-pyaudio')
 	sys.exit(0)
 
-
-def sound_callback(in_data, frame_count, time_info, status):
-    
-    data = f.readframes(frame_count)
-    return (data, pyaudio.paContinue)
-
-
-
-
-SOUNDS_DIR = "sounds/"
-
 from asr_server import ASRServer
+
+
+
+SOUNDS_DIR = "sounds/"  # dir with sounds
+soundfile = None        # sound file
+
 
 tts_server = None
 asr_server = None
+
+
+def TTS_callback(in_data, frame_count, time_info, status):
+    global soundfile
+    chunk=2048
+    data = soundfile.readframes(chunk)
+    return (data, pyaudio.paContinue)
 
 
 class TTSServer(threading.Thread):
@@ -63,6 +65,7 @@ class TTSServer(threading.Thread):
                 channels = 1, #f.getnchannels(),  
                 rate = 44100, #f.getframerate(),  
                 output = True,
+                stream_callback = TTS_callback,
                 output_device_index = 3) # 3 ???  
 
         # Create a TCP/IP socket
@@ -164,11 +167,10 @@ class TTSServer(threading.Thread):
             i += 1
             time.sleep(1)
         if (name in self.Sounds):
-            self.playwav(self.Sounds[name])
+            self.playwav2(self.Sounds[name])
             time.sleep(1)
         if (self.connection != None):
             self.connection.send('OK')
-
 
     def playwav(self, soundfile):
         chunk = 2048
@@ -176,7 +178,15 @@ class TTSServer(threading.Thread):
         while (len(data)>0):
             self.stream.write(data)  
             data = soundfile.readframes(chunk)  
-        
+
+    def playwav2(self, sfile):
+        global soundfile
+        soundfile = sfile
+        self.stream.start_stream()
+        while self.stream.is_active():
+            time.sleep(1.0)
+        stream.stop_stream()  
+
 
 
 
