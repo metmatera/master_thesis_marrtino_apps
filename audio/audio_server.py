@@ -1,6 +1,5 @@
-# sudo -H pip install pyglet
 
-# Only PCM 16 bit wav 44100 Hz - Use audacity to convert audio files.
+# Only PCM 16 bit wav 44100 Hz - Use audacity or sox to convert audio files.
 
 # WAV generation
 
@@ -10,8 +9,7 @@
 
 # Voices
 # pico2wave -l "it-IT" -w start.wav "Bene! Si Parte!"
-
-# To run this from a remote shell use:  'ssh -X ubuntu@<IP>'
+# Then convert wav files to to 44100 Hz
 
 # Note: some initial sound may not be played.
 
@@ -21,20 +19,40 @@ import time
 import socket
 import sys
 import os
+import wave
+
 try:
-	import pyglet
+    import pyaudio
 except:
-	print('pyglet required. Install with:   sudo -H pip install pyglet')
+	print('pyaudio required. Install with:   sudo apt install python-pyaudio')
 	sys.exit(0)
 
-pyglet.options['audio'] = ('alsa', 'silent')
+try:
+    import sox
+except:
+	print('sox required. Install with:   sudo -H pip install sox')
+	sys.exit(0)
 
-SOUNDS_DIR = "sounds/"
 
 from asr_server import ASRServer
 
+
+
+SOUNDS_DIR = "sounds/"  # dir with sounds
+soundfile = None        # sound file
+
+
 tts_server = None
 asr_server = None
+
+
+def TTS_callback(in_data, frame_count, time_info, status):
+    global soundfile
+    if (soundfile==None):
+        return (None, True)
+    else:
+        data = soundfile.readframes(frame_count)
+        return (data, pyaudio.paContinue)
 
 
 class TTSServer(threading.Thread):
@@ -42,9 +60,18 @@ class TTSServer(threading.Thread):
     def __init__(self, port):
         threading.Thread.__init__(self)
 
-        # Initialize pyglet player
-        self.player = pyglet.media.Player()
-        self.player.play()
+        # Initialize audio player
+        self.pa = pyaudio.PyAudio()  
+
+        print("Audio devices available")
+
+        for dd in range(self.pa.get_device_count()):
+            for di in [self.pa.get_device_info_by_index(dd)]:
+                print "   ",dd,di['name']
+
+        self.output_device = 3 # OK for raspberry
+
+        print("Audio device used: %d" %self.output_device)
 
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,8 +88,7 @@ class TTSServer(threading.Thread):
 
         # Dictionary of sounds
         self.Sounds = {}
-        self.Sounds['bip'] = pyglet.resource.media(SOUNDS_DIR+'bip.wav', streaming=False)  # load in memory
-
+        self.Sounds['bip'] = wave.open(SOUNDS_DIR+'bip.wav', 'rb') 
         self.idcache = 0
     
     def stop(self):
@@ -86,8 +112,7 @@ class TTSServer(threading.Thread):
         global asr_server
         for i in range(0,1):
             print 'bip'
-            self.Sounds["bip"].play()
-            time.sleep(self.Sounds["bip"].duration+1)
+            self.play('bip')
         while (self.dorun):
             self.connect()
             try:
@@ -103,7 +128,7 @@ class TTSServer(threading.Thread):
                     
                     if (data!=None and data !="" and data!="***"):
                         print 'TTS Received "%s"' % data
-                        if (data[0:3]=='TTS'):
+                        if (data.startswith('TTS')):
                             self.say(data[4:])
                         elif (data=="ASR"):
                             print('asr request')
@@ -128,10 +153,17 @@ class TTSServer(threading.Thread):
         print 'Say ',data
         cachefile = 'cache'+str(self.idcache)
         self.idcache = (self.idcache+1)%10
-        cmd = 'pico2wave -l "it-IT" -w %s%s.wav " , %s"' %(SOUNDS_DIR, cachefile, data)
+        tmpfile = "/tmp/cache.wav"
+        cmd = 'pico2wave -l "it-IT" -w %s " , %s"' %(tmpfile, data)
         print cmd
         os.system(cmd)
         time.sleep(0.5)
+
+        # convert samplerate
+        tfm = sox.Transformer()
+        tfm.rate(samplerate=44100)
+        ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
+        tfm.build(tmpfile, ofile)
         self.play(cachefile)
 
 
@@ -141,16 +173,39 @@ class TTSServer(threading.Thread):
         while (i<3):
             if (not name in self.Sounds):
                 try:
-                    self.Sounds[name] = pyglet.resource.media(SOUNDS_DIR+name+".wav", streaming=False)  # False: load in memory
+                    self.Sounds[name] = wave.open(SOUNDS_DIR+name+".wav", 'rb')
                 except:
                     print "File %s%s.wav not found." %(SOUNDS_DIR,name)
             i += 1
             time.sleep(1)
         if (name in self.Sounds):
-            self.Sounds[name].play()
-            time.sleep(self.Sounds[name].duration+1)
-        self.connection.send('OK')
+            self.playwav2(self.Sounds[name])
+            time.sleep(1)
+        if (self.connection != None):
+            self.connection.send('OK')
 
+    def playwav(self, soundfile):
+        chunk = 2048
+        data = soundfile.readframes(chunk)
+        while (len(data)>0):
+            self.stream.write(data)  
+            data = soundfile.readframes(chunk)  
+
+    def playwav2(self, sfile):
+        global soundfile
+        self.stream = self.pa.open(format = 8, #self.pa.get_format_from_width(f.getsampwidth()),  
+                channels = 1, #f.getnchannels(),  
+                rate = 44100, #f.getframerate(),  
+                output = True,
+                stream_callback = TTS_callback,
+                output_device_index = self.output_device)
+        soundfile = sfile
+        soundfile.setpos(0)
+        self.stream.start_stream()
+        while self.stream.is_active():
+            time.sleep(1.0)
+        self.stream.stop_stream()  
+        self.stream.close()  
 
 
 
@@ -170,10 +225,13 @@ if __name__ == "__main__":
     asr_server = ASRServer(ASR_SERVER_PORT)
     asr_server.start()
 
-    try:
-        pyglet.app.run()
-    except:
-        print "Exit"
+    run = True
+    while (run):
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            print "Exit"
+            run = False
 
     tts_server.stop()
     asr_server.stop()
