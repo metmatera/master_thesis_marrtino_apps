@@ -63,6 +63,7 @@ class TTSServer(threading.Thread):
 
         # Initialize audio player
         self.pa = pyaudio.PyAudio()  
+        self.streaming = False
 
         print("Audio devices available")
 
@@ -200,6 +201,7 @@ class TTSServer(threading.Thread):
 
     def playwav2(self, sfile):
         global soundfile
+        self.streaming = True
         self.stream = self.pa.open(format = 8, #self.pa.get_format_from_width(f.getsampwidth()),  
                 channels = 1, #f.getnchannels(),  
                 rate = 44100, #f.getframerate(),  
@@ -213,6 +215,7 @@ class TTSServer(threading.Thread):
             time.sleep(1.0)
         self.stream.stop_stream()  
         self.stream.close()  
+        self.streaming = False
 
 
 
@@ -236,7 +239,7 @@ if __name__ == "__main__":
     while (run):
         try:
             time.sleep(3)
-            if (not tts_server.stream.is_active()):
+            if (not tts_server.streaming):
                 cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
                 os.system(cmd)
         except KeyboardInterrupt:
