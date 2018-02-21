@@ -19,6 +19,7 @@ import time
 import socket
 import sys
 import os
+import re
 import wave
 
 try:
@@ -129,7 +130,13 @@ class TTSServer(threading.Thread):
                     if (data!=None and data !="" and data!="***"):
                         print 'TTS Received "%s"' % data
                         if (data.startswith('TTS')):
-                            self.say(data[4:])
+                            lang = 'en-US' # default language
+                            strsay = data[4:]
+                            if (data[3]=='['):
+                                vd = re.split('\[|\]',data)
+                                lang = vd[1]
+                                strsay = vd[2]
+                            self.say(strsay,lang)
                         elif (data=="ASR"):
                             print('asr request')
                             bh = asr_server.get_asr()
@@ -149,12 +156,12 @@ class TTSServer(threading.Thread):
                     self.connection.close()
                     self.connection = None
 
-    def say(self, data):
+    def say(self, data, lang):
         print 'Say ',data
         cachefile = 'cache'+str(self.idcache)
         self.idcache = (self.idcache+1)%10
         tmpfile = "/tmp/cache.wav"
-        cmd = 'pico2wave -l "it-IT" -w %s " , %s"' %(tmpfile, data)
+        cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
         print cmd
         os.system(cmd)
         time.sleep(0.5)

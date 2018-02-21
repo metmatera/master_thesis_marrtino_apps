@@ -20,11 +20,16 @@ print data
 
 time.sleep(1)
 
-sock.send('TTS ciao, come stai?\n\r')
+sock.send('TTS[it-IT] ciao, come stai?\n\r')
 data = sock.recv(80)
 print data
 
-sock.send('TTS bene, grazie!\n\r')
+sock.send('TTS[en-US] very well, thank you!\n\r')
+data = sock.recv(80)
+print data
+
+
+sock.send('TTS default language is english!\n\r')
 data = sock.recv(80)
 print data
 
