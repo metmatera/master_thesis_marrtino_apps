@@ -235,7 +235,9 @@ if __name__ == "__main__":
     run = True
     while (run):
         try:
-            time.sleep(1)
+            time.sleep(3)
+            cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
+            os.system(cmd)
         except KeyboardInterrupt:
             print "Exit"
             run = False
