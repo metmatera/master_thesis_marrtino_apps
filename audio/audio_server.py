@@ -236,8 +236,9 @@ if __name__ == "__main__":
     while (run):
         try:
             time.sleep(3)
-            cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
-            os.system(cmd)
+            if (not self.stream.is_active()):
+                cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
+                os.system(cmd)
         except KeyboardInterrupt:
             print "Exit"
             run = False
