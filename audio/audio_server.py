@@ -67,11 +67,12 @@ class TTSServer(threading.Thread):
 
         print("Audio devices available")
 
+        self.output_device = 0 
         for dd in range(self.pa.get_device_count()):
             for di in [self.pa.get_device_info_by_index(dd)]:
                 print "   ",dd,di['name']
-
-        self.output_device = 3 # OK for raspberry
+                if (di['name']=='default'):
+                    self.output_device = dd # choose default device
 
         print("Audio device used: %d" %self.output_device)
 
