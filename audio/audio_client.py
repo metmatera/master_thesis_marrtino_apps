@@ -24,5 +24,9 @@ sock.send('TTS ciao, come stai?\n\r')
 data = sock.recv(80)
 print data
 
+sock.send('TTS bene, grazie!\n\r')
+data = sock.recv(80)
+print data
+
 sock.close()
 
