@@ -112,7 +112,7 @@ class TTSServer(threading.Thread):
 
     def run(self):
         global asr_server
-        for i in range(0,5):
+        for i in range(0,1):
             print 'bip'
             self.play('bip')
             time.sleep(1)
