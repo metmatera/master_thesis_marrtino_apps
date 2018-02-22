@@ -21,6 +21,7 @@ import sys
 import os
 import re
 import wave
+import argparse
 
 try:
     import pyaudio
@@ -58,22 +59,20 @@ def TTS_callback(in_data, frame_count, time_info, status):
 
 class TTSServer(threading.Thread):
 
-    def __init__(self, port):
+    def __init__(self, port, output_device):
         threading.Thread.__init__(self)
 
         # Initialize audio player
         self.pa = pyaudio.PyAudio()  
         self.streaming = False
+        self.output_device = output_device
 
         print("Audio devices available")
-
-        self.output_device = 0 
         for dd in range(self.pa.get_device_count()):
             for di in [self.pa.get_device_info_by_index(dd)]:
                 print "   ",dd,di['name']
-                if (di['name']=='default'):
+                if ((di['name']=='default') and (self.output_device < 0)):
                     self.output_device = dd # choose default device
-
         print("Audio device used: %d" %self.output_device)
 
         # Create a TCP/IP socket
@@ -113,9 +112,10 @@ class TTSServer(threading.Thread):
 
     def run(self):
         global asr_server
-        for i in range(0,1):
+        for i in range(0,5):
             print 'bip'
             self.play('bip')
+            time.sleep(1)
         while (self.dorun):
             self.connect()
             try:
@@ -158,38 +158,44 @@ class TTSServer(threading.Thread):
                     self.connection.close()
                     self.connection = None
 
+
+
     def say(self, data, lang):
         print 'Say ',data
         cachefile = 'cache'+str(self.idcache)
         self.idcache = (self.idcache+1)%10
         tmpfile = "/tmp/cache.wav"
+        ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
+        cmd = 'rm %s %s' %(tmpfile, ofile)
+        os.system(cmd)
+        time.sleep(0.1)
         cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
         print cmd
         os.system(cmd)
-        time.sleep(0.5)
+        time.sleep(0.1)
 
         # convert samplerate
         tfm = sox.Transformer()
         tfm.rate(samplerate=44100)
-        ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
         tfm.build(tmpfile, ofile)
+        time.sleep(0.1)
+
         self.play(cachefile)
 
 
     def play(self, name):
         print 'Play ',name
         i = 0
-        while (i<3):
-            if (not name in self.Sounds):
-                try:
-                    self.Sounds[name] = wave.open(SOUNDS_DIR+name+".wav", 'rb')
-                except:
-                    print "File %s%s.wav not found." %(SOUNDS_DIR,name)
+        while ((not name in self.Sounds) and (i<3)):
+            try:
+                self.Sounds[name] = wave.open(SOUNDS_DIR+name+".wav", 'rb')
+            except:
+                print "File %s%s.wav not found." %(SOUNDS_DIR,name)
+                time.sleep(0.5)
             i += 1
-            time.sleep(1)
         if (name in self.Sounds):
             self.playwav2(self.Sounds[name])
-            time.sleep(1)
+            #time.sleep(1)
         if (self.connection != None):
             self.connection.send('OK')
 
@@ -223,17 +229,18 @@ class TTSServer(threading.Thread):
 
 if __name__ == "__main__":
 
-    TTS_SERVER_PORT = 9001
-    ASR_SERVER_PORT = 9002
-    if (len(sys.argv)>1):
-        TTS_SERVER_PORT = int(sys.argv[1]);
-    if (len(sys.argv)>2):
-        ASR_SERVER_PORT = int(sys.argv[2]);
 
-    tts_server = TTSServer(TTS_SERVER_PORT)
+    parser = argparse.ArgumentParser(description='audio_server')
+    parser.add_argument('-ttsport', type=int, help='TTS server port [default: 9001]', default=9001)
+    parser.add_argument('-asrport', type=int, help='ASR server port [default: 9002]', default=9002)
+    parser.add_argument('-device', type=int, help='audio device id [default: -1 = default]', default=-1)
+
+    args = parser.parse_args()
+
+    tts_server = TTSServer(args.ttsport,args.device)
     tts_server.start()
 
-    asr_server = ASRServer(ASR_SERVER_PORT)
+    asr_server = ASRServer(args.asrport)
     asr_server.start()
 
     run = True
