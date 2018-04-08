@@ -340,13 +340,13 @@ def say(text):
 
 def asr():
     global assock
-    print 'asr ',
+    #print 'ASR received: ',
     try:
         assock.send('ASR\n\r')  # ask fr ASR results
         time.sleep(0.5)
         data = assock.recv(160)
         data = data.strip()
-        print data
+        #print data
         return data
     except:
         pass
