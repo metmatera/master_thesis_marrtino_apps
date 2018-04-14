@@ -64,7 +64,8 @@ class ASRServer(threading.Thread):
                             transcriptions = json.loads(data)
                             self.best_hypo = transcriptions['hypotheses'][0]['transcription']
                             self.rcv_time = time.time()
-                    
+                        elif data=='REQ':
+                            self.connection.send('ACK\n\r')
 
                     elif (data == None or data==""):
                         break

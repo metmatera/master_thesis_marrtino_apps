@@ -297,31 +297,24 @@ def wait(r=1):
 
 # Sounds
 
-def bip(r=1):
+def audioplay(name):
     global assock
-    for i in range(0,r):
-        print 'bip'
-        try:
-            assock.send('bip\n\r')
-            time.sleep(0.5)
-            data = assock.recv(80)
-            print data
-        except:
-            pass
+    print('audioplay %s' %name)
+    try:
+        assock.send('%s\n\r' %name)
+        time.sleep(0.5)
+        data = assock.recv(80)
+        print data
+    except:
+        pass
 
+def bip(r=1):
+    for i in range(0,r):
+        audioplay('bip')
 
 def bop(r=1):
-    global assock
     for i in range(0,r):
-        print 'bop'
-        try:
-            assock.send('bop\n\r')
-            time.sleep(0.5)
-            data = assock.recv(80)
-            print data
-        except:
-            pass
-        time.sleep(0.5)
+        audioplay('bop')
 
 # TTS
 
@@ -340,13 +333,13 @@ def say(text):
 
 def asr():
     global assock
-    print 'asr ',
+    #print 'ASR received: ',
     try:
         assock.send('ASR\n\r')  # ask fr ASR results
         time.sleep(0.5)
         data = assock.recv(160)
         data = data.strip()
-        print data
+        #print data
         return data
     except:
         pass
