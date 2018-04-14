@@ -17,21 +17,21 @@
     <param name="io_method" value="mmap"/>
   </node>
 
-  <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+  <!-- node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
     <remap from="image" to="/usb_cam/image_raw"/>
     <param name="autosize" value="true" />
-  </node>
+  </node -->
 
   <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen"
     _launch-prefix="xterm -e gdb --args"   
   >
     <rosparam param="tag_descriptions">[
-      {id: 0, size: 0.064, frame_id: tag0_frame},
-      {id: 1, size: 0.064, frame_id: tag1_frame},
-      {id: 2, size: 0.064, frame_id: tag2_frame},
+      {id: 0, size: 0.162, frame_id: tag0_frame},
+      {id: 1, size: 0.162, frame_id: tag1_frame},
+      {id: 2, size: 0.162, frame_id: tag2_frame},
       {id: 3, size: 0.162, frame_id: tag3_frame},
-      {id: 4, size: 0.162},
-      {id: 5, size: 0.162}]
+      {id: 4, size: 0.162, frame_id: tag4_frame},
+      {id: 5, size: 0.162, frame_id: tag5_frame}]
     </rosparam>
     <remap from="/camera_info" to="/usb_cam/camera_info"/>
     <remap from="/image_rect" to="/usb_cam/image_raw"/>
