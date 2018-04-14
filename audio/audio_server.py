@@ -172,7 +172,7 @@ class TTSServer(threading.Thread):
         cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
         print cmd
         os.system(cmd)
-        time.sleep(0.1)
+        time.sleep(2.5)
 
         # convert samplerate
         tfm = sox.Transformer()
@@ -247,9 +247,10 @@ if __name__ == "__main__":
     while (run):
         try:
             time.sleep(3)
-            if (not tts_server.streaming):
-                cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
-                os.system(cmd)
+            #if (not tts_server.streaming):
+                #cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
+		#print cmd
+                #os.system(cmd)
         except KeyboardInterrupt:
             print "Exit"
             run = False
