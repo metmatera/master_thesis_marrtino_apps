@@ -189,6 +189,14 @@ def begin():
         tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
         laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
         odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
+
+        delay = 0.25 # sec
+        rate = rospy.Rate(1/delay) # Hz
+        rate.sleep()
+        while (robot_pose is None):
+            rate.sleep()
+        robot_initialized = True
+
     if (use_audio):
         print("Audio enabled")
         assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -197,17 +205,12 @@ def begin():
         except:
             print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
 
-    delay = 0.25 # sec
-    rate = rospy.Rate(1/delay) # Hz
-    rate.sleep()
-    while (robot_pose is None):
-        rate.sleep()
-    robot_initialized = True
 
 
 def end():
     global assock
-    stop()
+    if (use_robot):
+        stop()
     print 'end'    
     if (use_audio):
         assock.close()
@@ -318,12 +321,15 @@ def bop(r=1):
 
 # TTS
 
-def say(text):
+def say(text, language='en'):
     global assock
-    print 'say ',text
+    print('say %s [%s]' %(text,language))
+    lstr = 'en-US'
+    if (language=='it'):
+        lstr = 'it-IT'
     try:
-        assock.send('TTS '+text+'\n\r')
-        time.sleep(0.5)
+        assock.send('TTS[%s] %s\n\r' %(lstr,text))
+        time.sleep(1)
         data = assock.recv(80)
         print data
     except:
