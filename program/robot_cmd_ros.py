@@ -108,6 +108,41 @@ def distance(p1,p2):
     return math.sqrt(dx2+dy2)
 
 
+# ROS param access
+
+def set_global_param(var, value):
+    param = '/MARRtino/params/'+var
+    now = rospy.Time.now()
+    pd = {} 
+    pd['value'] = value
+    pd['timestamp'] = now.secs
+    rospy.set_param(param, pd)
+
+
+def get_global_param(var):
+    param = '/MARRtino/params/'+var
+    value = ''
+    if rospy.has_param(param):
+        value = rospy.get_param(param,'')
+    return value
+
+def del_global_param(var):
+    param = '/MARRtino/params/'+var
+    if rospy.has_param(param):
+        rospy.delete_param(param)
+
+
+def event():
+    pd = get_global_param('event')
+    if (pd==''):
+        return ''
+    now = rospy.Time.now()
+    if (now.secs - pd['timestamp'] < 5): # last 5 seconds
+        del_global_param('event')
+        return pd['value']
+    else:
+        return ''
+
 # ROS publishers/subscribers
 cmd_pub = None # cmd_vel publisher
 tag_sub = None # tag_detection subscriber
@@ -195,6 +230,7 @@ def begin(nodename='robot_cmd'):
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
         odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
 
+        print("Waiting for robot pose...")
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
         rate.sleep()
@@ -346,7 +382,7 @@ def asr():
     global assock
     #print 'ASR received: ',
     try:
-        assock.send('ASR\n\r')  # ask fr ASR results
+        assock.send('ASR\n\r')  # ask for ASR results
         time.sleep(0.5)
         data = assock.recv(160)
         data = data.strip()

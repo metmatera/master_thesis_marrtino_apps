@@ -14,7 +14,10 @@ from threading import Thread
 import sys
 sys.path.append('../program')
 
+import robot_cmd_ros
 from robot_cmd_ros import *
+
+robot_cmd_ros.use_robot = True
 
 # Global variables
 
@@ -38,8 +41,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         if (message=='stop'):
             print('Stop code and robot')
             robot_stop_request()
+        elif (message[0:5]=='event'):
+            print('Received event %s' %message)
+            v = message.split('_')
+            if (v>1):
+                set_global_param('event',v[1])
+                print('Global param %s = %s' %('event',v[1]))
         else:
-            print('Code received:\n%s' % message)
+            print('Code received:\n%s' %message)
             if (status=='Idle'):
                 t = Thread(target=run_code, args=(message,))
                 t.start()

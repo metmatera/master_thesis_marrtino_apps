@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+import robot_cmd_ros
 from robot_cmd_ros import *
 
-
+robot_cmd_ros.use_robot = True
 
 begin()
 
