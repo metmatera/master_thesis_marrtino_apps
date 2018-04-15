@@ -14,11 +14,10 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 sock.connect((ip,port))
 
+
 sock.send('bip\n\r')
 data = sock.recv(80)
 print data
-
-time.sleep(1)
 
 sock.send('TTS[it-IT] ciao, come stai?\n\r')
 data = sock.recv(80)
@@ -32,6 +31,12 @@ print data
 sock.send('TTS default language is english!\n\r')
 data = sock.recv(80)
 print data
+
+sock.send('bop\n\r')
+data = sock.recv(80)
+print data
+
+time.sleep(1)
 
 sock.close()
 

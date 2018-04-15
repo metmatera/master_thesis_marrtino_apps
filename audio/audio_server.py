@@ -24,17 +24,17 @@ import wave
 import argparse
 
 try:
-    import pyaudio
-except:
-	print('pyaudio required. Install with:   sudo apt install python-pyaudio')
-	sys.exit(0)
-
-try:
     import sox
 except:
 	print('sox required. Install with:   sudo -H pip install sox')
 	sys.exit(0)
 
+
+try:
+    import alsaaudio
+except:
+	print('alsaaudio required. Install with:   sudo -H pip install pyalsaaudio')
+	sys.exit(0)
 
 from asr_server import ASRServer
 
@@ -63,17 +63,30 @@ class TTSServer(threading.Thread):
         threading.Thread.__init__(self)
 
         # Initialize audio player
-        self.pa = pyaudio.PyAudio()  
         self.streaming = False
         self.output_device = output_device
 
         print("Audio devices available")
-        for dd in range(self.pa.get_device_count()):
-            for di in [self.pa.get_device_info_by_index(dd)]:
-                print "   ",dd,di['name']
-                if ((di['name']=='default') and (self.output_device < 0)):
-                    self.output_device = dd # choose default device
-        print("Audio device used: %d" %self.output_device)
+        pp = alsaaudio.pcms()
+        if (self.output_device=='sysdefault'):
+            # select proper sysdefault name
+            for l in pp:
+                print l
+                if (l[0:10]=='sysdefault'):
+                    print "choose ",l
+                    self.output_device = l # choose default device
+                    break
+        print("Audio device used: %s" %self.output_device)
+
+
+        self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
+        self.aa_stream.setformat(alsaaudio.PCM_FORMAT_S16_LE)
+        self.aa_stream.setchannels(1)
+        self.audio_rate = 44100
+        self.periodsize = self.audio_rate / 8
+        self.aa_stream.setrate(self.audio_rate)
+        self.aa_stream.setperiodsize(self.periodsize)
+
 
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -168,36 +181,41 @@ class TTSServer(threading.Thread):
         ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
         cmd = 'rm %s %s' %(tmpfile, ofile)
         os.system(cmd)
-        time.sleep(0.1)
+        time.sleep(0.2)
         cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
         print cmd
         os.system(cmd)
-        time.sleep(0.1)
+        time.sleep(0.2)
 
         # convert samplerate
         tfm = sox.Transformer()
-        tfm.rate(samplerate=44100)
+        tfm.rate(samplerate=self.audio_rate)
         tfm.build(tmpfile, ofile)
-        time.sleep(0.1)
+        time.sleep(0.2)
 
         self.play(cachefile)
 
 
     def play(self, name):
         print 'Play ',name
-        i = 0
-        while ((not name in self.Sounds) and (i<3)):
+        soundfile = None
+
+        i = 0    
+        while (i<3): #((not name in self.Sounds) and (i<3)):
             try:
-                self.Sounds[name] = wave.open(SOUNDS_DIR+name+".wav", 'rb')
+                soundfile = wave.open(SOUNDS_DIR+name+".wav", 'rb')
+                #self.Sounds[name] = soundfile
             except:
                 print "File %s%s.wav not found." %(SOUNDS_DIR,name)
-                time.sleep(0.5)
+                time.sleep(1)
             i += 1
-        if (name in self.Sounds):
-            self.playwav2(self.Sounds[name])
+        
+        if (soundfile != None): #(name in self.Sounds):
+            self.playwav3(soundfile)
             #time.sleep(1)
         if (self.connection != None):
             self.connection.send('OK')
+
 
     def playwav(self, soundfile):
         chunk = 2048
@@ -224,6 +242,14 @@ class TTSServer(threading.Thread):
         self.stream.close()  
         self.streaming = False
 
+    def playwav3(self, soundfile):
+        soundfile.setpos(0)
+        data = soundfile.readframes(self.periodsize)
+        while (len(data)>0):
+            # print('stream data %d' %(len(data)))
+            self.aa_stream.write(data)  
+            data = soundfile.readframes(self.periodsize)  
+
 
 
 
@@ -233,23 +259,24 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='audio_server')
     parser.add_argument('-ttsport', type=int, help='TTS server port [default: 9001]', default=9001)
     parser.add_argument('-asrport', type=int, help='ASR server port [default: 9002]', default=9002)
-    parser.add_argument('-device', type=int, help='audio device id [default: -1 = default]', default=-1)
+    parser.add_argument('-device', type=str, help='audio device [default: \'sysdefault\']', default='sysdefault')
 
     args = parser.parse_args()
 
     tts_server = TTSServer(args.ttsport,args.device)
-    tts_server.start()
-
     asr_server = ASRServer(args.asrport)
+
+    tts_server.start()
+    time.sleep(1)
     asr_server.start()
 
     run = True
     while (run):
         try:
             time.sleep(3)
-            if (not tts_server.streaming):
-                cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
-                os.system(cmd)
+            #if (not tts_server.streaming):
+            #    cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
+            #    os.system(cmd)
         except KeyboardInterrupt:
             print "Exit"
             run = False
@@ -257,8 +284,5 @@ if __name__ == "__main__":
     tts_server.stop()
     asr_server.stop()
     sys.exit(0)
-
-
-
 
 
