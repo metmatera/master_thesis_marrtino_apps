@@ -80,8 +80,11 @@ class ASRServer(threading.Thread):
     def get_asr(self):
         dt = time.time() - self.rcv_time
         print "dtime ",dt
-        if (dt < 3):
-            return self.best_hypo
+        if (dt < 5): # only if in the last 5 seconds
+            r = self.best_hypo  # send only once
+            self.best_hypo = ''
+            self.rcv_time = 0
+            return r
         else:
             return ''
 

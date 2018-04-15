@@ -13,6 +13,8 @@ run = True
 while run:
 
     a = asr();
+    if (a!=''):
+        print a
 
     if ('avanti' in a):
         forward();
@@ -25,9 +27,9 @@ while run:
     elif ('esci' in a):
         run = False;
     elif (a!=''):
-        print a
         bop()
 
+    wait()
 
 end()
 
