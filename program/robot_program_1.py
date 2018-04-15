@@ -6,12 +6,15 @@ begin()
 
 bip()
 
-forward(3)
 wait()
+
+forward(2)
 backward()
 left(2)
-forward(2)
+forward(1)
 right(2)
+
+wait()
 
 bop()
 

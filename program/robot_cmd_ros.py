@@ -143,8 +143,12 @@ def laser_cb(data):
     nr = int((data.angle_max - math.pi/2)/data.angle_increment)
     nl = len(data.ranges) - nr
     laser_center_dist = min(data.ranges[nc-10:nc+10])
-    laser_left_dist = min(data.ranges[nl-10:nl+10])
-    laser_right_dist = min(data.ranges[nr-10:nr+10])
+    try:
+        laser_left_dist = min(data.ranges[nl-10:nl+10])
+        laser_right_dist = min(data.ranges[nr-10:nr+10])
+    except:
+        laser_left_dist = -1
+        laser_right_dist = -1
     #print("angle min %.3f max %.3f inc %.6f" %(data.angle_min, data.angle_max, data.angle_increment))
     #print("center %.3f left %.3f right %.3f" %(laser_center_dist, laser_left_dist, laser_right_dist))
 
