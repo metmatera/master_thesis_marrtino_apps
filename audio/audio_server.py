@@ -185,7 +185,11 @@ class TTSServer(threading.Thread):
         cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
         print cmd
         os.system(cmd)
+<<<<<<< HEAD
         time.sleep(0.2)
+=======
+        time.sleep(2.5)
+>>>>>>> 2abb87c6c6aafca97c778a4d7daf254062caee04
 
         # convert samplerate
         tfm = sox.Transformer()
