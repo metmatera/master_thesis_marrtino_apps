@@ -183,15 +183,16 @@ def begin(nodename='robot_cmd'):
     if (robot_initialized):
         return
 
+    rospy.init_node(nodename,  disable_signals=True)
+    tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
+    laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
+
     if (use_robot):
         print("Robot enabled")
-        rospy.init_node(nodename,  disable_signals=True)
         cmd_vel_topic = 'cmd_vel'
         if (use_obstacle_avoidance):
             cmd_vel_topic = 'desired_cmd_vel'
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
-        tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
-        laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
         odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
 
         delay = 0.25 # sec
