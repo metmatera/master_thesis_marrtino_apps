@@ -171,7 +171,7 @@ def odom_cb(data):
 
 # Begin/end
 
-def begin():
+def begin(nodename='robot_cmd'):
     global assock
     global cmd_pub, tag_sub, laser_sub
     global robot_initialized, stop_request
@@ -185,7 +185,7 @@ def begin():
 
     if (use_robot):
         print("Robot enabled")
-        rospy.init_node('robot_cmd',  disable_signals=True)
+        rospy.init_node(nodename,  disable_signals=True)
         cmd_vel_topic = 'cmd_vel'
         if (use_obstacle_avoidance):
             cmd_vel_topic = 'desired_cmd_vel'

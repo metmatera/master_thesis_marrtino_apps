@@ -121,7 +121,7 @@ if __name__ == "__main__":
     t.start()
 
     # Run robot
-    begin()
+    begin('websocket_robot')
 
     # Run web server
     application = tornado.web.Application([
