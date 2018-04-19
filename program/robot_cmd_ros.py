@@ -389,7 +389,8 @@ def asr():
         #print data
         return data
     except:
-        pass
+        return ''
+
 
 # Precise move and turn
 
