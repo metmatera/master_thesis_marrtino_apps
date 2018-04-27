@@ -1,0 +1,18 @@
+<launch>
+
+  <arg name="cameraframe" default="camera_frame_depth" />
+
+  <!-- transforms -->
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
+            args="$(find depth2laser)/config/transforms.txt" output="screen">
+  </node>
+
+  <!-- astra node -->
+  <node pkg="astra_camera" type="astra_camera_node" name="astra" output="screen">
+      <param name="rgb_frame_id" value="$(arg cameraframe)" />
+      <param name="depth_frame_id" value="$(arg cameraframe)" />
+
+  </node>
+		
+</launch>
+
