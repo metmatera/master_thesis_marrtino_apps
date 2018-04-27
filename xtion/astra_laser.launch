@@ -6,15 +6,37 @@
   <arg name="laserframe" default="laser_frame" />
   <arg name="lasertopic" default="/scan" />
   <arg name="rgb_mode" default="-1" />
+  <arg name="num_worker_threads" default="2" />
+  <arg name="use_nodelet" default="true" />
+
 
   <!-- transforms -->
-
   <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
 	    args="$(find depth2laser)/config/transforms.txt" output="screen">
   </node>
 
+  <!-- Nodelet manager -->
+
+  <arg name="manager" value="camera_nodelet_manager" />
+  <arg name="respawn" default="false" />
+
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager"
+        output="screen" launch-prefix="" if="$(arg use_nodelet)" >
+     <param name="num_worker_threads" value="$(arg num_worker_threads)" />
+  </node>
+
+  <!-- astra driver nodelet -->
+  <node pkg="nodelet" type="nodelet" name="astra_driver"
+        args="load astra_camera/AstraDriverNodelet $(arg manager)"
+	    respawn="$(arg respawn)" if="$(arg use_nodelet)" >
+      <param name="rgb_frame_id" value="$(arg cameraframe)" />
+      <param name="depth_frame_id" value="$(arg cameraframe)" />
+  </node>
+
+
   <!-- astra node -->
-  <node pkg="astra_camera" type="astra_camera_node" name="astra" output="screen">
+  <node pkg="astra_camera" type="astra_camera_node" name="astra" output="screen"
+            unless="$(arg use_nodelet)" >
       <param name="rgb_frame_id" value="$(arg cameraframe)" />
       <param name="depth_frame_id" value="$(arg cameraframe)" />
   </node>
