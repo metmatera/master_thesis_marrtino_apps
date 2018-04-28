@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="cameraframe" default="camera_frame_depth" />
+  <arg name="camera_frame" default="camera_frame_depth" />
 
   <!-- transforms -->
   <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
@@ -9,9 +9,8 @@
 
   <!-- astra node -->
   <node pkg="astra_camera" type="astra_camera_node" name="astra" output="screen">
-      <param name="rgb_frame_id" value="$(arg cameraframe)" />
-      <param name="depth_frame_id" value="$(arg cameraframe)" />
-
+      <param name="rgb_frame_id" value="$(arg camera_frame)" />
+      <param name="depth_frame_id" value="$(arg camera_frame)" />
   </node>
 		
 </launch>

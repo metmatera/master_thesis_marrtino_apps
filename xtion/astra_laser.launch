@@ -1,8 +1,8 @@
 <launch>
   <arg name="camera_image_topic" default="/depth/image_raw" />
   <arg name="camera_info_topic" default="/depth/camera_info" />
+  <arg name="camera_frame" default="camera_frame_depth" />
   <arg name="baseframe" default="base_frame" />
-  <arg name="cameraframe" default="camera_frame_depth" />
   <arg name="laserframe" default="laser_frame" />
   <arg name="lasertopic" default="/scan" />
   <arg name="rgb_mode" default="-1" />
@@ -29,16 +29,16 @@
   <node pkg="nodelet" type="nodelet" name="astra_driver"
         args="load astra_camera/AstraDriverNodelet $(arg manager)"
 	    respawn="$(arg respawn)" if="$(arg use_nodelet)" >
-      <param name="rgb_frame_id" value="$(arg cameraframe)" />
-      <param name="depth_frame_id" value="$(arg cameraframe)" />
+      <param name="rgb_frame_id" value="$(arg camera_frame)" />
+      <param name="depth_frame_id" value="$(arg camera_frame)" />
   </node>
 
 
   <!-- astra node -->
   <node pkg="astra_camera" type="astra_camera_node" name="astra" output="screen"
             unless="$(arg use_nodelet)" >
-      <param name="rgb_frame_id" value="$(arg cameraframe)" />
-      <param name="depth_frame_id" value="$(arg cameraframe)" />
+      <param name="rgb_frame_id" value="$(arg camera_frame)" />
+      <param name="depth_frame_id" value="$(arg camera_frame)" />
   </node>
 
   <!-- depth2laser node -->
