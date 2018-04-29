@@ -1,6 +1,6 @@
 # laser #
 
-Laser launchers
+Laser launchers (RPlidar, RGBD depth2laser)
 
 ## Install ##
 

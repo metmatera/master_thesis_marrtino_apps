@@ -6,7 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1/Frames1
+        - /TF1/Tree1
         - /LaserScan1
+        - /Image1
       Splitter Ratio: 0.5
     Tree Height: 329
   - Class: rviz/Selection
@@ -53,11 +56,13 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         base_frame:
           Value: true
-        camera_frame_depth:
-          Value: true
+        base_link:
+          Value: false
+        camera_frame:
+          Value: false
         laser_frame:
           Value: true
       Marker Scale: 1
@@ -67,7 +72,9 @@ Visualization Manager:
       Show Names: true
       Tree:
         base_frame:
-          camera_frame_depth:
+          base_link:
+            {}
+          camera_frame:
             {}
           laser_frame:
             {}
@@ -105,7 +112,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /camera/depth/image_raw
+      Image Topic: /rgb/image
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -148,6 +155,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
+    Default Light: true
     Fixed Frame: laser_frame
     Frame Rate: 30
   Name: root
@@ -169,24 +177,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 8.1181469
+      Distance: 3.92712307
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.279393971
+        Y: 0.254565269
+        Z: 0.696135342
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
+      Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.515203893
+      Pitch: 0.280204058
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.93857574
+      Yaw: 3.23357606
     Saved: ~
 Window Geometry:
   Displays:
@@ -206,5 +215,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 58
+  X: 57
   Y: 24

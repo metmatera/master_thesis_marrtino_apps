@@ -7,7 +7,7 @@
 
   <!-- transforms -->
   <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
-	    args="$(find depth2laser)/config/transforms.txt" output="screen">
+	    args="config/transforms.txt" output="screen">
   </node>
 
   <!-- thin_xtion node -->

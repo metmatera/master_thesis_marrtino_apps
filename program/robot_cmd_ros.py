@@ -366,8 +366,8 @@ def say(text, language='en'):
     global assock
     print('say %s [%s]' %(text,language))
     lstr = 'en-US'
-    if (language=='it'):
-        lstr = 'it-IT'
+    if (language!='en'):
+        lstr = language+'-'+language.upper()
     try:
         assock.send('TTS[%s] %s\n\r' %(lstr,text))
         time.sleep(1)
