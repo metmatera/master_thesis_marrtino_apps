@@ -1,18 +1,8 @@
-# xtion #
+# laser #
 
-Applications using xtion/astra sensor
+Laser launchers
 
 ## Install ##
-
-Download the following packages in your catkin workspace and compile them with catkin_make:
-
-Xtion:
-
-* https://bitbucket.org/ggrisetti/thin_drivers
-
-Astra:
-
-* https://github.com/tfoote/ros_astra_camera.git
 
 Depth2laser:
 
@@ -20,16 +10,6 @@ Depth2laser:
 
 
 ## Run ##
-
-* Run only the xtion/astra node
-
-```
-$ roslaunch xtion.launch
-```
-
-```
-$ roslaunch astra.launch
-```
 
 * Run xtion/astra and depth2laser
 
