@@ -4,7 +4,7 @@
 	<node pkg="srrg2_orazio_ros" type="orazio_robot_node" name="robot" output="screen">
 	</node>
 
-	<node pkg="srrg_core_ros" type="srrg_state_publisher_node" name="state_pub" args="-odom_topic odom -base_link_frame_id base_frame -odom_frame_id odom config/transforms.txt" >
+	<node ppkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub" args="-odom_topic odom -base_link_frame_id base_frame -odom_frame_id odom config/transforms.txt" >
 	</node>
 
 </launch>
