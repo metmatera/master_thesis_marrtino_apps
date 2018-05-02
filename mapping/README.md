@@ -5,6 +5,10 @@
 
 * http://wiki.ros.org/gmapping
 
+```
+sudo apt-get install ros-kinetic-gmapping
+```
+
 
 ## Run ##
 

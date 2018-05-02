@@ -3,13 +3,28 @@
 
 ## Install ##
 
-Download the following packages in your catkin workspace and compile them with catkin_make:
+* ROS navigation packages
+
+```
+sudo apt-get install ros-kinetic-navigation
+```
+
+
+* ROS package: gradient_based_navigation
 
 ```
 https://github.com/Imperoli/gradient_based_navigation
 ```
 
+
 ## Run ##
+
+* Standard navigation nodes: amcl, move_base
+
+```
+$ roslaunch move_base.launch
+```
+
 
 * To launch only the obstacle avoidance behavior
 
