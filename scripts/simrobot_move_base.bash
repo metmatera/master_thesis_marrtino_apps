@@ -24,7 +24,7 @@ sleep 1
 
 tmux select-pane -t 2
 tmux send-keys "cd $HOME/src/marrtino_apps/navigation" C-m
-tmux send-keys "roslaunch amcl.launch map_name:=my_map" C-m
+tmux send-keys "roslaunch amcl.launch map_name:=map" C-m
 sleep 1
 
 tmux select-pane -t 3
