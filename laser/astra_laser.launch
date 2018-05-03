@@ -11,7 +11,6 @@
 
 
   <!-- transforms -->
-  <!-- NOTE: thin_state_publisher publishes tf only when it receives an odom message!!! -->
   <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
 	    args="-odom_topic odom -base_link_frame_id base_frame -odom_frame_id odom $(env MARRTINO_APPS_HOME)/laser/config/transforms.txt" output="screen">
   </node>

@@ -63,6 +63,7 @@ def robot_stop_request(): # stop until next begin()
 tag_trigger_ = False
 tag_id_ = -1
 tag_distance_ = 0
+tag_angle_ = 0
 tag_count = 25
 
 def tag_trigger():
@@ -76,6 +77,10 @@ def tag_id():
 def tag_distance():
     global tag_distance_
     return tag_distance_
+
+def tag_angle():
+    global tag_angle_
+    return tag_angle_
 
 laser_center_dist = 10
 laser_left_dist = 10
@@ -155,11 +160,13 @@ odom_sub = None  # odom subscriber
 
 
 def tag_cb(data):
-    global tag_trigger_, tag_count, tag_id_, tag_distance_
+    global tag_trigger_, tag_count, tag_id_, tag_distance_, tag_angle_
     v = data.detections
     if (len(v)>0):
         tag_id_ = v[0].id
         tag_distance_ = v[0].pose.pose.position.z
+        tag_angle_ = math.atan2(-v[0].pose.pose.position.x,v[0].pose.pose.position.z)*180.0/math.pi
+
         tag_trigger_ = True
         tag_count = 3 # about seconds
         # print 'tag ',tag_id_,' distance ',tag_distance_
@@ -170,6 +177,10 @@ def tag_cb(data):
             # print 'tag count = ',tag_count
             if (tag_count==0):
                 tag_trigger_ = False
+                tag_id_ = -1
+                tag_distance_ = 0
+                tag_angle_ = 0
+
 
 
 def laser_cb(data):

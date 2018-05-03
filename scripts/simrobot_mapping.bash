@@ -37,7 +37,7 @@ sleep 1
 tmux new-window -t $SESSION:1 -n 'Mapping'
 
 tmux send-keys "cd $HOME/src/marrtino_apps/teleop" C-m
-tmux send-keys "roslaunch teleop.launch use_joystick:=true" C-m
+tmux send-keys "roslaunch teleop.launch use_joystick:=false" C-m
 sleep 1
 
 tmux split-window -v

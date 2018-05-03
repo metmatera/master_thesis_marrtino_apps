@@ -15,10 +15,14 @@
       <param name="linearUpdate" value="1.0" />
       <param name="angularUpdate" value="1.0" />
       <param name="temporalUpdate" value="10.0" />
-      <param name="xmin" value="-5.0" />
-      <param name="ymin" value="-5.0" />
-      <param name="xmax" value=" 5.0" />
-      <param name="ymax" value=" 5.0" />
+      <param name="particles" value="100" />
+      <param name="delta" value="0.1" />  <!-- map resolution -->
+      <param name="minimumScore" value="500" />
+
+      <param name="xmin" value="-10.0" />
+      <param name="ymin" value="-10.0" />
+      <param name="xmax" value=" 10.0" />
+      <param name="ymax" value=" 10.0" />
     </node>
 		
 </launch>
