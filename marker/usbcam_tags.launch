@@ -1,7 +1,7 @@
 <launch>
 
   <arg name="baseframe" default="base_frame" />
-  <arg name="cameraframe" default="camera_frame_depth" />
+  <arg name="rgbcameraframe" default="rgb_camera_frame" />
   <arg name="laserframe" default="laser_frame" />
   <arg name="lasertopic" default="/scan" />
 
@@ -13,7 +13,7 @@
     <param name="image_height" value="360" />
     <param name="pixel_format" value="mjpeg" />
     <!-- param name="pixel_format" value="yuyv" / -->
-    <param name="camera_frame_id" value="usb_cam" />
+    <param name="camera_frame_id" value="$(arg rgbcameraframe)" />
     <param name="io_method" value="mmap"/>
   </node>
 
