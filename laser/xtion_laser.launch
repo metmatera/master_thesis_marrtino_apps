@@ -1,46 +1,29 @@
 <launch>
-  <arg name="baseframe" default="base_frame" />
   <arg name="rgbcameraframe" default="rgb_camera_frame" />
   <arg name="depthcameraframe" default="depth_camera_frame" />
-  <arg name="viewimage" default="false" />
-
+  <arg name="baseframe" default="base_frame" />
   <arg name="laserframe" default="laser_frame" />
   <arg name="lasertopic" default="/scan" />
-  <arg name="depth_image_topic" default="/depth/image_raw" />
-  <arg name="depth_info_topic" default="/depth/camera_info" />
-  <arg name="rgb_mode" default="9" />
 
+  <include file="$(env MARRTINO_APPS_HOME)/camera/xtion.launch">
+    <arg name="rgbcameraframe" default="$(arg rgbcameraframe)" />
+    <arg name="depthcameraframe" default="$(arg depthcameraframe)" />
+  </include>
 
   <!-- transforms -->
-  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_astra"
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_xtion_laser"
 	    args="-odom_topic odom -odom_frame_id none $(env MARRTINO_APPS_HOME)/laser/config/transforms.txt" output="screen">
-  </node>
-
-  <!-- thin_xtion node -->
-  <node pkg="thin_xtion" type="thin_xtion_node" name="xtion" output="screen">
-      <param name="device_num" value="0"/>
-      <param name="rgb_mode" value="$(arg rgb_mode)"/>
-      <param name="depth_mode" value="0"/>
-      <param name="frame_skip" value="3"/>
-      <param name="rgb_frame_id" value="$(arg rgbcameraframe)"/>
-      <param name="depth_frame_id" value="$(arg depthcameraframe)"/>
-
-      <remap from="/camera/rgb/image_raw" to="/rgb/image_raw" />
-      <remap from="/camera/rgb/camera_info" to="/rgb/camera_info" />
-      <remap from="/camera/depth/image_raw" to="$(arg depth_image_topic)" />
-      <remap from="/camera/depth/camera_info" to="$(arg depth_info_topic)" />
   </node>
 
   <!-- depth2laser node -->
   <node pkg="depth2laser" type="depth2laser_node" name="depth2laser" output="screen">
   	<param name="publish_pointcloud" value="1" />
-    <param name="camera_image_topic" value="$(arg depth_image_topic)" />
-    <param name="camera_info_topic" value="$(arg depth_info_topic)" />
+    <param name="camera_image_topic" value="/depth/image_raw" />
+    <param name="camera_info_topic" value="/depth/camera_info" />
 	<param name="base_frame_id" value="$(arg baseframe)" />
 	<param name="laser_frame_id" value="$(arg laserframe)" />
     <param name="laser_topic" value="$(arg lasertopic)" /> 
   </node>
 
-		
 </launch>
 

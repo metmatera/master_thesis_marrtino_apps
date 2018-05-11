@@ -4,7 +4,7 @@
   <arg name="viewimage" default="false" />
 
   <!-- transforms -->
-  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_astra"
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_xtion"
 	    args="-odom_topic odom -odom_frame_id none $(env MARRTINO_APPS_HOME)/camera/config/transforms.txt" output="screen">
   </node>
 
