@@ -303,8 +303,10 @@ def stop():
     msg.angular.z = 0
     cmd_pub.publish(msg)
     delay = 0.1 # sec
-    rospy.Rate(10).sleep() # 0.1 sec
-
+    try:
+        rospy.Rate(10).sleep() # 0.1 sec
+    except:
+        pass
 
 
 def forward(r=1):

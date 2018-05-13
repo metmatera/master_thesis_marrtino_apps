@@ -27,6 +27,17 @@
     </tr>
 </table>
 
+<p>
+ROS nodes:
+<div id="rosnodes" style="color: blue;" ></div>
+</p>
+
+<p>
+ROS topics:
+<div id="rostopics" style="color: blue;" ></div>
+</p>
+
+
 <table border=1>
     <tr height=40>
       <td width=80><div id="ros" style="color: grey;" >ROS</div></td>
@@ -56,14 +67,79 @@
 
 <h1> Robot start-up actions </h1>
 
+<p>
 <button onclick="send_cmd('check')">Check status</button>
-<button onclick="send_cmd('ros_quit')">ROS quit</button>
+<button onclick="send_cmd('ros_quit')">Quit all</button>
+</p>
 
+<hr>
+
+<p>
+<button id="robot_start_btn" onclick="send_cmd('robot_start')">Robot start</button>
+<button id="robot_quit_btn" onclick="send_cmd('robot_kill')">Robot quit</button>
 <button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')">Simrobot start</button>
 <button id="simrobot_quit_btn" onclick="send_cmd('simrobot_kill')">Simrobot quit</button>
+</p>
 
+<hr>
+
+<p>
 <button id="usbcam_start_btn" onclick="send_cmd('usbcam_start')">USB camera start</button>
 <button id="usbcam_quit_btn" onclick="send_cmd('usbcam_kill')">USB camera quit</button>
+</p>
+
+<p>
+<button id="astra_start_btn" onclick="send_cmd('astra_start')">Astra camera start</button>
+<button id="astra_quit_btn" onclick="send_cmd('astra_kill')">Astra camera quit</button>
+</p>
+
+<p>
+<button id="xtion_start_btn" onclick="send_cmd('xtion_start')">Xtion camera start</button>
+<button id="xtion_quit_btn" onclick="send_cmd('xtion_kill')">Xtion camera quit</button>
+</p>
+
+<hr>
+
+<p>
+<button id="hokuyo_start_btn" onclick="send_cmd('hokuyo_start')">Hokuyo laser start</button>
+<button id="hokuyo_quit_btn" onclick="send_cmd('hokuyo_kill')">Hokuyo laser quit</button>
+</p>
+
+<p>
+<button id="rplidar_start_btn" onclick="send_cmd('rplidar_start')">RPlidar laser start</button>
+<button id="rplidar_quit_btn" onclick="send_cmd('rplidar_kill')">RPlidar laser quit</button>
+</p>
+
+<p>
+<button id="astralaser_start_btn" onclick="send_cmd('astralaser_start')">Astra laser start</button>
+<button id="astralaser_quit_btn" onclick="send_cmd('astralaser_kill')">Astra laser quit</button>
+</p>
+
+<p>
+<button id="xtionlaser_start_btn" onclick="send_cmd('xtionlaser_start')">Xtion laser start</button>
+<button id="xtionlaser_quit_btn" onclick="send_cmd('xtionlaser_kill')">Xtion laser quit</button>
+</p>
+
+<hr>
+
+<p>
+<button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button>
+<button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button>
+</p>
+
+<hr>
+
+<p>
+<button id="audio_start_btn" onclick="send_cmd('audio_start')">Audio start</button>
+<button id="audio_quit_btn" onclick="send_cmd('audio_kill')">Audio quit</button>
+<button id="wsrobot_start_btn" onclick="send_cmd('wsrobot_start')">WS robot start</button>
+<button id="wsrobot_quit_btn" onclick="send_cmd('wsrobot_kill')">WS robot quit</button>
+</p>
+
+<hr>
+
+
+<br><br><br>
 
 </body>
 
@@ -72,8 +148,7 @@
 
 <script>
 
-    document.getElementById("simrobot_start_btn").disabled = false;
-    document.getElementById("simrobot_quit_btn").disabled = false;
+    //document.getElementById("simrobot_start_btn").disabled = false;
 
     // messages received from wsserver
     eventproc = function(event){
@@ -89,18 +164,21 @@
             document.getElementById(v[1]).style.color = 'green';
             document.getElementById(v[1]+"_btn").style.color = 'green';
 
-            document.getElementById(v[1]+"_start_btn").disabled = false;
-            document.getElementById(v[1]+"_quit_btn").disabled = false;
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
           }
           else if (v[2]=='False') {
             cv = "<font color='red'>"+v[2]+"</font>"
             document.getElementById(v[1]).style.color = 'red';
-            document.getElementById(v[1]+"_start_btn").disabled = false;
-            document.getElementById(v[1]+"_quit_btn").disabled = false;
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
           }
-          // document.getElementById(v[1]).innerHTML = cv;
-
-          
+      }
+      else if (v[0]=='VALUE') {
+          vs = '';
+          for (i=2; i<v.length ; i++)
+             vs += v[i]
+          document.getElementById(v[1]).innerHTML = vs;
       }
     }
 

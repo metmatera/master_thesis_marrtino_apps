@@ -24,6 +24,15 @@ def printOK():
 def printFail():
     print('%sFAIL%s' %(FAIL,ENDC))
 
+def check_ROS_q():
+    r = True
+    try:
+        rosnode.get_node_names()
+    except Exception as e:
+        r = False
+    return r
+
+
 def check_ROS():
     global nodenames, topicnames
     print '----------------------------------------'
@@ -186,7 +195,7 @@ tf_listener = None
 
 def check_tf(source, target):
     global tf_listener
-    r = check_ROS()
+    r = check_ROS_q()
     if (not r):
         return r
     if (tf_listener == None):
