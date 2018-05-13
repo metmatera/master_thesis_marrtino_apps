@@ -186,6 +186,9 @@ tf_listener = None
 
 def check_tf(source, target):
     global tf_listener
+    r = check_ROS()
+    if (not r):
+        return r
     if (tf_listener == None):
         tf_listener = tf.TransformListener()
     print  "  -- TF %s -> %s  " %(source, target),
@@ -195,6 +198,8 @@ def check_tf(source, target):
         printOK()
     except tf.Exception:
         printFail()    
+        r = False
+    return r
 
 
 def check_tfs():
