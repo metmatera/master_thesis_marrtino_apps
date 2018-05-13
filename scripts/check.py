@@ -28,6 +28,8 @@ def check_ROS():
     global nodenames, topicnames
     print '----------------------------------------'
     print 'Check ROS...'
+    nodenames = []
+    topicnames = []
     r = True
     try:
         nodenames = rosnode.get_node_names()
@@ -43,21 +45,28 @@ def check_ROS():
 
 def check_robot():
     global nodenames
+    r = True
     print '----------------------------------------'
     print 'Check orazio robot ...'
     if '/orazio' in nodenames:
         printOK()
     else:
         printFail()
+        r = False
+    return r
 
 def check_simrobot():
     global nodenames
+    r = True
     print '----------------------------------------'
     print 'Check Stage simulator ...'
     if '/stageros' in nodenames:
         printOK()
     else:
         printFail()
+        r = False
+    return r
+
 
 odomcount = 0
 odomframe = ''
@@ -78,6 +87,7 @@ def odom_cb(data):
 
 def check_odom():
     global topicnames, odomcount, odomframe
+    r = True
     print '----------------------------------------'
     print 'Check odometry ...'
     if ['/odom', 'nav_msgs/Odometry'] in topicnames:
@@ -90,6 +100,8 @@ def check_odom():
         printOK()
     else:
         printFail()
+        r = False
+    return r
 
 
         
@@ -103,6 +115,7 @@ def laser_cb(data):
 
 def check_laser():
     global topicnames, lasercount, laserframe
+    r = True
     print '----------------------------------------'
     print 'Check laser scan ...'
     if ['/scan', 'sensor_msgs/LaserScan'] in topicnames:
@@ -116,6 +129,8 @@ def check_laser():
         printOK()
     else:
         printFail()
+        r = False
+    return r
 
 
 cameracount = 0
@@ -129,6 +144,7 @@ def image_cb(data):
 
 def check_rgb_camera():
     global topicnames, cameracount, cameraframe
+    r = True
     print '----------------------------------------'
     print 'Check RGB camera ...'
     if ['/rgb/image_raw', 'sensor_msgs/Image'] in topicnames:
@@ -142,10 +158,13 @@ def check_rgb_camera():
         printOK()
     else:
         printFail()
+        r = False
+    return r
 
 
 def check_depth_camera():
     global topicnames, cameracount, cameraframe
+    r = True
     print '----------------------------------------'
     print 'Check depth camera ...'
     if ['/depth/image_raw', 'sensor_msgs/Image'] in topicnames:
@@ -159,6 +178,8 @@ def check_depth_camera():
         printOK()
     else:
         printFail()
+        r = False
+    return r
 
 
 tf_listener = None
@@ -199,5 +220,6 @@ def main():
         check_tfs()
 
 
-main()
+if __name__=='__main__':
+    main()
 

@@ -18,9 +18,9 @@ function wsrobot_connected() {
   return connected;
 }
 
-function wsrobot_init() {
+function wsrobot_init(port) {
     var ip = document.getElementById("IP").value;
-    var url = "ws://"+ip+":9000/websocketserver";
+    var url = "ws://"+ip+":"+port+"/websocketserver";
     console.log(url);
     websocket = new WebSocket(url);
 
