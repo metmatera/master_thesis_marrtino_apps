@@ -23,18 +23,36 @@ import re
 import wave
 import argparse
 
+import rospy
+
+use_sound_play = True
+use_alsaaudio = True
+
+try:
+    from sound_play.msg import SoundRequest
+    from sound_play.libsoundplay import SoundClient
+except:
+    print('ROS package sound_play required.')
+    print('Install with: sudo apt-get install ros-kinetic-audio-common libasound2')
+    use_sound_play = False
+    #sys.exit(0)
+
+
 try:
     import sox
 except:
-	print('sox required. Install with:   sudo -H pip install sox')
-	sys.exit(0)
+    print('sox required. Install with:   sudo -H pip install sox')
+    sys.exit(0)
 
 
 try:
     import alsaaudio
 except:
-	print('alsaaudio required. Install with:   sudo -H pip install pyalsaaudio')
-	sys.exit(0)
+    print('alsaaudio required. Install with:   sudo -H pip install pyalsaaudio')
+    use_alsaaudio = False
+    #sys.exit(0)
+
+
 
 from asr_server import ASRServer
 
@@ -57,7 +75,7 @@ def TTS_callback(in_data, frame_count, time_info, status):
         return (data, pyaudio.paContinue)
 
 
-class TTSServer(threading.Thread):
+class TTSServer(threading.Thread):    
 
     def __init__(self, port, output_device):
         threading.Thread.__init__(self)
@@ -65,27 +83,13 @@ class TTSServer(threading.Thread):
         # Initialize audio player
         self.streaming = False
         self.output_device = output_device
+        self.soundhandle = None
 
-        print("Audio devices available")
-        pp = alsaaudio.pcms()
-        if (self.output_device=='sysdefault'):
-            # select proper sysdefault name
-            for l in pp:
-                print l
-                if (l[0:10]=='sysdefault'):
-                    print "choose ",l
-                    self.output_device = l # choose default device
-                    break
-        print("Audio device used: %s" %self.output_device)
+        if (use_alsaaudio):
+            self.init_alsaaudio()
 
-
-        self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
-        self.aa_stream.setformat(alsaaudio.PCM_FORMAT_S16_LE)
-        self.aa_stream.setchannels(1)
-        self.audio_rate = 44100
-        self.periodsize = self.audio_rate / 8
-        self.aa_stream.setrate(self.audio_rate)
-        self.aa_stream.setperiodsize(self.periodsize)
+        if (use_sound_play):
+            rospy.init_node('sound_client', disable_signals=True)
 
 
         # Create a TCP/IP socket
@@ -106,6 +110,30 @@ class TTSServer(threading.Thread):
         self.Sounds['bip'] = wave.open(SOUNDS_DIR+'bip.wav', 'rb') 
         self.idcache = 0
     
+
+    def init_alsaaudio(self):
+        print("Audio devices available")
+        pp = alsaaudio.pcms()
+        if (self.output_device=='sysdefault'):
+            # select proper sysdefault name
+            for l in pp:
+                print l
+                if (l[0:10]=='sysdefault'):
+                    print "choose ",l
+                    self.output_device = l # choose default device
+                    break
+        print("Audio device used: %s" %self.output_device)
+
+        self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
+        self.aa_stream.setformat(alsaaudio.PCM_FORMAT_S16_LE)
+        self.aa_stream.setchannels(1)
+        self.audio_rate = 44100
+        self.periodsize = self.audio_rate / 8
+        self.aa_stream.setrate(self.audio_rate)
+        self.aa_stream.setperiodsize(self.periodsize)
+
+
+
     def stop(self):
         self.dorun = False
 
@@ -175,26 +203,48 @@ class TTSServer(threading.Thread):
 
     def say(self, data, lang):
         print 'Say ',data
-        cachefile = 'cache'+str(self.idcache)
-        self.idcache = (self.idcache+1)%10
-        tmpfile = "/tmp/cache.wav"
-        ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
-        cmd = 'rm %s %s' %(tmpfile, ofile)
-        os.system(cmd)
-        time.sleep(0.2)
-        cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
-        print cmd
-        os.system(cmd)
-        time.sleep(0.2)
 
-        # convert samplerate
-        tfm = sox.Transformer()
-        tfm.rate(samplerate=self.audio_rate)
-        tfm.build(tmpfile, ofile)
-        time.sleep(0.2)
+        if (use_sound_play):
 
-        self.play(cachefile)
+            if (self.soundhandle == None):
+                self.soundhandle = SoundClient()
+            rospy.sleep(1)
 
+            voice = 'voice_kal_diphone'
+            volume = 1.0
+            print 'Saying: %s' % data
+            print 'Voice: %s' % voice
+            print 'Volume: %s' % volume
+            
+            self.soundhandle.say(data, voice, volume)
+            rospy.sleep(1)
+
+        elif (use_alsaaudio):
+            cachefile = 'cache'+str(self.idcache)
+            self.idcache = (self.idcache+1)%10
+            tmpfile = "/tmp/cache.wav"
+            ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
+            cmd = 'rm %s %s' %(tmpfile, ofile)
+            os.system(cmd)
+            time.sleep(0.2)
+            cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
+            print cmd
+            os.system(cmd)
+            time.sleep(0.2)
+
+            # convert samplerate
+            tfm = sox.Transformer()
+            tfm.rate(samplerate=self.audio_rate)
+            tfm.build(tmpfile, ofile)
+            time.sleep(0.2)
+
+            self.play(cachefile)
+
+        else:
+            print('Cannot play audio. No infrastructure available.')
+
+        if (self.connection != None):
+            self.connection.send('OK')
 
     def play(self, name):
         print 'Play ',name
@@ -210,11 +260,8 @@ class TTSServer(threading.Thread):
                 time.sleep(1)
             i += 1
         
-        if (soundfile != None): #(name in self.Sounds):
+        if (soundfile != None and use_alsaaudio): #(name in self.Sounds):
             self.playwav3(soundfile)
-            #time.sleep(1)
-        if (self.connection != None):
-            self.connection.send('OK')
 
 
     def playwav(self, soundfile):
@@ -254,7 +301,6 @@ class TTSServer(threading.Thread):
 
 
 if __name__ == "__main__":
-
 
     parser = argparse.ArgumentParser(description='audio_server')
     parser.add_argument('-ttsport', type=int, help='TTS server port [default: 9001]', default=9001)
