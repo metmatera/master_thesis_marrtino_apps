@@ -241,7 +241,7 @@ class TTSServer(threading.Thread):
             os.system(cmd)
             if (lang=='en'):
                 lang = 'en-US'
-            else if (len(lang)==2):
+            elif (len(lang)==2):
                 lang = lang+'-'+lang.upper()
             time.sleep(0.2)
             cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
