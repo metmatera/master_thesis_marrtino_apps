@@ -89,6 +89,8 @@ class TTSServer(threading.Thread):
             self.init_alsaaudio()
 
         if (use_sound_play):
+            os.system('roslaunch sound_play.launch &')
+            time.sleep(5)
             rospy.init_node('sound_client', disable_signals=True)
 
 
