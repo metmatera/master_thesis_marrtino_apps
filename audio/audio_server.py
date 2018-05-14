@@ -17,8 +17,7 @@
 import threading
 import time
 import socket
-import sys
-import os
+import sys, os, platform
 import re
 import wave
 import argparse
@@ -78,7 +77,7 @@ def TTS_callback(in_data, frame_count, time_info, status):
 class TTSServer(threading.Thread):    
 
     def __init__(self, port, output_device):
-        global use_alsaaudio
+        global use_alsaaudio, use_sound_play
 
         threading.Thread.__init__(self)
 
@@ -87,6 +86,10 @@ class TTSServer(threading.Thread):
         self.output_device = output_device
         self.soundhandle = None
 
+        m = platform.machine()
+        print "Machine type:" , m
+        if (m[0:3]=='arm'):
+            use_sound_play = False
 
         if (use_sound_play):
             os.system('roslaunch sound_play.launch &')
