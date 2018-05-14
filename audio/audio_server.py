@@ -78,6 +78,8 @@ def TTS_callback(in_data, frame_count, time_info, status):
 class TTSServer(threading.Thread):    
 
     def __init__(self, port, output_device):
+        global use_alsaaudio
+
         threading.Thread.__init__(self)
 
         # Initialize audio player
@@ -85,14 +87,16 @@ class TTSServer(threading.Thread):
         self.output_device = output_device
         self.soundhandle = None
 
-        if (use_alsaaudio):
-            self.init_alsaaudio()
 
         if (use_sound_play):
             os.system('roslaunch sound_play.launch &')
             time.sleep(5)
             rospy.init_node('sound_client', disable_signals=True)
-
+            use_alsaaudio = False
+        elif (use_alsaaudio):
+            self.init_alsaaudio()
+        else:
+            print('Cannot initializa audio interface')
 
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -155,10 +159,19 @@ class TTSServer(threading.Thread):
 
     def run(self):
         global asr_server
-        for i in range(0,1):
-            print 'bip'
-            self.play('bip')
-            time.sleep(1)
+
+        if (self.soundhandle == None):
+            self.soundhandle = SoundClient()
+            time.sleep(3)
+
+        print 'bip'
+        self.play('bip')
+        time.sleep(3)
+
+        self.say('Hello!', 'en')
+        self.say('Audio server is running.', 'en')
+        time.sleep(3)
+
         while (self.dorun):
             self.connect()
             try:
@@ -207,11 +220,6 @@ class TTSServer(threading.Thread):
         print 'Say ',data
 
         if (use_sound_play):
-
-            if (self.soundhandle == None):
-                self.soundhandle = SoundClient()
-            rospy.sleep(1)
-
             voice = 'voice_kal_diphone'
             volume = 1.0
             print 'Saying: %s' % data
@@ -219,7 +227,7 @@ class TTSServer(threading.Thread):
             print 'Volume: %s' % volume
             
             self.soundhandle.say(data, voice, volume)
-            rospy.sleep(1)
+            rospy.sleep(3)
 
         elif (use_alsaaudio):
             cachefile = 'cache'+str(self.idcache)
@@ -249,21 +257,24 @@ class TTSServer(threading.Thread):
             self.connection.send('OK')
 
     def play(self, name):
-        print 'Play ',name
-        soundfile = None
+        if (use_alsaaudio):
+            print 'Play ',name
+            soundfile = None
+            i = 0    
+            while (i<3): #((not name in self.Sounds) and (i<3)):
+                try:
+                    soundfile = wave.open(SOUNDS_DIR+name+".wav", 'rb')
+                    #self.Sounds[name] = soundfile
+                except:
+                    print "File %s%s.wav not found." %(SOUNDS_DIR,name)
+                    time.sleep(1)
+                i += 1
+            
+            if (soundfile != None and use_alsaaudio): #(name in self.Sounds):
+                self.playwav3(soundfile)
 
-        i = 0    
-        while (i<3): #((not name in self.Sounds) and (i<3)):
-            try:
-                soundfile = wave.open(SOUNDS_DIR+name+".wav", 'rb')
-                #self.Sounds[name] = soundfile
-            except:
-                print "File %s%s.wav not found." %(SOUNDS_DIR,name)
-                time.sleep(1)
-            i += 1
-        
-        if (soundfile != None and use_alsaaudio): #(name in self.Sounds):
-            self.playwav3(soundfile)
+        if (self.connection != None):
+            self.connection.send('OK')
 
 
     def playwav(self, soundfile):
