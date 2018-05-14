@@ -239,6 +239,10 @@ class TTSServer(threading.Thread):
             ofile = "%s%s.wav" %(SOUNDS_DIR, cachefile)
             cmd = 'rm %s %s' %(tmpfile, ofile)
             os.system(cmd)
+            if (lang=='en'):
+                lang = 'en-US'
+            else:
+                lang = lang+'-'+upper(lang)
             time.sleep(0.2)
             cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
             print cmd
