@@ -68,6 +68,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
     def checkStatus(self):
         global status
         status = 'Check ...'
+        self.write_message('VALUE marrtino_version %r' %os.getenv('MARRTINO_VERSION'))
         r = check_ROS()
         self.write_message('RESULT ros '+str(r))
         if (r):
