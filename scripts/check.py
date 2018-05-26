@@ -204,9 +204,16 @@ def check_tf(source, target):
     try:
         tf_listener.waitForTransform(source, target, rospy.Time(), rospy.Duration(1.0))
         (posn, rotn) = tf_listener.lookupTransform(source, target, rospy.Time())
-        printOK()
-    except tf.Exception:
-        printFail()    
+        # how much time ago we get a transform (secs)
+        t = rospy.Time.now().secs - tf_listener.getLatestCommonTime(source, target).secs
+        if (t<10):
+            printOK()
+        else:
+            printFail()
+            r = False
+    except tf.Exception as e:
+        #print e
+        printFail()
         r = False
     return r
 

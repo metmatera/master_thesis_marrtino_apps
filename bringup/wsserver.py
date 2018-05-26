@@ -216,6 +216,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('depth2laser')
             tmux_kill('state_pub_astra_laser')
             time.sleep(3)
+            tmux_Cc(3)
+            time.sleep(3)
             self.checkStatus()
 
         elif (message=='xtionlaser_start'):
