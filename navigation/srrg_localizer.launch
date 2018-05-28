@@ -8,7 +8,7 @@
   <arg name="initial_pose_a" default="0.0" />
 
   <arg name="paramsdir" default="$(env MARRTINO_APPS_HOME)/navigation/config" />
-  <arg name="mapsdir" default="$(env MARRTINO_APPS_HOME)/mapping" />
+  <arg name="mapsdir" default="$(env MARRTINO_APPS_HOME)/mapping/maps" />
 
   <node pkg="map_server" type="map_server" name="map_server" args="$(arg mapsdir)/$(arg map_name).yaml" respawn="false" >
         <param name="frame_id" value="/map" />
