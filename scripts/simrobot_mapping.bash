@@ -43,7 +43,7 @@ sleep 1
 
 tmux split-window -v
 
-tmux send-keys "cd $HOME/src/marrtino_apps/mapping" C-m
+tmux send-keys "cd $HOME/src/marrtino_apps/mapping/maps" C-m
 tmux send-keys "rosrun map_server map_saver -f map"
 sleep 1
 
