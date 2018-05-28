@@ -18,6 +18,8 @@ tmux send-keys "roslaunch robot.launch" C-m
 sleep 1
 
 tmux select-pane -t 1
+tmux send-keys "cd $HOME/src/marrtino_apps/laser" C-m
+tmux send-keys "roslaunch astra_laser.launch" C-m
 #tmux send-keys "cd $HOME/src/marrtino_apps/navigation" C-m
 #tmux send-keys "rosrun rviz rviz -d nav.rviz" C-m
 sleep 1
@@ -31,6 +33,8 @@ tmux select-pane -t 3
 tmux send-keys "cd $HOME/src/marrtino_apps/navigation" C-m
 tmux send-keys "roslaunch move_base.launch" C-m
 sleep 1
+
+
 
 
 # Attach to session

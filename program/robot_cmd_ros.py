@@ -7,12 +7,13 @@ import math
 import sys
 import rospy
 import tf
+import actionlib
 
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
 from apriltags_ros.msg import AprilTagDetectionArray
-
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 AUDIO_SERVER_IP = '127.0.0.1'
 AUDIO_SERVER_PORT = 9001
@@ -33,7 +34,13 @@ rv_min = 0.2
 
 move_step = 1.0
 
+# robot pose from odometry
+odom_robot_pose = None
+# robot pose from localization
+loc_robot_pose = None
 
+move_base_running = False
+ac_movebase = None 
 
 def setMoveStep(x):
     global move_step
@@ -90,11 +97,12 @@ def laser_center_distance():
     global laser_center_dist
     return laser_center_dist
 
-robot_pose = None
-
 def get_robot_pose():
-    global robot_pose
-    return list(robot_pose)
+    global odom_robot_pose, loc_robot_pose
+    if (loc_robot_pose != None):
+        return list(loc_robot_pose)
+    else:
+        return list(odom_robot_pose)
 
 def obstacle_distance(direction=0):
     global laser_center_dist, laser_left_dist, laser_right_dist
@@ -153,7 +161,7 @@ cmd_pub = None # cmd_vel publisher
 tag_sub = None # tag_detection subscriber
 laser_sub = None # laser subscriber
 odom_sub = None  # odom subscriber
-
+localizer_sub = None
 
 
 # ROS Callback functions
@@ -202,17 +210,27 @@ def laser_cb(data):
 
 
 def odom_cb(data):
-    global robot_pose
-    if (robot_pose is None):
-        robot_pose = [0,0,0]
-    robot_pose[0] = data.pose.pose.position.x
-    robot_pose[1] = data.pose.pose.position.y
+    global odom_robot_pose
+    if (odom_robot_pose is None):
+        odom_robot_pose = [0,0,0]
+    odom_robot_pose[0] = data.pose.pose.position.x
+    odom_robot_pose[1] = data.pose.pose.position.y
     o = data.pose.pose.orientation
     q = (o.x, o.y, o.z, o.w)
     euler = tf.transformations.euler_from_quaternion(q)
-    robot_pose[2] = euler[2] # yaw
+    odom_robot_pose[2] = euler[2] # yaw
 
 
+def localizer_cb(data):
+    global loc_robot_pose
+    if (loc_robot_pose is None):
+        loc_robot_pose = [0,0,0]
+    loc_robot_pose[0] = data.pose.pose.position.x
+    loc_robot_pose[1] = data.pose.pose.position.y
+    o = data.pose.pose.orientation
+    q = (o.x, o.y, o.z, o.w)
+    euler = tf.transformations.euler_from_quaternion(q)
+    loc_robot_pose[2] = euler[2] # yaw
 
 
 # Begin/end
@@ -232,6 +250,7 @@ def begin(nodename='robot_cmd'):
     rospy.init_node(nodename,  disable_signals=True)
     tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
     laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
+    localizer_sub = rospy.Subscriber('amcl_pose', PoseWithCovarianceStamped, localizer_cb)
 
     if (use_robot):
         print("Robot enabled")
@@ -245,7 +264,7 @@ def begin(nodename='robot_cmd'):
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
         rate.sleep()
-        while (robot_pose is None):
+        while (odom_robot_pose is None):
             rate.sleep()
         robot_initialized = True
 
@@ -297,7 +316,10 @@ def setSpeed(lx,az,tm,stopend=True):
 
 
 def stop():
+    global move_base_running
     print 'stop'
+    if (move_base_running):
+        exec_movebase_stop()
     msg = Twist()
     msg.linear.x = 0
     msg.angular.z = 0
@@ -333,6 +355,8 @@ def right(r=1):
     exec_turn_REL(-90*r)
     #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
+def goto(gx, gy, gth_deg):
+    exec_movebase(gx, gy, gth_deg)
 
 # Turn
 
@@ -439,8 +463,8 @@ def norm_target_angle(a):
 
 
 def exec_turn_REL(th_deg):
-    global robot_pose, rv_good
-    current_th = robot_pose[2]
+    global rv_good, odom_robot_pose
+    current_th = odom_robot_pose[2]
     target_th = norm_target_angle(current_th + DEG2RAD(th_deg))
     rv_nom = rv_good 
     if (th_deg < 0):
@@ -455,23 +479,23 @@ def exec_turn_REL(th_deg):
             rv = rv_min*rv/abs(rv)
         tv = 0.0
         setSpeed(tv, rv, 0.1, False)
-        current_th = robot_pose[2]
+        current_th = odom_robot_pose[2]
         dth = abs(NORM_PI(current_th-target_th))
         if (dth < last_dth):
             last_dth = dth
-        # print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(current_th), target_th, dth, tv, rv))
+        # print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.1f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), target_th, dth, tv, rv))
     setSpeed(0.0,0.0,0.1)
 
 
 
 def exec_move_REL(tx):
-    global robot_pose, tv_good
-    start_pose = list(robot_pose)
+    global tv_good, odom_robot_pose
+    start_pose = list(odom_robot_pose)
     tv_nom = tv_good 
     if (tx < 0):
         tv_nom *= -1
         tx *= -1
-    dx = abs(distance(start_pose,robot_pose) - tx)
+    dx = abs(distance(start_pose,odom_robot_pose) - tx)
     while (dx>0.05):
         tv = tv_nom
         if (dx<0.5):
@@ -480,8 +504,44 @@ def exec_move_REL(tx):
             tv = tv_min*tv/abs(tv)
         rv = 0.0
         setSpeed(tv, rv, 0.1, False)
-        dx = abs(distance(start_pose,robot_pose) - tx)
-        #print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(robot_pose[2]), tx, dx, tv, rv))
+        pose = odom_robot_pose
+        dx = abs(distance(start_pose, pose) - tx)
+        #print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(pose[0], pose[1], RAD2DEG(pose[2]), tx, dx, tv, rv))
     setSpeed(0.0,0.0,0.1)
 
+
+
+def exec_movebase(gx, gy, gth_deg):
+    global ac_movebase, move_base_running
+    if (ac_movebase == None):
+        ac_movebase = actionlib.SimpleActionClient('move_base',MoveBaseAction)
+    ac_movebase.wait_for_server()
+
+    goal = MoveBaseGoal()
+    goal.target_pose.header.frame_id = "map"
+    goal.target_pose.header.stamp = rospy.Time.now()
+    goal.target_pose.pose.position.x = gx
+    goal.target_pose.pose.position.y = gy
+    yaw = gth_deg/180.0*math.pi
+    q = tf.transformations.quaternion_from_euler(0, 0, yaw)
+    goal.target_pose.pose.orientation = Quaternion(q[0],q[1],q[2],q[3])
+
+    ac_movebase.send_goal(goal)
+    move_base_running = True
+    wait = ac_movebase.wait_for_result()
+    if not wait:
+        rospy.logerr("Action server not available!")
+        #rospy.signal_shutdown("Action server not available!")
+    else:
+        print ac_movebase.get_result()
+    print('Move action completed.')
+    move_base_running = False
+
+def exec_movebase_stop():
+    global ac_movebase, move_base_running
+    if (ac_movebase == None):
+        ac_movebase = actionlib.SimpleActionClient('move_base',MoveBaseAction)
+    ac_movebase.wait_for_server()
+    ac_movebase.cancel_all_goals()
+    move_base_running = False
 

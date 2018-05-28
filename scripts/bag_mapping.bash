@@ -14,8 +14,8 @@ tmux select-pane -t 2
 
 tmux select-pane -t 0
 tmux send-keys "cd $HOME/src/marrtino_apps/laser" C-m
-tmux send-keys "roslaunch bags_transform.launch" C-m
-sleep 1
+tmux send-keys "roslaunch bag_transform.launch" C-m
+sleep 3
 
 tmux select-pane -t 1
 tmux send-keys "cd $HOME/src/marrtino_apps/mapping" C-m
@@ -24,8 +24,8 @@ sleep 1
 
 tmux select-pane -t 2
 tmux send-keys "cd $HOME/src/marrtino_apps/mapping" C-m
-#tmux send-keys "roslaunch gmapping.launch" C-m
-tmux send-keys "roslaunch srrg_mapper.launch" C-m
+tmux send-keys "roslaunch gmapping.launch" C-m
+#tmux send-keys "roslaunch srrg_mapper.launch" C-m
 sleep 1
 
 

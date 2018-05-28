@@ -8,6 +8,6 @@ global_costmap:
   #height: 20.0
   #origin_x: -10.0
   #origin_y: -10.0
-  inflation_radius: 0.60
+  inflation_radius: 0.50
   transform_tolerance: 1.0
 

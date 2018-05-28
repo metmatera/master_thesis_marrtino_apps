@@ -15,7 +15,7 @@ tmux split-window -h
 tmux select-pane -t 0
 tmux send-keys "cd $HOME/src/marrtino_apps/stage" C-m
 tmux send-keys "roslaunch simrobot.launch" C-m
-sleep 1
+sleep 3
 
 tmux select-pane -t 1
 tmux send-keys "cd $HOME/src/marrtino_apps/navigation" C-m
