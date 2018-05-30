@@ -24,8 +24,8 @@ sleep 1
 
 tmux select-pane -t 2
 tmux send-keys "cd $HOME/src/marrtino_apps/mapping" C-m
-tmux send-keys "roslaunch gmapping.launch" C-m
-#tmux send-keys "roslaunch srrg_mapper.launch" C-m
+#tmux send-keys "roslaunch gmapping.launch" C-m
+tmux send-keys "roslaunch srrg_mapper.launch" C-m
 sleep 1
 
 
@@ -39,8 +39,8 @@ sleep 1
 
 tmux split-window -v
 
-tmux send-keys "cd $HOME/src/marrtino_apps/mapping" C-m
-tmux send-keys "rosrun map_server map_saver -f map"
+tmux send-keys "cd $HOME/src/marrtino_apps/mapping/maps" C-m
+tmux send-keys "rosrun map_server map_saver -f mymap"
 sleep 1
 
 # Set default window
