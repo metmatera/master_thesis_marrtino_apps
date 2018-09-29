@@ -27,19 +27,36 @@ Note: change file names in the .script files if needed.
 ## Manual version ##
 
 
-    cd ~/config
-    rosrun srrg2_orazio_core orazio -serial-device /dev/orazio
+* Download
 
-    orazio> load_config XXX_firmware_params.cfg
-    orazio> send system_params
-    orazio> send joint_params[0]
-    orazio> send joint_params[1]
-    orazio> send drive_params
-    orazio> store system_params
-    orazio> store joint_params[0]
-    orazio> store joint_params[1]
-    orazio> store drive_params
-    orazio> quit
+        cd ~/config
+        rosrun srrg2_orazio_core orazio -serial-device /dev/orazio
+        orazio> fetch system_params
+        orazio> fetch joint_params[0]
+        orazio> fetch joint_params[1]
+        orazio> fetch drive_params
+        orazio> request system_params
+        orazio> request joint_params[0]
+        orazio> request joint_params[1]
+        orazio> request drive_params
+        orazio> save_config XXX_firmware_params.cfg
+        orazio> quit
+
+
+* Upload
+
+        cd ~/config
+        rosrun srrg2_orazio_core orazio -serial-device /dev/orazio
+        orazio> load_config XXX_firmware_params.cfg
+        orazio> send system_params
+        orazio> send joint_params[0]
+        orazio> send joint_params[1]
+        orazio> send drive_params
+        orazio> store system_params
+        orazio> store joint_params[0]
+        orazio> store joint_params[1]
+        orazio> store drive_params
+        orazio> quit
 
 
 
