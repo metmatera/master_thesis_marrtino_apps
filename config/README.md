@@ -1,7 +1,8 @@
 # MARRtino firmware parameters configuration #
 
 NOTE: Instructions have been updated for 2018 firmware. 
-If you have 2017 firmware, please use the scripts named with 2017.
+If you have 2017 firmware, please use the scripts named with 2017
+or refer to previous checkout ```19c4c221f81e2414651aceeba900ca3a0c66988e``` of this repository.
 
 ## Scripted version ##
 
