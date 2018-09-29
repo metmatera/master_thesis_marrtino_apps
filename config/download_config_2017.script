@@ -1,0 +1,9 @@
+fetch system_params
+fetch joint_params
+fetch drive_params
+request system_params
+request joint_params
+request drive_params
+save_config downloaded_firmware2017_params.cfg
+quit
+

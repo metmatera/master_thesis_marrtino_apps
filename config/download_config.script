@@ -1,9 +1,11 @@
 fetch system_params
-fetch joint_params
+fetch joint_params[0]
+fetch joint_params[1]
 fetch drive_params
 request system_params
-request joint_params
+request joint_params[0]
+request joint_params[1]
 request drive_params
-save_config marrtino2017_firmware_params_2.cfg
+save_config last_downloaded_params.cfg
 quit
 

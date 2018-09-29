@@ -97,7 +97,7 @@ def laser_center_distance():
     global laser_center_dist
     return laser_center_dist
 
-def get_robot_pose():
+def get_robot_pose(): # returns [x,y,theta]
     global odom_robot_pose, loc_robot_pose
     if (loc_robot_pose != None):
         return list(loc_robot_pose)
