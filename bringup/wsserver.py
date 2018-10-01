@@ -272,7 +272,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='shutdown'):
             self.quitall()
             self.checkStatus()
-            tmux_cmd(1,'shutdown')
+            tmux_cmd(1,'sudo shutdown -h now')
 
         else:
             print('Code received:\n%s' %message)
@@ -282,16 +282,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             else:
                 print('Program running. This code is discarded.')
 
-  
+
     def on_close(self):
         print('Connection closed')
-  
+
     def on_ping(self, data):
         print('ping received: %s' %(data))
-  
+
     def on_pong(self, data):
         print('pong received: %s' %(data))
-  
+
     def check_origin(self, origin):
         #print("-- Request from %s" %(origin))
         return True
@@ -318,13 +318,13 @@ def run_code(code):
     global status
     if (code is None):
         return
-           
+
 
 
 
 
 # Main program
-  
+
 if __name__ == "__main__":
 
     tmux_init()
