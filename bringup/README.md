@@ -21,11 +21,11 @@ add a line like this
 
 * Configure and run a web server
 
-    sudo service nginx start
+        sudo service nginx start
 
 * Open a browser at the URL
 
-    http://<ROBOT_IP>/bringup
+        http://<ROBOT_IP>/bringup
 
 
 * Connect to the robot and run commands
