@@ -47,6 +47,10 @@ def tmux_python(wid, mdir, mpy, mparams=''):
     os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
     os.system('tmux send-keys "python %s %s" C-m' %(mpy, mparams))
 
+def tmux_cmd(wid, cmd):
+    os.system('tmux select-window -t bringup:%d' %(wid))
+    os.system('tmux send-keys "%s" C-m' %(cmd))
+
 def tmux_kill(rosnode):
     wid = 0
     os.system('tmux select-window -t bringup:%d' %(wid))
@@ -109,6 +113,20 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         print('New connection')
         self.checkStatus()
 
+    def quitall(self):
+        tmux_kill('-a')
+        time.sleep(3)
+        i=1
+        while (i<=nwindows):
+            tmux_Cc(i)  # C-c on all the windows
+            time.sleep(1)
+            i += 1
+        i=1
+        while (i<=nwindows):
+            tmux_Ck(i)  # C-c on all the windows
+            time.sleep(1)
+            i += 1
+
 
     def on_message(self, message):
         global code, status
@@ -121,18 +139,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.checkStatus()
 
         elif (message=='ros_quit'):
-            tmux_kill('-a')
-            time.sleep(3)
-            i=1
-            while (i<=nwindows):
-                tmux_Cc(i)  # C-c on all the windows
-                time.sleep(1)
-                i += 1
-            i=1
-            while (i<=nwindows):
-                tmux_Ck(i)  # C-c on all the windows
-                time.sleep(1)
-                i += 1
+            self.quitall()
             self.checkStatus()
 
         elif (message=='robot_start'):
@@ -262,6 +269,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
 
+        elif (message=='shutdown'):
+            self.quitall()
+            self.checkStatus()
+            tmux_cmd(1,'shutdown')
 
         else:
             print('Code received:\n%s' %message)
