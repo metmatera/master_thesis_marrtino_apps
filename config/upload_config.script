@@ -1,4 +1,4 @@
-load_config dellbox_firmware2018_params.cfg
+load_config marrtino2018_firmware_params.cfg
 send system_params
 send joint_params[0]
 send joint_params[1]
