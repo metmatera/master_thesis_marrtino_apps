@@ -56,6 +56,11 @@ def tmux_kill(rosnode):
     os.system('tmux select-window -t bringup:%d' %(wid))
     os.system('tmux send-keys "rosnode kill %s" C-m' %(rosnode))
 
+def tmux_killall(wid):
+    tmux_Cc(wid)
+    time.sleep(wid)
+    tmux_Ck(wid)
+
 def tmux_Cc(wid):
     os.system('tmux select-window -t bringup:%d' %(wid))
     os.system('tmux send-keys C-c')
@@ -150,6 +155,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('orazio')
             tmux_kill('state_pub_robot')
             time.sleep(3)
+            tmux_killall(1)
             self.checkStatus()
 
         elif (message=='simrobot_start'):
@@ -158,6 +164,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.checkStatus()
         elif (message=='simrobot_kill'):
             tmux_kill('stageros')
+            time.sleep(3)
+            tmux_killall(1)
             time.sleep(3)
             self.checkStatus()
 
@@ -169,6 +177,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('usb_cam')
             tmux_kill('state_pub_usbcam')
             time.sleep(3)
+            tmux_killall(3)
+            time.sleep(3)
+            self.checkStatus()
+            time.sleep(3)
             self.checkStatus()
 
         elif (message=='astra_start'):
@@ -179,7 +191,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('astra')
             tmux_kill('state_pub_astra')
             time.sleep(3)
-            tmux_Cc(3)
+            tmux_killall(3)
             time.sleep(3)
             self.checkStatus()
 
@@ -191,7 +203,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('xtion')
             tmux_kill('state_pub_xtion')
             time.sleep(3)
-            tmux_Cc(3)
+            tmux_killall(3)
             time.sleep(3)
             self.checkStatus()
 
@@ -203,6 +215,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('hokuyo')
             tmux_kill('state_pub_laser')
             time.sleep(3)
+            tmux_killall(2)
+            time.sleep(3)
             self.checkStatus()
 
         elif (message=='rplidar_start'):
@@ -212,6 +226,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='rplidar_kill'):
             tmux_kill('rplidar')
             tmux_kill('state_pub_laser')
+            time.sleep(3)
+            tmux_killall(2)
             time.sleep(3)
             self.checkStatus()
 
@@ -224,7 +240,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('depth2laser')
             tmux_kill('state_pub_astra_laser')
             time.sleep(3)
-            tmux_Cc(3)
+            tmux_killall(2)
             time.sleep(3)
             self.checkStatus()
 
@@ -237,6 +253,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('depth2laser')
             tmux_kill('state_pub_xtion_laser')
             time.sleep(3)
+            tmux_killall(2)
+            time.sleep(3)
             self.checkStatus()
 
         elif (message=='joystick_start'):
@@ -247,6 +265,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             tmux_kill('joystick')
             tmux_kill('joy')
             time.sleep(3)
+            tmux_killall(4)
+            time.sleep(3)
             self.checkStatus()
 
         elif (message=='audio_start'):
@@ -254,7 +274,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
         elif (message=='audio_kill'):
-            tmux_Cc(5)
+            tmux_killall(5)
             time.sleep(3)
             self.checkStatus()
 
@@ -263,9 +283,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
         elif (message=='wsrobot_kill'):
-            tmux_Cc(6)
-            time.sleep(3)
-            tmux_Ck(6)
+            tmux_killall(6)
             time.sleep(3)
             self.checkStatus()
 
