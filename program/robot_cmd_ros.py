@@ -26,6 +26,18 @@ use_obstacle_avoidance = False
 robot_initialized = False
 stop_request = False
 
+# Topic names
+
+TOPIC_tag_detections = 'tag_detections'
+TOPIC_scan = 'scan'
+TOPIC_amcl_pose = 'amcl_pose'
+TOPIC_cmd_vel = 'cmd_vel'
+TOPIC_desired_cmd_vel = 'desired_cmd_vel'
+TOPIC_odom = 'odom'
+ACTION_move_base = 'move_base'
+
+
+
 # Good values
 tv_good = 0.2
 rv_good = 0.8
@@ -52,6 +64,18 @@ def setMaxSpeed(x,r):
     global rv_good
     tv_good=x
     rv_good=r
+
+
+def setRobotNamePrefix(prefix):
+    global TOPIC_tag_detections,TOPIC_scan,TOPIC_amcl_pose,TOPIC_cmd_vel,TOPIC_desired_cmd_vel,TOPIC_odom,ACTION_move_base
+
+    TOPIC_tag_detections = prefix+'/tag_detections'
+    TOPIC_scan = prefix+'/scan'
+    TOPIC_amcl_pose = prefix+'/amcl_pose'
+    TOPIC_cmd_vel = prefix+'/cmd_vel'
+    TOPIC_desired_cmd_vel = prefix+'/desired_cmd_vel'
+    TOPIC_odom = prefix+'/odom'
+    ACTION_move_base = prefix+'/move_base'
 
 
 def enableObstacleAvoidance():
@@ -248,17 +272,18 @@ def begin(nodename='robot_cmd'):
         return
 
     rospy.init_node(nodename,  disable_signals=True)
-    tag_sub = rospy.Subscriber('tag_detections', AprilTagDetectionArray, tag_cb)
-    laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
-    localizer_sub = rospy.Subscriber('amcl_pose', PoseWithCovarianceStamped, localizer_cb)
+
+    tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
+    laser_sub = rospy.Subscriber(TOPIC_scan, LaserScan, laser_cb)
+    localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
 
     if (use_robot):
         print("Robot enabled")
-        cmd_vel_topic = 'cmd_vel'
+        cmd_vel_topic = TOPIC_cmd_vel
         if (use_obstacle_avoidance):
-            cmd_vel_topic = 'desired_cmd_vel'
+            cmd_vel_topic = TOPIC_desired_cmd_vel
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
-        odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
+        odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
 
         print("Waiting for robot pose...")
         delay = 0.25 # sec
@@ -357,6 +382,9 @@ def right(r=1):
 
 def goto(gx, gy, gth_deg):
     exec_movebase(gx, gy, gth_deg)
+
+def goto_target(gx, gy):
+    exec_goto_target(gx, gy)
 
 # Turn
 
@@ -463,14 +491,23 @@ def norm_target_angle(a):
 
 
 def exec_turn_REL(th_deg):
-    global rv_good, odom_robot_pose
+    global rv_good, rv_min, odom_robot_pose
     current_th = odom_robot_pose[2]
+    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(current_th) + th_deg))
+    #print("TURN -- to-normalize RAD: %.1f" %(current_th + DEG2RAD(th_deg)))
     target_th = norm_target_angle(current_th + DEG2RAD(th_deg))
+    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(target_th)))
+
     rv_nom = rv_good 
     if (th_deg < 0):
         rv_nom *= -1
+
     dth = abs(NORM_PI(current_th-target_th))
+
+    #print("TURN -- dTh %.2f norm_PI: %.2f" %(current_th-target_th,dth))
+
     last_dth = dth
+    #print("TURN -- last_dth %.2f" %(last_dth))
     while (dth>rv_min/8.0 and last_dth>=dth):
         rv = rv_nom
         if (dth<0.8):
@@ -481,11 +518,12 @@ def exec_turn_REL(th_deg):
         setSpeed(tv, rv, 0.1, False)
         current_th = odom_robot_pose[2]
         dth = abs(NORM_PI(current_th-target_th))
-        if (dth < last_dth):
+        if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
             last_dth = dth
-        # print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.1f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), target_th, dth, tv, rv))
+        #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
+    #print("TURN -- dth %.2f - last_dth %.2f" %(dth,last_dth))
     setSpeed(0.0,0.0,0.1)
-
+    #print 'TURN -- end'
 
 
 def exec_move_REL(tx):
@@ -511,10 +549,42 @@ def exec_move_REL(tx):
 
 
 
+def exec_goto_target(gx,gy):
+    global tv_good, rv_good, tv_min, rv_min, odom_robot_pose
+    goal_pose = [gx,gy,0]
+    dx = distance(goal_pose,odom_robot_pose)
+    while (dx>0.05):
+        tv = tv_good
+        if (dx<0.5):
+            tv = tv*dx/0.5
+        if (abs(tv)<tv_min):
+            tv = tv_min*tv/abs(tv)
+
+        current_th = odom_robot_pose[2]
+        th_goal = math.atan2(gy-odom_robot_pose[1],gx-odom_robot_pose[0])
+
+        #print("GOTO -- th_target: %.2f" %(RAD2DEG(th_goal)))
+
+        dth = NORM_PI(th_goal-current_th)
+        rv = rv_good * dth/abs(dth)
+        if (abs(dth)>0.8):
+            tv = tv_min
+        if (abs(dth)<0.8):
+            rv = rv*abs(dth)/0.8
+        if (abs(rv)<rv_min):
+            rv = rv_min*rv/abs(rv)
+
+        setSpeed(tv, rv, 0.1, False)
+        dx = distance(goal_pose, odom_robot_pose)
+        #print("GOTO -- POS: %.1f %.1f %.1f -- target %.1f %.1f -- dx: %.1f dth: %.1f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(odom_robot_pose[2]), gx, gy, dx, dth, tv, rv))
+    setSpeed(0.0,0.0,0.1)
+
+
+
 def exec_movebase(gx, gy, gth_deg):
     global ac_movebase, move_base_running
     if (ac_movebase == None):
-        ac_movebase = actionlib.SimpleActionClient('move_base',MoveBaseAction)
+        ac_movebase = actionlib.SimpleActionClient(ACTION_move_base,MoveBaseAction)
     ac_movebase.wait_for_server()
 
     goal = MoveBaseGoal()
