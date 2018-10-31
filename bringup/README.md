@@ -2,6 +2,11 @@
 
 ## Install ##
 
+Install '''tmux'''  and '''nginx'''
+
+    sudo apt install tmux nginx
+
+
 Link this folder from a folder accessible from a web server
 
     cd /var/www/html
@@ -16,9 +21,6 @@ add a line like this
 
     ubuntu ALL=(ALL) NOPASSWD: /sbin/poweroff, /sbin/reboot, /sbin/shutdown
 
-Install '''tmux'''
-
-    sudo apt install tmux
 
 
 ## Run ##
