@@ -2,7 +2,7 @@
 
 ## Install ##
 
-Install '''tmux'''  and '''nginx'''
+Install ```tmux```  and ```nginx```
 
     sudo apt install tmux nginx
 
@@ -33,7 +33,7 @@ add a line like this
 
         python wsbringup.py
 
-    You can check command execution with '''tmux a'''
+    You can check command execution with ```tmux a```
 
 * Open a browser at the URL
 
