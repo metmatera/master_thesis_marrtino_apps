@@ -16,6 +16,10 @@ add a line like this
 
     ubuntu ALL=(ALL) NOPASSWD: /sbin/poweroff, /sbin/reboot, /sbin/shutdown
 
+Install '''tmux'''
+
+    sudo apt install tmux
+
 
 ## Run ##
 
@@ -23,11 +27,16 @@ add a line like this
 
         sudo service nginx start
 
+* Run the server
+
+        python wsbringup.py
+
+    You can check command execution with '''tmux a'''
+
 * Open a browser at the URL
 
         http://<ROBOT_IP>/bringup
 
-
-* Connect to the robot and run commands
+* Connect to the robot and control its running modules
 
 
