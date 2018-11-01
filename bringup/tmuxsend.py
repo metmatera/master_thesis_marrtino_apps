@@ -18,6 +18,11 @@ class TmuxSend:
         os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
         os.system('tmux send-keys "roslaunch %s.launch %s" C-m' %(mlaunch, mparams))
 
+    def roskill(self, rosnode):
+        wid = 0
+        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys "rosnode kill %s" C-m' %(rosnode))
+
     def python(self, wid, mdir, mpy, mparams=''):
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
@@ -27,26 +32,21 @@ class TmuxSend:
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         os.system('tmux send-keys "%s" C-m' %(cmd))
 
-    def kill(self, rosnode):
-        wid = 0
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys "rosnode kill %s" C-m' %(rosnode))
-
     def killall(self, wid):
         self.Cc(wid)
         time.sleep(3)
         self.Ck(wid)
 
     def Cc(self, wid):
-        os.system('tmux select-window -t bringup:%d' %(wid))
+        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         os.system('tmux send-keys C-c')
 
     def Ck(self, wid):
-        os.system('tmux select-window -t bringup:%d' %(wid))
+        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         os.system('tmux send-keys C-\\')
 
     def quitall(self):
-        self.kill('-a')
+        self.roskill('-a')
         time.sleep(3)
         for i in range(0,self.nwindows):
             self.Cc(i+1)  # C-c on all the windows
