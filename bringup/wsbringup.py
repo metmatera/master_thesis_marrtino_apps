@@ -34,10 +34,16 @@ status = "Idle"             # robot status sent to websocket
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
+    def getversion(self):
+        f = open('/home/ubuntu/.marrtino_version','r')
+        v = f.readline().strip()
+        f.close()
+        return v
+
     def checkStatus(self):
         global status
         status = 'Check ...'
-        self.write_message('VALUE marrtino_version %r' %os.getenv('MARRTINO_VERSION'))
+        self.write_message('VALUE marrtino_version %r' %self.getversion())
         r = check_ROS()
         self.write_message('RESULT ros '+str(r))
         if (r):
