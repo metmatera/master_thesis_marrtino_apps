@@ -42,3 +42,7 @@ add a line like this
 * Connect to the robot and control its running modules
 
 
+## Start server at boot ##
+
+Use script ```1-bringup.bash``` at init
+
