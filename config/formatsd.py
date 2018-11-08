@@ -1,0 +1,57 @@
+import time
+import os
+
+import sys
+sys.path.append('../bringup')
+
+from tmuxsend import TmuxSend
+
+
+def umount(tmux):
+    time.sleep(5)
+    tmux.cmd(1,'df -h')
+    tmux.cmd(1,'umount /dev/mmcblk0p1',1)
+    tmux.cmd(1,'umount /dev/mmcblk0p2',1)
+    tmux.cmd(1,'umount /dev/mmcblk0p3',1)
+    tmux.cmd(1,'df -h')
+    time.sleep(3)
+
+
+def main(tmux):
+    tmux.cmd(1,'sudo bash')
+    #tmux.cmd(1,'marrtino')
+    time.sleep(1)
+    tmux.cmd(1,'zanzar1')
+    time.sleep(1)
+
+    umount(tmux)
+
+    tmux.cmd(1,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(1,'p\no\nw\n')
+    time.sleep(1)
+    tmux.cmd(1,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(1,'n\np\n1\n2048\n133119\nt\nc\np\n')
+    time.sleep(1)
+    tmux.cmd(1,'n\np\n2\n133120\n20613119\np\n')
+    time.sleep(1)
+    tmux.cmd(1,'n\np\n3\n\n\np\nw\n',3)
+
+    umount(tmux)
+
+    tmux.cmd(1,'mkfs.fat -n PI_BOOT /dev/mmcblk0p1',3)
+    tmux.cmd(1,'mkfs.ext4 -L PI_ROOT /dev/mmcblk0p2',15)
+    tmux.cmd(1,'mkfs.ext4 -L data /dev/mmcblk0p3',15)
+    time.sleep(3)
+
+    tmux.cmd(1,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(1,'a\n1\np\nw\n',3)
+
+    umount(tmux)
+
+
+# Main program
+
+if __name__ == "__main__":
+    tmux = TmuxSend('formatsd',['format'])
+    main(tmux)
+

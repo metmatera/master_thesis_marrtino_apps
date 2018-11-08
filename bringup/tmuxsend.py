@@ -28,9 +28,10 @@ class TmuxSend:
         os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
         os.system('tmux send-keys "python %s %s" C-m' %(mpy, mparams))
 
-    def cmd(self, wid, cmd):
+    def cmd(self, wid, cmd, sleeptime=0.1):
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         os.system('tmux send-keys "%s" C-m' %(cmd))
+        time.sleep(sleeptime)
 
     def killall(self, wid):
         self.Cc(wid)
