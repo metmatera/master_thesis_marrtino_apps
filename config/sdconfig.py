@@ -23,8 +23,8 @@ def umount(tmux):
 
 
 def mount(tmux):
-    tmux.cmd(1,'mkdir /media/$USER/PI_ROOT')
-    tmux.cmd(1,'mount /dev/mmcblk0p2 /media/$USER/PI_ROOT',1)
+    tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT')
+    tmux.cmd(1,'mount /dev/mmcblk0p2 /media/$SUDO_USER/PI_ROOT',1)
     tmux.cmd(1,'df -h')
     time.sleep(3)
 
@@ -70,7 +70,7 @@ def copyimg(tmux):
 def copyimg(tmux):
     #sudobash(tmux)
     mount(tmux)
-    mdir = '/media/$USER/PI_ROOT/'
+    mdir = '/media/$SUDO_USER/PI_ROOT/'
     tmux.cmd(1,'cd %s/etc/NetworkManager/system-connections/' %mdir)
     tmux.cmd(1,'ls')
     tmux.cmd(1,'cat %s/etc/hostname' %mdir)
