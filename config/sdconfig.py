@@ -22,13 +22,22 @@ def umount(tmux):
     time.sleep(3)
 
 
-def main(tmux):
+def mount(tmux):
+    tmux.cmd(1,'mkdir /media/$USER/PI_ROOT')
+    tmux.cmd(1,'mount /dev/mmcblk0p2 /media/$USER/PI_ROOT',1)
+    tmux.cmd(1,'df -h')
+    time.sleep(3)
+
+
+def sudobash(tmux):
     tmux.cmd(1,'sudo bash')
-    #tmux.cmd(1,'marrtino')
     time.sleep(1)
-    tmux.cmd(1,'zanzar1')
+    tmux.cmd(1,'marrtino')
     time.sleep(1)
 
+def format(tmux):
+
+    #sudobash(tmux)
     umount(tmux)
 
     tmux.cmd(1,'fdisk /dev/mmcblk0',2)
@@ -53,10 +62,30 @@ def main(tmux):
 
     umount(tmux)
 
+def copyimg(tmux):
+    sudobash(tmux)
+    # ./writeimg.bash ....
+
+
+def copyimg(tmux):
+    #sudobash(tmux)
+    mount(tmux)
+    mdir = '/media/$USER/PI_ROOT/'
+    tmux.cmd(1,'cd %s/etc/NetworkManager/system-connections/' %mdir)
+    tmux.cmd(1,'ls')
+    tmux.cmd(1,'cat %s/etc/hostname' %mdir)
+    tmux.cmd(1,'cat %s/etc/hosts' %mdir)
+    time.sleep(3)
+    tmux.cmd(1,'cat %s/home/ubuntu/.bashrc | grep ROS_IP' %mdir)
+    time.sleep(1)
+    tmux.cmd(1,'cd $HOME')
+    umount(tmux)
+
 
 # Main program
 
 if __name__ == "__main__":
     tmux = TmuxSend('formatsd',['format'])
-    main(tmux)
+    #format(tmux)
+    copyimg(tmux)
 
