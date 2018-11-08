@@ -6,6 +6,11 @@ sys.path.append('../bringup')
 
 from tmuxsend import TmuxSend
 
+#        Device Boot      Start         End      Blocks   Id  System
+#/dev/mmcblk0p1   *        2048      133119       65536    c  W95 FAT32 (LBA)
+#/dev/mmcblk0p2          133120    20613119    10240000   83  Linux
+#/dev/mmcblk0p3        20613120    63272959    21329920   83  Linux
+
 
 def umount(tmux):
     time.sleep(5)
