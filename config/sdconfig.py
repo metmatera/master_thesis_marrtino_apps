@@ -67,7 +67,7 @@ def copyimg(tmux):
     # ./writeimg.bash ....
 
 
-def copyimg(tmux):
+def checkimg(tmux):
     #sudobash(tmux)
     mount(tmux)
     mdir = '/media/$SUDO_USER/PI_ROOT/'
@@ -87,5 +87,5 @@ def copyimg(tmux):
 if __name__ == "__main__":
     tmux = TmuxSend('formatsd',['format'])
     #format(tmux)
-    copyimg(tmux)
+    checkimg(tmux)
 
