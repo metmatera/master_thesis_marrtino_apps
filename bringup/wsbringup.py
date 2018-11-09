@@ -35,10 +35,13 @@ status = "Idle"             # robot status sent to websocket
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def getversion(self):
-        f = open('/home/ubuntu/.marrtino_version','r')
-        v = f.readline().strip()
-        f.close()
-        return v
+        try:
+            f = open('/home/ubuntu/.marrtino_version','r')
+            v = f.readline().strip()
+            f.close()
+            return v
+        except:
+            return 'None'
 
     def checkStatus(self):
         global status
