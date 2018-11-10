@@ -17,7 +17,7 @@ sys.path.append('../scripts')
 sys.path.append('../bringup')
 
 from tmuxsend import TmuxSend
-
+from wsbringup import getversion
 
 # Global variables
 
@@ -38,8 +38,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
     def checkStatus(self):
         global status
         status = 'Check ...'
-        self.write_message('VALUE marrtino_version %r' %os.getenv('MARRTINO_VERSION'))
-
+        self.write_message('VALUE marrtino_version %r' %getversion())
         status = 'Idle'
 
     def open(self):

@@ -7,6 +7,7 @@ import tornado.ioloop
 import tornado.web
 import socket
 import time
+import os
 from threading import Thread
 
 import sys
@@ -28,25 +29,26 @@ server_port = 9500          # web server port
 status = "Idle"             # robot status sent to websocket
 
 
+def getversion():
+    v = os.getenv('MARRTINO_VERSION')
+    if (v==None):
+        try:
+            f = open('/home/ubuntu/.marrtino_version','r')
+            v = f.readline().strip()
+            f.close()
+        except:
+            v = 'None'
+    return v
 
 
 # Websocket server handler
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
-    def getversion(self):
-        try:
-            f = open('/home/ubuntu/.marrtino_version','r')
-            v = f.readline().strip()
-            f.close()
-            return v
-        except:
-            return 'None'
-
     def checkStatus(self):
         global status
         status = 'Check ...'
-        self.write_message('VALUE marrtino_version %r' %self.getversion())
+        self.write_message('VALUE marrtino_version %r' %getversion())
         r = check_ROS()
         self.write_message('RESULT ros '+str(r))
         if (r):

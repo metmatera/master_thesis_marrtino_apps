@@ -9,4 +9,3 @@ python wsbringup.py &
 cd /home/ubuntu/src/marrtino_apps/config
 python wsconfig.py &
 
-
