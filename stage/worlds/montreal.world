@@ -26,10 +26,10 @@ floorplan
 )
 
 # boxes
-box( pose [ 2.0 2.0 0 0 ] color "red")
-box( pose [ 8.0 2.0 0 0 ] color "red")
+box( pose [ 6.0 9.0 0 0 ] color "red")
+box( pose [ 6.0 4.0 0 0 ] color "green")
 
 # robot
-marrtino( pose [ 2.5 11.0 0 0 ] name "orazio" color "blue")
+marrtino( pose [ 2.0 11.0 0 0 ] name "orazio" color "blue")
 
 

@@ -69,25 +69,46 @@ ROS topics:
   <tr><td><div id="tf_base_depth" style="color: grey;">base_frame -&gt; depth_camera_frame</div></td></tr>
 </table>
 
-
-<h1> Robot start-up actions </h1>
+<hr>
 
 <p>
 <button onclick="send_cmd('check')">Check status</button>
 <button onclick="send_cmd('ros_quit')">Quit all</button>
+<button id="shutdown_btn" onclick="send_cmd('shutdown')">Shutdown</button>
 </p>
+<br>
 
 <hr>
 
+<h1> Simulator start-up actions </h1>
+
 <p>
-<button id="robot_start_btn" onclick="send_cmd('robot_start')">Robot start</button>
-<button id="robot_quit_btn" onclick="send_cmd('robot_kill')">Robot quit</button>
 <button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')">Simrobot start</button>
 <button id="simrobot_quit_btn" onclick="send_cmd('simrobot_kill')">Simrobot quit</button>
 </p>
+<br>
 
 <hr>
 
+<h1> Robot start-up actions </h1>
+
+
+<hr>
+
+<h2>Robot</h2>
+<p>
+<button id="robot_start_btn" onclick="send_cmd('robot_start')">Robot start</button>
+<button id="robot_quit_btn" onclick="send_cmd('robot_kill')">Robot quit</button>
+</p>
+
+<p>
+<button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button>
+<button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button>
+</p>
+
+<hr>
+
+<h2>Camera</h2>
 <p>
 <button id="usbcam_start_btn" onclick="send_cmd('usbcam_start')">USB camera start</button>
 <button id="usbcam_quit_btn" onclick="send_cmd('usbcam_kill')">USB camera quit</button>
@@ -105,6 +126,7 @@ ROS topics:
 
 <hr>
 
+<h2>Laser</h2>
 <p>
 <button id="hokuyo_start_btn" onclick="send_cmd('hokuyo_start')">Hokuyo laser start</button>
 <button id="hokuyo_quit_btn" onclick="send_cmd('hokuyo_kill')">Hokuyo laser quit</button>
@@ -127,25 +149,16 @@ ROS topics:
 
 <hr>
 
-<p>
-<button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button>
-<button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button>
-</p>
-
-<hr>
-
+<h2>Audio</h2>
 <p>
 <button id="audio_start_btn" onclick="send_cmd('audio_start')">Audio start</button>
 <button id="audio_quit_btn" onclick="send_cmd('audio_kill')">Audio quit</button>
-<button id="wsrobot_start_btn" onclick="send_cmd('wsrobot_start')">WS robot start</button>
-<button id="wsrobot_quit_btn" onclick="send_cmd('wsrobot_kill')">WS robot quit</button>
+<!-- button id="wsrobot_start_btn" onclick="send_cmd('wsrobot_start')">WS robot start</button>
+<button id="wsrobot_quit_btn" onclick="send_cmd('wsrobot_kill')">WS robot quit</button -->
 </p>
 
 <hr>
 
-<p>
-<button id="shutdown_btn" onclick="send_cmd('shutdown')">Shutdown</button>
-</p>
 
 <hr>
 

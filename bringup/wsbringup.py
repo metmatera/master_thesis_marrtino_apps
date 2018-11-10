@@ -102,8 +102,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.quitall()
             self.checkStatus()
 
+        # include wsrobot start/stop
         elif (message=='robot_start'):
             self.tmux.roslaunch(1,'robot','robot')
+            time.sleep(3)
+            self.tmux.python(6,'blockly','websocket_robot.py')
             time.sleep(3)
             self.checkStatus()
         elif (message=='robot_kill'):
@@ -111,10 +114,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.roskill('state_pub_robot')
             time.sleep(3)
             self.tmux.killall(1)
+            time.sleep(3)
+            self.tmux.killall(6)
+            time.sleep(3)
             self.checkStatus()
 
+        # include wsrobot start/stop
         elif (message=='simrobot_start'):
             self.tmux.roslaunch(1,'stage','simrobot')
+            time.sleep(3)
+            self.tmux.python(6,'blockly','websocket_robot.py')
             time.sleep(3)
             self.checkStatus()
         elif (message=='simrobot_kill'):
@@ -122,7 +131,19 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.tmux.killall(1)
             time.sleep(3)
+            self.tmux.killall(6)
+            time.sleep(3)
             self.checkStatus()
+
+        elif (message=='wsrobot_start'):
+            self.tmux.python(6,'blockly','websocket_robot.py')
+            time.sleep(3)
+            self.checkStatus()
+        elif (message=='wsrobot_kill'):
+            self.tmux.killall(6)
+            time.sleep(3)
+            self.checkStatus()
+
 
         elif (message=='usbcam_start'):
             self.tmux.roslaunch(3,'camera','usbcam')
@@ -230,15 +251,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.checkStatus()
         elif (message=='audio_kill'):
             self.tmux.killall(5)
-            time.sleep(3)
-            self.checkStatus()
-
-        elif (message=='wsrobot_start'):
-            self.tmux.python(6,'blockly','websocket_robot.py')
-            time.sleep(3)
-            self.checkStatus()
-        elif (message=='wsrobot_kill'):
-            self.tmux.killall(6)
             time.sleep(3)
             self.checkStatus()
 
