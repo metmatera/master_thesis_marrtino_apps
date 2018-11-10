@@ -53,8 +53,15 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         global code, status
         print('Received: %s' %message)
 
-        if (message=='update'):
-            print('TODO update')
+        if (message=='updatesystem'):
+            print('TODO system update')
+
+
+        elif (message=='updatemarrtinoapps'):
+            print('marrtino_apps update')
+            self.tmux.cmd(3,'cd /home/ubuntu/src/marrtino_apps')
+            self.tmux.cmd(3,'git pull')
+
 
         elif (message=='shutdown'):
             self.tmux.quitall()
