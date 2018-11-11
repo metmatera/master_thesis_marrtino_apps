@@ -1,6 +1,6 @@
 import time
 import os
-
+import argparse
 import sys
 sys.path.append('../bringup')
 
@@ -13,19 +13,18 @@ from tmuxsend import TmuxSend
 
 
 def umount(tmux):
-    time.sleep(5)
-    tmux.cmd(1,'df -h')
-    tmux.cmd(1,'umount /dev/mmcblk0p1',1)
-    tmux.cmd(1,'umount /dev/mmcblk0p2',1)
-    tmux.cmd(1,'umount /dev/mmcblk0p3',1)
-    tmux.cmd(1,'df -h')
+    #tmux.cmd(1,'df -h')
+    tmux.cmd(1,'umount /dev/mmcblk0p1',blocking=True)
+    tmux.cmd(1,'umount /dev/mmcblk0p2',blocking=True)
+    tmux.cmd(1,'umount /dev/mmcblk0p3',blocking=True)
+    #tmux.cmd(1,'df -h')
     time.sleep(3)
 
 
 def mount(tmux):
-    tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT')
-    tmux.cmd(1,'mount /dev/mmcblk0p2 /media/$SUDO_USER/PI_ROOT',1)
-    tmux.cmd(1,'df -h')
+    tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT',blocking=True)
+    tmux.cmd(1,'mount /dev/mmcblk0p2 /media/$SUDO_USER/PI_ROOT',blocking=True)
+    #tmux.cmd(1,'df -h')
     time.sleep(3)
 
 
@@ -36,56 +35,92 @@ def sudobash(tmux):
     time.sleep(1)
 
 def format(tmux):
+    print('Formatting ...')
 
-    #sudobash(tmux)
+    wid = 1
+    umount(tmux)
+    tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(wid,'p\no\nw\n')
+    time.sleep(1)
+    tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(wid,'n\np\n1\n2048\n133119\nt\nc\np\n')
+    time.sleep(1)
+    tmux.cmd(wid,'n\np\n2\n133120\n20613119\np\n')
+    time.sleep(1)
+    tmux.cmd(wid,'n\np\n3\n\n\np\nw\n',3)
+
     umount(tmux)
 
-    tmux.cmd(1,'fdisk /dev/mmcblk0',2)
-    tmux.cmd(1,'p\no\nw\n')
-    time.sleep(1)
-    tmux.cmd(1,'fdisk /dev/mmcblk0',2)
-    tmux.cmd(1,'n\np\n1\n2048\n133119\nt\nc\np\n')
-    time.sleep(1)
-    tmux.cmd(1,'n\np\n2\n133120\n20613119\np\n')
-    time.sleep(1)
-    tmux.cmd(1,'n\np\n3\n\n\np\nw\n',3)
-
-    umount(tmux)
-
-    tmux.cmd(1,'mkfs.fat -n PI_BOOT /dev/mmcblk0p1',3)
-    tmux.cmd(1,'mkfs.ext4 -L PI_ROOT /dev/mmcblk0p2',15)
-    tmux.cmd(1,'mkfs.ext4 -L data /dev/mmcblk0p3',15)
+    tmux.cmd(wid,'mkfs.fat -n PI_BOOT /dev/mmcblk0p1',blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -L PI_ROOT /dev/mmcblk0p2',blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -L data /dev/mmcblk0p3',blocking=True)
     time.sleep(3)
 
-    tmux.cmd(1,'fdisk /dev/mmcblk0',2)
-    tmux.cmd(1,'a\n1\np\nw\n',3)
+    tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(wid,'a\n1\np\nw\n',3)
 
     umount(tmux)
 
-def copyimg(tmux):
-    sudobash(tmux)
-    # ./writeimg.bash ....
+def write(tmux, imagefile):
+    print('Writing ...')
+    umount(tmux)
+    wid=2
+    tmux.cmd(wid,'./writeimg.bash %s' %imagefile, blocking=True)
+    umount(tmux)
+    
 
-
-def checkimg(tmux):
-    #sudobash(tmux)
+def check(tmux):
+    print('Checking ...')
+    wid=3
     mount(tmux)
     mdir = '/media/$SUDO_USER/PI_ROOT/'
-    tmux.cmd(1,'cd %s/etc/NetworkManager/system-connections/' %mdir)
-    tmux.cmd(1,'ls')
-    tmux.cmd(1,'cat %s/etc/hostname' %mdir)
-    tmux.cmd(1,'cat %s/etc/hosts' %mdir)
+    tmux.cmd(wid,'cd %s/etc/NetworkManager/system-connections/' %mdir)
+    tmux.cmd(wid,'ls')
+    tmux.cmd(wid,'cat MARRtinoAP')
+    tmux.cmd(wid,'cat %s/etc/hostname' %mdir)
+    tmux.cmd(wid,'cat %s/etc/hosts' %mdir)
     time.sleep(3)
-    tmux.cmd(1,'cat %s/home/ubuntu/.bashrc | grep ROS_IP' %mdir)
+    tmux.cmd(wid,'cat %s/home/ubuntu/.bashrc | grep ROS_IP' %mdir)
     time.sleep(1)
-    tmux.cmd(1,'cd $HOME')
+    tmux.cmd(wid,'cd $HOME')
     umount(tmux)
+
+
+def test(tmux):
+    wid=3
+    tmux.cmd(wid,'echo sleep 10 non blocking...')
+    tmux.cmd(wid,'date')
+    tmux.cmd(wid,'sleep 10',1)
+    tmux.cmd(wid,'date')
+    tmux.cmd(wid,'echo done')
+
+    tmux.cmd(wid,'echo sleep 10 blocking...')
+    tmux.cmd(wid,'date')
+    tmux.cmd(wid,'sleep 10',blocking=True)
+    tmux.cmd(wid,'date')
+    tmux.cmd(wid,'echo done')
+
 
 
 # Main program
 
 if __name__ == "__main__":
-    tmux = TmuxSend('formatsd',['format'])
-    #format(tmux)
-    checkimg(tmux)
+
+    if os.geteuid() != 0:
+        exit("You need to have root privileges to run this script.")
+
+    parser = argparse.ArgumentParser(description='MARRtino SD config')
+    parser.add_argument('imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_v2.0)')
+    args = parser.parse_args()
+    tmux = TmuxSend('sdconfigtest',['format','write','check'])
+
+    print('Format SD card with image file %s' %args.imagefile)
+    print('ALL DATA FROM SD CARD WILL BE ERASED!!!')
+    val = raw_input('Please confirm [yes/no] ')
+    if val=='yes':
+        print("Use command  'sudo tmux a -t sdconfig'  in a new terminal if you want to check progresses")
+        format(tmux)
+        write(tmux,args.imagefile)
+        check(tmux)
+        print('Done')
 

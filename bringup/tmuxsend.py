@@ -28,10 +28,18 @@ class TmuxSend:
         os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
         os.system('tmux send-keys "python %s %s" C-m' %(mpy, mparams))
 
-    def cmd(self, wid, cmd, sleeptime=0.1):
+    def cmd(self, wid, cmd, sleeptime=0.1, blocking=False):
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys "%s" C-m' %(cmd))
-        time.sleep(sleeptime)
+        if blocking:
+            os.system('tmux send-keys "%s; tmux wait-for -S tmux-end" C-m' %(cmd))
+            self.waitfor('tmux-end')            
+        else:
+            os.system('tmux send-keys "%s" C-m' %(cmd))
+            time.sleep(sleeptime)
+
+
+    def waitfor(self, wforlabel):
+        os.system('tmux wait-for %s' %(wforlabel))
 
     def killall(self, wid):
         self.Cc(wid)
