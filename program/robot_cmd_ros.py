@@ -12,8 +12,14 @@ import actionlib
 from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
-from apriltags_ros.msg import AprilTagDetectionArray
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+
+try:
+    from apriltags_ros.msg import AprilTagDetectionArray
+    AprilTagFound = True
+except:
+    print("apriltag_ros not found")
+    AprilTagFound = False
 
 AUDIO_SERVER_IP = '127.0.0.1'
 AUDIO_SERVER_PORT = 9001
@@ -273,7 +279,8 @@ def begin(nodename='robot_cmd'):
 
     rospy.init_node(nodename,  disable_signals=True)
 
-    tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
+    if AprilTagFound:
+        tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
     laser_sub = rospy.Subscriber(TOPIC_scan, LaserScan, laser_cb)
     localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
 
