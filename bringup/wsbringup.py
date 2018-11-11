@@ -138,14 +138,13 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.checkStatus()
 
         elif (message=='wsrobot_start'):
-            self.tmux.python(6,'blockly','websocket_robot.py')
+            self.tmux.python(6,'blockly','websocket_robot.py &')
             time.sleep(3)
             self.checkStatus()
         elif (message=='wsrobot_kill'):
-            self.tmux.killall(6)
+            self.tmux.cmd('kill -9 `ps ax | grep websocket_robot | awk '{print $1}'')
             time.sleep(3)
             self.checkStatus()
-
 
         elif (message=='usbcam_start'):
             self.tmux.roslaunch(3,'camera','usbcam')
