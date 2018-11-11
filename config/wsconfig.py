@@ -53,8 +53,9 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         print('Received: %s' %message)
 
         if (message=='updatesystem'):
-            print('TODO system update')
-
+            print('system update')
+            self.tmux.cmd(3,'cd /home/ubuntu/install')
+            self.tmux.cmd(3,'python marrtino_update.py --yes')
 
         elif (message=='updatemarrtinoapps'):
             print('marrtino_apps update')
