@@ -108,7 +108,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='robot_start'):
             self.tmux.roslaunch(1,'robot','robot')
             time.sleep(3)
-            self.tmux.python(6,'blockly','websocket_robot.py')
+            self.tmux.python(6,'blockly','websocket_robot.py &')
             time.sleep(3)
             self.checkStatus()
         elif (message=='robot_kill'):
@@ -117,7 +117,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.tmux.killall(1)
             time.sleep(3)
-            self.tmux.killall(6)
+            self.tmux.cmd("kill -9 `ps ax | grep websocket_robot | awk '{print $1}'")
             time.sleep(3)
             self.checkStatus()
 
@@ -125,7 +125,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='simrobot_start'):
             self.tmux.roslaunch(1,'stage','simrobot')
             time.sleep(3)
-            self.tmux.python(6,'blockly','websocket_robot.py')
+            self.tmux.python(6,'blockly','websocket_robot.py &')
             time.sleep(3)
             self.checkStatus()
         elif (message=='simrobot_kill'):
@@ -133,7 +133,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.tmux.killall(1)
             time.sleep(3)
-            self.tmux.killall(6)
+            self.tmux.cmd("kill -9 `ps ax | grep websocket_robot | awk '{print $1}'")
             time.sleep(3)
             self.checkStatus()
 
