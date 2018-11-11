@@ -142,7 +142,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
         elif (message=='wsrobot_kill'):
-            self.tmux.cmd('kill -9 `ps ax | grep websocket_robot | awk '{print $1}'')
+            self.tmux.cmd("kill -9 `ps ax | grep websocket_robot | awk '{print $1}'")
             time.sleep(3)
             self.checkStatus()
 
