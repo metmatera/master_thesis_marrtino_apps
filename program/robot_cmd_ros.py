@@ -237,6 +237,11 @@ def laser_cb(data):
     #print("center %.3f left %.3f right %.3f" %(laser_center_dist, laser_left_dist, laser_right_dist))
 
 
+def sonar_cb(data):
+    global laser_center_dist, laser_left_dist, laser_right_dist
+    # TODO
+    # ...
+
 
 
 def odom_cb(data):
@@ -282,6 +287,7 @@ def begin(nodename='robot_cmd'):
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
     laser_sub = rospy.Subscriber(TOPIC_scan, LaserScan, laser_cb)
+    #sonar_sub = rospy.Subscriber(TOPIC_sonar, ...., sonar_cb)
     localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
 
     if (use_robot):
