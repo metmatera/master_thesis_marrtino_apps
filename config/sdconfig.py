@@ -12,6 +12,12 @@ from tmuxsend import TmuxSend
 #/dev/mmcblk0p3        20613120    63272959    21329920   83  Linux
 
 
+#Device         Boot    Start      End  Sectors  Size Id Type
+#/dev/mmcblk0p1 *        2048   133119   131072   64M  e W95 FAT16 (LBA)
+#/dev/mmcblk0p2        133120 20613119 20480000  9,8G 83 Linux
+#/dev/mmcblk0p3      20613120 61030399 40417280 19,3G 83 Linux
+
+
 def umount(tmux):
     #tmux.cmd(1,'df -h')
     tmux.cmd(1,'umount /dev/mmcblk0p1',blocking=True)
@@ -43,7 +49,7 @@ def format(tmux):
     tmux.cmd(wid,'p\no\nw\n')
     time.sleep(1)
     tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
-    tmux.cmd(wid,'n\np\n1\n2048\n133119\nt\nc\np\n')
+    tmux.cmd(wid,'n\np\n1\n2048\n133119\nt\ne\np\n')
     time.sleep(1)
     tmux.cmd(wid,'n\np\n2\n133120\n20613119\np\n')
     time.sleep(1)
@@ -52,8 +58,8 @@ def format(tmux):
     umount(tmux)
 
     tmux.cmd(wid,'mkfs.fat -n PI_BOOT /dev/mmcblk0p1',blocking=True)
-    tmux.cmd(wid,'mkfs.ext4 -L PI_ROOT /dev/mmcblk0p2',blocking=True)
-    tmux.cmd(wid,'mkfs.ext4 -L data /dev/mmcblk0p3',blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -F -L PI_ROOT /dev/mmcblk0p2',blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -F -L data /dev/mmcblk0p3',blocking=True)
     time.sleep(3)
 
     tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
@@ -112,7 +118,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='MARRtino SD config')
     parser.add_argument('imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_v2.0)')
     args = parser.parse_args()
-    tmux = TmuxSend('sdconfigtest',['format','write','check'])
+    tmux = TmuxSend('sdconfig',['format','write','check'])
 
     print('Format SD card with image file %s' %args.imagefile)
     print('ALL DATA FROM SD CARD WILL BE ERASED!!!')
