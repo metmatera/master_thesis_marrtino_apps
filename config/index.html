@@ -31,6 +31,9 @@
 MARRtino version:
 <div id="marrtino_version" style="color: blue;" ></div>
 
+MARRtino Apps version:
+<div id="marrtino_apps_version" style="color: blue;" ></div>
+
 <p>
 <button id="btn_update" onclick="send_cmd('updatesystem')">System Update</button>
 <button id="btn_update" onclick="send_cmd('updatemarrtinoapps')">marrtino_apps Update</button>
@@ -69,6 +72,12 @@ Ethernet status:
 <button id="btn_wirelessHome" onclick="send_cmd('wirelessHome')">Wireless Home client</button>
 </p>
 
+<h1> Firmware upload (advace user only)</h1>
+
+<p>
+<button id="Firmware_flash_btn" onclick="send_cmd('flash')">Firmware Flash</button>
+<button id="Firmware_update_params_btn" onclick="send_cmd('firmwareparam')">Firmware Update Params</button>
+</p>
 
 <hr>
 
