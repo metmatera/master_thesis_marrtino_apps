@@ -11,6 +11,7 @@ import actionlib
 
 from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import Range
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
@@ -41,6 +42,10 @@ TOPIC_cmd_vel = 'cmd_vel'
 TOPIC_desired_cmd_vel = 'desired_cmd_vel'
 TOPIC_odom = 'odom'
 ACTION_move_base = 'move_base'
+TOPIC_sonar_0 = '/sonar_0' 
+TOPIC_sonar_1 = '/sonar_1'
+TOPIC_sonar_2 = '/sonar_2'
+TOPIC_sonar_3 = '/sonar_3'
 
 
 
@@ -82,6 +87,10 @@ def setRobotNamePrefix(prefix):
     TOPIC_desired_cmd_vel = prefix+'/desired_cmd_vel'
     TOPIC_odom = prefix+'/odom'
     ACTION_move_base = prefix+'/move_base'
+    TOPIC_sonar_0 = prefix+'/sonar_0' 
+    TOPIC_sonar_1 = prefix+'/sonar_1'
+    TOPIC_sonar_2 = prefix+'/sonar_2'
+    TOPIC_sonar_3 = prefix+'/sonar_3'
 
 
 def enableObstacleAvoidance():
@@ -192,6 +201,10 @@ tag_sub = None # tag_detection subscriber
 laser_sub = None # laser subscriber
 odom_sub = None  # odom subscriber
 localizer_sub = None
+sonar_sub_0 = None
+sonar_sub_1 = None
+sonar_sub_2 = None
+sonar_sub_3 = None
 
 
 # ROS Callback functions
@@ -239,8 +252,14 @@ def laser_cb(data):
 
 def sonar_cb(data):
     global laser_center_dist, laser_left_dist, laser_right_dist
-    # TODO
-    # ...
+    if(data.range < data.max_range):
+        if(data.header.frame_id == "/sonar_frame_0"):
+            laser_center_dist = data.range
+        elif(data.header.frame_id == "/sonar_frame_1"):
+            laser_right_dist = data.range
+        #elif(data.header.frame_id == "/sonar_frame_2"):
+        elif(data.header.frame_id == "/sonar_frame_3"):
+            laser_left_dist = data.range
 
 
 
@@ -272,7 +291,7 @@ def localizer_cb(data):
 
 def begin(nodename='robot_cmd'):
     global assock
-    global cmd_pub, tag_sub, laser_sub
+    global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
     global robot_initialized, stop_request
 
     print 'begin'
@@ -287,7 +306,10 @@ def begin(nodename='robot_cmd'):
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
     laser_sub = rospy.Subscriber(TOPIC_scan, LaserScan, laser_cb)
-    #sonar_sub = rospy.Subscriber(TOPIC_sonar, ...., sonar_cb)
+    sonar_sub_0 = rospy.Subscriber(TOPIC_sonar_0, Range, sonar_cb)
+    sonar_sub_1 = rospy.Subscriber(TOPIC_sonar_1, Range, sonar_cb)
+    sonar_sub_2 = rospy.Subscriber(TOPIC_sonar_2, Range, sonar_cb)
+    sonar_sub_3 = rospy.Subscriber(TOPIC_sonar_3, Range, sonar_cb)
     localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
 
     if (use_robot):
