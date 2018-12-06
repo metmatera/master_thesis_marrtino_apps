@@ -253,13 +253,14 @@ def laser_cb(data):
 def sonar_cb(data):
     global laser_center_dist, laser_left_dist, laser_right_dist
     if(data.range < data.max_range):
+    	r = (data.range*0.75)/0.265 #scale the value of the range in meters
         if(data.header.frame_id == "/sonar_frame_0"):
-            laser_center_dist = data.range
+            laser_center_dist = r
         elif(data.header.frame_id == "/sonar_frame_1"):
-            laser_right_dist = data.range
-        #elif(data.header.frame_id == "/sonar_frame_2"):
+            laser_right_dist = r
+        #elif(data.header.frame_id == "/sonar_frame_2"): this is for the back sonar
         elif(data.header.frame_id == "/sonar_frame_3"):
-            laser_left_dist = data.range
+            laser_left_dist = r
 
 
 
