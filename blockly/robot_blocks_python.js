@@ -63,8 +63,10 @@ Blockly.Python['get_pose'] = function(block) {
 Blockly.Python['obstacle_distance'] = function(block) {
   var dropdown_direction = block.getFieldValue('direction');
   var v=0
-  if (dropdown_direction == "OPTIONLEFT") { v = 1; }
-  else if (dropdown_direction == "OPTIONRIGHT") { v = -1; }
+  if (dropdown_direction == "OPTIONFRONT") { v = 0; }
+  else if (dropdown_direction == "OPTIONLEFT") { v = 90; }
+  else if (dropdown_direction == "OPTIONRIGHT") { v = -90; }
+  else if (dropdown_direction == "OPTIONBACK") { v = 180; }
   var code = 'obstacle_distance('+v+')';
   return [code, Blockly.Python.ORDER_NONE];
 };

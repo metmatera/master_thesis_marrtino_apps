@@ -131,6 +131,7 @@ def tag_angle():
 laser_center_dist = 10
 laser_left_dist = 10
 laser_right_dist = 10
+laser_back_dist = 10
 
 def laser_center_distance():
     global laser_center_dist
@@ -144,13 +145,15 @@ def get_robot_pose(): # returns [x,y,theta]
         return list(odom_robot_pose)
 
 def obstacle_distance(direction=0):
-    global laser_center_dist, laser_left_dist, laser_right_dist
-    if (direction==0):
+    global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
+    if (direction==0): #front
         return laser_center_dist
-    elif (direction==1):
+    elif (direction==90): #left
         return laser_left_dist
-    elif (direction==-1):
+    elif (direction==-90): # right
         return laser_right_dist
+    elif (direction==-180): # right
+        return laser_back_dist
 
 def distance(p1,p2):
     dx = p1[0]-p2[0]
@@ -235,7 +238,7 @@ def tag_cb(data):
 
 
 def laser_cb(data):
-    global laser_center_dist, laser_left_dist, laser_right_dist
+    global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
     nc = len(data.ranges)/2
     nr = int((data.angle_max - math.pi/2)/data.angle_increment)
     nl = len(data.ranges) - nr
@@ -251,17 +254,17 @@ def laser_cb(data):
 
 
 def sonar_cb(data):
-    global laser_center_dist, laser_left_dist, laser_right_dist
+    global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
     if(data.range < data.max_range):
     	r = (data.range*0.75)/0.265 #scale the value of the range in meters
-        if(data.header.frame_id == "/sonar_frame_0"):
+        if(data.header.frame_id == "/sonar_frame_0"): # front
             laser_center_dist = r
-        elif(data.header.frame_id == "/sonar_frame_1"):
+        elif(data.header.frame_id == "/sonar_frame_1"): # right
             laser_right_dist = r
-        #elif(data.header.frame_id == "/sonar_frame_2"): this is for the back sonar
-        elif(data.header.frame_id == "/sonar_frame_3"):
+        elif(data.header.frame_id == "/sonar_frame_3"): # left
             laser_left_dist = r
-
+        elif(data.header.frame_id == "/sonar_frame_2"): # back
+            laser_back_dist = r
 
 
 def odom_cb(data):
