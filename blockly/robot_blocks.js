@@ -133,7 +133,7 @@ Blockly.Blocks['setSpeed'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(120);
- this.setTooltip("robot turns [angle in degrees]");
+ this.setTooltip("robot speed tv [m/s], rv [rad/s] for time seconds");
  this.setHelpUrl("");
   }
 };
@@ -162,7 +162,7 @@ Blockly.Blocks['random'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(0);
- this.setTooltip("returns the pose of the robot [x,y,theta]");
+ this.setTooltip("returns a random number between min and max");
  this.setHelpUrl("");
   }
 };
@@ -176,7 +176,7 @@ Blockly.Blocks['obstacle_distance'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(0);
- this.setTooltip("distance of obstable");
+ this.setTooltip("returns distance from obstable front|left|right");
  this.setHelpUrl("");
   }
 };
