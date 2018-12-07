@@ -172,7 +172,7 @@ Blockly.Blocks['obstacle_distance'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("obstacle_distance")
-        .appendField(new Blockly.FieldDropdown([["front","OPTIONFRONT"], ["left","OPTIONLEFT"], ["right","OPTIONRIGHT"]]), "direction");
+        .appendField(new Blockly.FieldDropdown([["front","OPTIONFRONT"], ["left","OPTIONLEFT"], ["right","OPTIONRIGHT"], ["back","OPTIONBACK"]]), "direction");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(0);

@@ -11,6 +11,7 @@ import actionlib
 
 from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import Range
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
@@ -41,6 +42,10 @@ TOPIC_cmd_vel = 'cmd_vel'
 TOPIC_desired_cmd_vel = 'desired_cmd_vel'
 TOPIC_odom = 'odom'
 ACTION_move_base = 'move_base'
+TOPIC_sonar_0 = '/sonar_0' 
+TOPIC_sonar_1 = '/sonar_1'
+TOPIC_sonar_2 = '/sonar_2'
+TOPIC_sonar_3 = '/sonar_3'
 
 
 
@@ -82,6 +87,10 @@ def setRobotNamePrefix(prefix):
     TOPIC_desired_cmd_vel = prefix+'/desired_cmd_vel'
     TOPIC_odom = prefix+'/odom'
     ACTION_move_base = prefix+'/move_base'
+    TOPIC_sonar_0 = prefix+'/sonar_0' 
+    TOPIC_sonar_1 = prefix+'/sonar_1'
+    TOPIC_sonar_2 = prefix+'/sonar_2'
+    TOPIC_sonar_3 = prefix+'/sonar_3'
 
 
 def enableObstacleAvoidance():
@@ -122,6 +131,7 @@ def tag_angle():
 laser_center_dist = 10
 laser_left_dist = 10
 laser_right_dist = 10
+laser_back_dist = 10
 
 def laser_center_distance():
     global laser_center_dist
@@ -135,13 +145,15 @@ def get_robot_pose(): # returns [x,y,theta]
         return list(odom_robot_pose)
 
 def obstacle_distance(direction=0):
-    global laser_center_dist, laser_left_dist, laser_right_dist
-    if (direction==0):
+    global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
+    if (direction==0): #front
         return laser_center_dist
-    elif (direction==1):
+    elif (direction==90): #left
         return laser_left_dist
-    elif (direction==-1):
+    elif (direction==-90): # right
         return laser_right_dist
+    elif (direction==-180): # right
+        return laser_back_dist
 
 def distance(p1,p2):
     dx = p1[0]-p2[0]
@@ -192,6 +204,10 @@ tag_sub = None # tag_detection subscriber
 laser_sub = None # laser subscriber
 odom_sub = None  # odom subscriber
 localizer_sub = None
+sonar_sub_0 = None
+sonar_sub_1 = None
+sonar_sub_2 = None
+sonar_sub_3 = None
 
 
 # ROS Callback functions
@@ -222,7 +238,7 @@ def tag_cb(data):
 
 
 def laser_cb(data):
-    global laser_center_dist, laser_left_dist, laser_right_dist
+    global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
     nc = len(data.ranges)/2
     nr = int((data.angle_max - math.pi/2)/data.angle_increment)
     nl = len(data.ranges) - nr
@@ -237,6 +253,18 @@ def laser_cb(data):
     #print("center %.3f left %.3f right %.3f" %(laser_center_dist, laser_left_dist, laser_right_dist))
 
 
+def sonar_cb(data):
+    global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
+    if(data.range < data.max_range):
+    	r = (data.range*0.75)/0.265 #scale the value of the range in meters
+        if(data.header.frame_id == "/sonar_frame_0"): # front
+            laser_center_dist = r
+        elif(data.header.frame_id == "/sonar_frame_1"): # right
+            laser_right_dist = r
+        elif(data.header.frame_id == "/sonar_frame_3"): # left
+            laser_left_dist = r
+        elif(data.header.frame_id == "/sonar_frame_2"): # back
+            laser_back_dist = r
 
 
 def odom_cb(data):
@@ -267,7 +295,7 @@ def localizer_cb(data):
 
 def begin(nodename='robot_cmd'):
     global assock
-    global cmd_pub, tag_sub, laser_sub
+    global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
     global robot_initialized, stop_request
 
     print 'begin'
@@ -282,6 +310,10 @@ def begin(nodename='robot_cmd'):
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
     laser_sub = rospy.Subscriber(TOPIC_scan, LaserScan, laser_cb)
+    sonar_sub_0 = rospy.Subscriber(TOPIC_sonar_0, Range, sonar_cb)
+    sonar_sub_1 = rospy.Subscriber(TOPIC_sonar_1, Range, sonar_cb)
+    sonar_sub_2 = rospy.Subscriber(TOPIC_sonar_2, Range, sonar_cb)
+    sonar_sub_3 = rospy.Subscriber(TOPIC_sonar_3, Range, sonar_cb)
     localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
 
     if (use_robot):

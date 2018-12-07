@@ -27,6 +27,19 @@ server_name = 'Config'      # server name
 server_port = 9510          # config web server port
 status = "Idle"             # robot status sent to websocket
 
+def getMarrtinoAppVersion():
+    try:
+        f = open('/home/ubuntu/src/marrtino_apps/marrtinoappversion.txt','r')
+        v = f.readline().strip()
+        lista = v.split(':',1)
+        v = lista[1]
+        lista = v.split('+')
+        v=lista[0]
+        f.close()
+    except:
+        v = 'None'
+    return v
+
 
 # check connection
 # nmcli c show --active
@@ -40,12 +53,15 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         status = 'Check ...'
         self.write_message('VALUE marrtino_version %r' %getversion())
         status = 'Idle'
+        self.write_message('VALUE marrtino_apps_version %r' %getMarrtinoAppVersion())
 
     def open(self):
         global websocket_server, run
         websocket_server = self
         print('New connection')
         self.tmux = TmuxSend('config',['robot','network','apps'])
+        self.tmux.cmd(3,'cd /home/ubuntu/src/marrtino_apps')
+        self.tmux.cmd(3,'git log | head -n 4 | grep Date > marrtinoappversion.txt')
         self.checkStatus()
 
     def on_message(self, message):
@@ -67,6 +83,18 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.quitall()
             self.checkStatus()
             self.tmux.cmd(0,'sudo shutdown -h now')
+
+        elif(message=='flash'):
+            print('firmware upload')
+            self.tmux.cmd(3,'cd /home/ubuntu/src/srrg/srrg2_orazio_core/firmware_build/atmega2560/')
+            self.tmux.cmd(3,'make')
+            self.tmux.cmd(3,'make orazio.hex')
+            self.tmux.cmd(3,'make clean')
+
+        elif(message=='firmwareparam'):
+            print('firmware parameters upload')
+            self.tmux.cmd(3,'cd /home/ubuntu/src/marrtino_apps/config')
+            self.tmux.cmd(3,'cat upload_config.script | rosrun srrg2_orazio_core orazio -serial-device /dev/orazio')
 
         else:
             print('Code received:\n%s' %message)
