@@ -51,6 +51,7 @@ ROS topics:
     </tr>
     <tr height=40>
       <td><div id="odom" style="color: grey;">odom</div></td>
+      <td><div id="sonar" style="color: grey;">sonar</div></td>
       <td><div id="laser" style="color: grey;">laser</div></td>
     </tr>
     <tr height=40>
@@ -104,6 +105,22 @@ ROS topics:
 <p>
 <button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button>
 <button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button>
+</p>
+
+<hr>
+
+<h2>Sonar</h2>
+<p>
+
+<table>
+<tr>
+<td width=150><button id="get_sonar_btn" onclick="send_cmd('read_sonars')">Read sonars</button></td>
+<td width=50>F <div id="sonar0" style="color: blue;" >0</div></td>
+<td width=50>R <div id="sonar1" style="color: blue;" >0</div></td>
+<td width=50>B <div id="sonar2" style="color: blue;" >0</div></td>
+<td width=50>L <div id="sonar3" style="color: blue;" >0</div></td>
+</tr>
+</table>
 </p>
 
 <hr>
@@ -178,7 +195,11 @@ ROS topics:
       v = event.data.split(' ');
 
       if (v[0]=='STATUS') {
-          document.getElementById("status").innerHTML = v[1];
+          vs = '';
+          for (i=1; i<v.length ; i++)
+             vs += v[i]+' '
+
+          document.getElementById("status").innerHTML = vs;
       }
       else if (v[0]=='RESULT') {
           cv = v[2];
@@ -200,7 +221,7 @@ ROS topics:
       else if (v[0]=='VALUE') {
           vs = '';
           for (i=2; i<v.length ; i++)
-             vs += v[i]
+             vs += v[i]+' '
           document.getElementById(v[1]).innerHTML = vs;
       }
     }

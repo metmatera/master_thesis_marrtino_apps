@@ -46,8 +46,9 @@ def getversion():
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def checkStatus(self):
-        global status
-        status = 'Check ...'
+
+        self.setStatus('Checking...')
+
         self.write_message('VALUE marrtino_version %r' %getversion())
         r = check_ROS()
         self.write_message('RESULT ros '+str(r))
@@ -62,6 +63,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.write_message('RESULT simrobot '+str(r))
         r = check_odom()
         self.write_message('RESULT odom '+str(r))
+        r = check_sonar()
+        self.write_message('RESULT sonar '+str(r))
         r = check_laser()
         self.write_message('RESULT laser '+str(r))
         r = check_rgb_camera()
@@ -79,8 +82,13 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.write_message('RESULT tf_base_rgb '+str(r))
         r = check_tf('base_frame', 'depth_camera_frame')
         self.write_message('RESULT tf_base_depth '+str(r))
+        self.setStatus('Idle')
 
-        status = 'Idle'
+
+    def setStatus(self, st):
+        global status
+        status = st
+        self.write_message('STATUS %s' %status)
 
 
     def open(self):
@@ -104,7 +112,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.quitall()
             self.checkStatus()
 
-        # include wsrobot start/stop
+        # robot start/stop
         elif (message=='robot_start'):
             self.tmux.roslaunch(1,'robot','robot')
             time.sleep(3)
@@ -121,7 +129,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
 
-        # include wsrobot start/stop
+        # simrobot start/stop
         elif (message=='simrobot_start'):
             self.tmux.roslaunch(1,'stage','simrobot')
             time.sleep(3)
@@ -137,6 +145,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
 
+        # wsrobot
         elif (message=='wsrobot_start'):
             self.tmux.python(6,'blockly','websocket_robot.py &')
             time.sleep(3)
@@ -146,6 +155,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
 
+        # sonar
+        elif (message=='read_sonars'):
+            self.setStatus('Read sonars')
+            for i in range(0,4):
+                v = getSonarValue(i)
+                self.write_message('VALUE sonar%d %.2f' %(i,v))
+                print('  -- Sonar %d range = %.2f' %(i,v))
+            self.setStatus('Idle')
+
+        # usbcam
         elif (message=='usbcam_start'):
             self.tmux.roslaunch(3,'camera','usbcam')
             time.sleep(3)

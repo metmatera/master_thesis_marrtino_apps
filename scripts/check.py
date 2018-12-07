@@ -3,7 +3,7 @@ import rospy
 import rosnode
 import tf
 
-from sensor_msgs.msg import LaserScan, Image
+from sensor_msgs.msg import LaserScan, Range, Image
 from nav_msgs.msg import Odometry
 
 nodenames = []
@@ -113,7 +113,62 @@ def check_odom():
     return r
 
 
-        
+sonarcount = 0
+sonarframe = ''
+sonarvalues = [0,0,0,0,0,0,0,0]
+idsonar = 0
+
+def sonar_cb(data):
+    global sonarcount, sonarframe, idsonar
+    sonarcount += 1
+    sonarframe = data.header.frame_id
+    r = (data.range*0.75)/0.265 #scale the value of the range in meters
+    sonarvalues[idsonar] = r
+
+def check_sonar():
+    global topicnames, sonarcount, sonarframe, sonarvalues, idsonar
+    r = True
+    print '----------------------------------------'
+    print 'Check sonar ...'
+    for i in range(0,4):
+        sname = 'sonar_%d' %i
+        idsonar = i
+        if ['/'+sname, 'sensor_msgs/Range'] in topicnames:
+            sonarcount = 0
+            sonar_sub = rospy.Subscriber(sname, Range, sonar_cb)
+            dt = 3.0
+            time.sleep(dt)
+            sonar_sub.unregister()
+            print('  -- Sonar %d scan rate = %.2f Hz' %(i,sonarcount/dt))
+            print('  -- Sonar %d frame = %s' %(i,sonarframe))
+            print('  -- Sonar %d range = %.2f' %(i,sonarvalues[i]))
+        else:
+            r = False
+    if r:
+        printOK()
+    else:
+        printFail()
+
+    return r
+
+
+def getSonarValues():
+    global sonarvalues
+    return sonarvalues
+
+def getSonarValue(i):
+    global sonarvalues, idsonar
+    idsonar = i
+    sname = 'sonar_%d' %i
+    sonar_sub = rospy.Subscriber(sname, Range, sonar_cb)
+    dt = 1.5
+    time.sleep(dt)
+    sonar_sub.unregister()
+    return sonarvalues[i]
+
+
+# Laser
+
 lasercount = 0
 laserframe = ''
 
@@ -235,6 +290,7 @@ def main():
         check_simrobot()
         check_robot()
         check_odom()
+        check_sonar()
         check_laser()
         check_rgb_camera()
         check_depth_camera()
