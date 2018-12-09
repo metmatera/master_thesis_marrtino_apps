@@ -28,18 +28,37 @@
 </table>
 
 <p>
-MARRtino version:
-<div id="marrtino_version" style="color: blue;" ></div>
 
-MARRtino Apps version:
-<div id="marrtino_apps_version" style="color: blue;" ></div>
+<table>
+<tr>
+<td>MARRtino version </td>
+<td> <div id="marrtino_version" style="color: blue;" ></div> </td>
+</tr>
+
+<tr>
+<td>MARRtino Apps version </td>
+<td> <div id="marrtino_apps_version" style="color: blue;" ></div> </td>
+</tr>
+</table>
 
 <p>
-<button id="btn_update" onclick="send_cmd('updatesystem')">System Update</button>
-<button id="btn_update" onclick="send_cmd('updatemarrtinoapps')">marrtino_apps Update</button>
+<button id="btn_upsys" onclick="send_cmd('updatesystem')">System Update</button>
+<button id="btn_upapp" onclick="send_cmd('updatemarrtinoapps')">marrtino_apps Update</button>
 </p>
 
 </p>
+
+<hr>
+
+<h1> Web config </h1>
+
+<p>
+<button id="btn_webstart" onclick="send_cmd('startweb')">Start web config</button>
+<button id="btn_webquit" onclick="send_cmd('quitweb')">Quit web config</button>
+
+<script>
+      document.write("<a target=_blank href=\"" + window.location.hostname + ":9000\">Orazio web interface</a>")
+</script>
 
 <hr>
 
@@ -125,7 +144,7 @@ Ethernet status:
       else if (v[0]=='VALUE') {
           vs = '';
           for (i=2; i<v.length ; i++)
-             vs += v[i]
+             vs += v[i]+' '
           document.getElementById(v[1]).innerHTML = vs;
       }
     }
@@ -160,8 +179,6 @@ Ethernet status:
     function send_cmd(action) {
         wsrobot_send(action);
     }
-
- 
 
 
 </script>

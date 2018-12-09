@@ -18,6 +18,10 @@ class TmuxSend:
         os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
         os.system('tmux send-keys "roslaunch %s.launch %s" C-m' %(mlaunch, mparams))
 
+    def roscore(self, wid):
+        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys "roscore" C-m')
+
     def roskill(self, rosnode):
         wid = 0
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
@@ -54,13 +58,13 @@ class TmuxSend:
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         os.system('tmux send-keys C-\\')
 
-    def quitall(self):
+    def quitall(self): # kill all processes in windows 1..n-1 (excluding 0 and n)
         self.roskill('-a')
         time.sleep(3)
-        for i in range(0,self.nwindows):
+        for i in range(0,self.nwindows-1):
             self.Cc(i+1)  # C-c on all the windows
             time.sleep(1)
-        for i in range(0,self.nwindows):
+        for i in range(0,self.nwindows-1):
             self.Ck(i+1)  # C-\ on all the windows
             time.sleep(1)
 

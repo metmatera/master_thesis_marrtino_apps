@@ -11,6 +11,7 @@ import os
 from threading import Thread
 
 import sys
+
 sys.path.append('../program')
 sys.path.append('../scripts')
 
@@ -18,7 +19,6 @@ import check
 from check import *
 
 from tmuxsend import TmuxSend
-
 
 # Global variables
 
@@ -29,18 +29,6 @@ server_port = 9500          # web server port
 status = "Idle"             # robot status sent to websocket
 
 
-def getversion():
-    v = os.getenv('MARRTINO_VERSION')
-    if (v==None):
-        try:
-            f = open('/home/ubuntu/.marrtino_version','r')
-            v = f.readline().strip()
-            f.close()
-        except:
-            v = 'None'
-    return v
-
-
 # Websocket server handler
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
@@ -49,7 +37,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         self.setStatus('Checking...')
 
-        self.write_message('VALUE marrtino_version %r' %getversion())
         r = check_ROS()
         self.write_message('RESULT ros '+str(r))
         if (r):
@@ -95,15 +82,20 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         global websocket_server, run
         websocket_server = self
         print('New connection')
-        self.tmux = TmuxSend('bringup',['robot','laser','camera','joystick','audio','wsrobot'])
+        self.tmux = TmuxSend('bringup',['robot','laser','camera','joystick','audio','wsrobot','roscore'])
+        self.tmux.roscore(7)
+        time.sleep(3)
         self.checkStatus()
 
     def on_message(self, message):
         global code, status
         print('Received: %s' %message)
 
+        self.setStatus(message)
+
         if (message=='stop'):
             print('!!! EMERGENCY STOP !!!')
+            self.checkStatus()
 
         elif (message=='check'):
             self.checkStatus()

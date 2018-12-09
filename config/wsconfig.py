@@ -17,7 +17,7 @@ sys.path.append('../scripts')
 sys.path.append('../bringup')
 
 from tmuxsend import TmuxSend
-from wsbringup import getversion
+
 
 # Global variables
 
@@ -27,17 +27,30 @@ server_name = 'Config'      # server name
 server_port = 9510          # config web server port
 status = "Idle"             # robot status sent to websocket
 
-def getMarrtinoAppVersion():
-    try:
-        f = open('/home/ubuntu/src/marrtino_apps/marrtinoappversion.txt','r')
-        v = f.readline().strip()
-        lista = v.split(':',1)
-        v = lista[1]
-        lista = v.split('+')
-        v=lista[0]
-        f.close()
-    except:
-        v = 'None'
+
+def getMARRtinoVersion():
+    v = os.getenv('MARRTINO_VERSION')
+    if (v==None):
+        try:
+            f = open('/tmp/.marrtino_version','r')
+            v = f.readline().strip()
+            f.close()
+        except:
+            v = 'None'
+    return v
+
+
+def getMARRtinoAppVersion():
+    #try:
+    f = open('/tmp/.marrtinoapp_version','r')
+    v = f.readline().strip()
+    lista = v.split(':',1)
+    v = lista[1]
+    lista = v.split('+')
+    v=lista[0]
+    f.close()
+    #except:
+    #    v = 'None'
     return v
 
 
@@ -48,21 +61,28 @@ def getMarrtinoAppVersion():
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
-    def checkStatus(self):
-        global status
-        status = 'Check ...'
-        self.write_message('VALUE marrtino_version %r' %getversion())
-        status = 'Idle'
-        self.write_message('VALUE marrtino_apps_version %r' %getMarrtinoAppVersion())
 
     def open(self):
         global websocket_server, run
         websocket_server = self
         print('New connection')
         self.tmux = TmuxSend('config',['robot','network','apps'])
-        self.tmux.cmd(3,'cd /home/ubuntu/src/marrtino_apps')
-        self.tmux.cmd(3,'git log | head -n 4 | grep Date > marrtinoappversion.txt')
+        self.mahome = os.getenv('MARRTINO_APPS_HOME')
+        if self.mahome==None:
+            self.home = os.getenv('HOME')
+            if (self.home=='/root'): # started at boot on MARRtino cards
+                self.home = '/home/ubuntu'
+            self.mahome = self.home+'/src/marrtino_apps'
         self.checkStatus()
+
+    def checkStatus(self):
+        global status
+        status = 'Check ...'
+        self.tmux.cmd(3,'cd %s' %self.mahome)
+        self.tmux.cmd(3,'git log | head -n 4 | grep Date > /tmp/.marrtinoapp_version')
+        self.write_message('VALUE marrtino_version %s' %getMARRtinoVersion())
+        status = 'Idle'
+        self.write_message('VALUE marrtino_apps_version %s' %getMARRtinoAppVersion())
 
     def on_message(self, message):
         global code, status
@@ -70,14 +90,17 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         if (message=='updatesystem'):
             print('system update')
-            self.tmux.cmd(3,'cd /home/ubuntu/install')
+            self.tmux.cmd(3,'cd %s/install' %self.home)
             self.tmux.cmd(3,'python marrtino_update.py --yes')
+            os.sleep(3)
+            self.checkStatus()
 
         elif (message=='updatemarrtinoapps'):
             print('marrtino_apps update')
-            self.tmux.cmd(3,'cd /home/ubuntu/src/marrtino_apps')
+            self.tmux.cmd(3,'cd %s' %self.mahome)
             self.tmux.cmd(3,'git pull')
-
+            os.sleep(3)
+            self.checkStatus()
 
         elif (message=='shutdown'):
             self.tmux.quitall()
@@ -86,15 +109,24 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         elif(message=='flash'):
             print('firmware upload')
-            self.tmux.cmd(3,'cd /home/ubuntu/src/srrg/srrg2_orazio_core/firmware_build/atmega2560/')
+            self.tmux.cmd(3,'cd %s/src/srrg/srrg2_orazio_core/firmware_build/atmega2560/' %self.home)
             self.tmux.cmd(3,'make')
             self.tmux.cmd(3,'make orazio.hex')
             self.tmux.cmd(3,'make clean')
 
         elif(message=='firmwareparam'):
             print('firmware parameters upload')
-            self.tmux.cmd(3,'cd /home/ubuntu/src/marrtino_apps/config')
+            self.tmux.cmd(3,'cd %s/config' %self.mahome)
             self.tmux.cmd(3,'cat upload_config.script | rosrun srrg2_orazio_core orazio -serial-device /dev/orazio')
+
+        elif (message=='startweb'):
+            print('start orazio web server')
+            self.tmux.cmd(1,'cd %s/config' %self.mahome)
+            self.tmux.cmd(1,'source run_orazio_web.bash')
+
+        elif (message=='quitweb'):
+            print('quit orazio web server')
+            self.tmux.cmd(1,'quit')
 
         else:
             print('Code received:\n%s' %message)
