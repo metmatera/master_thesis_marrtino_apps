@@ -151,13 +151,13 @@ Ethernet status:
 
     function connect() {
         wsrobot_init(9510);  // init websocket robot
-        setTimeout(check_connection, 1000);
+        setTimeout(check_connection, 2000);
         websocket.onmessage = eventproc;
     }
 
     function disconnect() {
-        wsrobot_quit();  // init websocket robot
-        setTimeout(check_connection, 1000);
+        wsrobot_quit();  // quit websocket robot
+        setTimeout(check_connection, 2000);
     }
 
     function check_connection() {
