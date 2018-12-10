@@ -54,9 +54,9 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
     def checkStatus(self):
         global status
         status = 'Check ...'
-        self.write_message('VALUE marrtino_version %s' %getMARRtinoVersion())
+        self.write_message('VALUE marrtino_version %s' %self.getMARRtinoVersion())
         status = 'Idle'
-        self.write_message('VALUE marrtino_apps_version %s' %getMARRtinoAppVersion())
+        self.write_message('VALUE marrtino_apps_version %s' %self.getMARRtinoAppVersion())
 
     def getMARRtinoVersion(self):
         v = os.getenv('MARRTINO_VERSION')
