@@ -107,6 +107,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.checkStatus()
             self.tmux.cmd(0,'sudo shutdown -h now')
 
+        elif (message=='reboot'):
+            self.tmux.quitall()
+            self.checkStatus()
+            self.tmux.cmd(0,'sudo reboot')
+
         elif(message=='flash'):
             print('firmware upload')
             self.tmux.cmd(3,'cd %s/src/srrg/srrg2_orazio_core/firmware_build/atmega2560/' %self.home)
