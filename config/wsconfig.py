@@ -28,30 +28,6 @@ server_port = 9510          # config web server port
 status = "Idle"             # robot status sent to websocket
 
 
-def getMARRtinoVersion():
-    v = os.getenv('MARRTINO_VERSION')
-    if (v==None):
-        try:
-            f = open('/tmp/.marrtino_version','r')
-            v = f.readline().strip()
-            f.close()
-        except:
-            v = 'None'
-    return v
-
-
-def getMARRtinoAppVersion():
-    #try:
-    f = open('/tmp/.marrtinoapp_version','r')
-    v = f.readline().strip()
-    lista = v.split(':',1)
-    v = lista[1]
-    lista = v.split('+')
-    v=lista[0]
-    f.close()
-    #except:
-    #    v = 'None'
-    return v
 
 
 # check connection
@@ -78,11 +54,37 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
     def checkStatus(self):
         global status
         status = 'Check ...'
-        self.tmux.cmd(3,'cd %s' %self.mahome)
-        self.tmux.cmd(3,'git log | head -n 4 | grep Date > /tmp/.marrtinoapp_version')
         self.write_message('VALUE marrtino_version %s' %getMARRtinoVersion())
         status = 'Idle'
         self.write_message('VALUE marrtino_apps_version %s' %getMARRtinoAppVersion())
+
+    def getMARRtinoVersion(self):
+        v = os.getenv('MARRTINO_VERSION')
+        if (v==None):
+            try:
+                f = open('%s/.marrtino_version' %self.home, 'r')
+                v = f.readline().strip()
+                f.close()
+            except:
+                v = 'None'
+        return v
+
+
+    def getMARRtinoAppVersion(self):
+        self.tmux.cmd(3,'cd %s' %self.mahome)
+        self.tmux.cmd(3,'git log | head -n 4 | grep Date > /tmp/.marrtinoapp_version')
+        try:
+            f = open('/tmp/.marrtinoapp_version','r')
+            v = f.readline().strip()
+            lista = v.split(':',1)
+            v = lista[1]
+            lista = v.split('+')
+            v=lista[0]
+            f.close()
+        except:
+            v = 'None'
+        return v
+
 
     def on_message(self, message):
         global code, status
