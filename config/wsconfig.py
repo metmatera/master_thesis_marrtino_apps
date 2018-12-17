@@ -72,7 +72,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def getMARRtinoAppVersion(self):
         self.tmux.cmd(3,'cd %s' %self.mahome)
-        self.tmux.cmd(3,'git log | head -n 4 | grep Date > /tmp/.marrtinoapp_version')
+        self.tmux.cmd(3,'git log | head -n 4 | grep Date > /tmp/.marrtinoapp_version', blocking=True)
         try:
             f = open('/tmp/.marrtinoapp_version','r')
             v = f.readline().strip()
