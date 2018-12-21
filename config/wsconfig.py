@@ -93,14 +93,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         if (message=='updatesystem'):
             print('system update')
             self.tmux.cmd(3,'cd %s/install' %self.home)
-            self.tmux.cmd(3,'python marrtino_update.py --yes')
+            self.tmux.cmd(3,'python marrtino_update.py --yes', blocking=True)
             os.sleep(3)
             self.checkStatus()
 
         elif (message=='updatemarrtinoapps'):
             print('marrtino_apps update')
             self.tmux.cmd(3,'cd %s' %self.mahome)
-            self.tmux.cmd(3,'git pull')
+            self.tmux.cmd(3,'git pull', blocking=True)
             os.sleep(3)
             self.checkStatus()
 
