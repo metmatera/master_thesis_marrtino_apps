@@ -43,11 +43,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         websocket_server = self
         print('New connection')
         self.tmux = TmuxSend('config',['robot','network','apps'])
+        self.home = os.getenv('HOME')
+        if (self.home=='/root'): # started at boot on MARRtino cards
+            self.home = '/home/ubuntu'
         self.mahome = os.getenv('MARRTINO_APPS_HOME')
         if self.mahome==None:
-            self.home = os.getenv('HOME')
-            if (self.home=='/root'): # started at boot on MARRtino cards
-                self.home = '/home/ubuntu'
             self.mahome = self.home+'/src/marrtino_apps'
         self.checkStatus()
 
