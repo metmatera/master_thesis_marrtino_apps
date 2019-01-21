@@ -101,6 +101,8 @@ def enableObstacleAvoidance():
 def robot_stop_request(): # stop until next begin()
     global stop_request
     stop_request = True
+    if (use_robot):
+        stop()
     print("stop request")
 
 
