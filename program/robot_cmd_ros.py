@@ -8,6 +8,7 @@ import sys
 import rospy
 import tf
 import actionlib
+from threading import Thread
 
 from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan
@@ -292,13 +293,28 @@ def localizer_cb(data):
     euler = tf.transformations.euler_from_quaternion(q)
     loc_robot_pose[2] = euler[2] # yaw
 
+run_audio_connect = True
+
+def audio_connect_thread():
+    global run_audio_connect
+    print("Audio enabled, Connecting...")
+    run_audio_connect = True
+    while run_audio_connect:
+        assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            assock.connect((AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
+            print("Audio connected.")
+            run_audio_connect = False
+        except:
+            #print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
+            time.sleep(2)
+
 
 # Begin/end
 
 def begin(nodename='robot_cmd'):
-    global assock
     global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
-    global robot_initialized, stop_request
+    global odom_robot_pose, robot_initialized, stop_request
 
     print 'begin'
 
@@ -307,7 +323,10 @@ def begin(nodename='robot_cmd'):
     if (robot_initialized):
         return
 
-    rospy.init_node(nodename,  disable_signals=True)
+    try:
+        rospy.init_node(nodename,  disable_signals=True)
+    except:
+        return
 
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
@@ -329,35 +348,52 @@ def begin(nodename='robot_cmd'):
         print("Waiting for robot pose...")
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
-        rate.sleep()
-        while (odom_robot_pose is None):
+        try:
             rate.sleep()
+            while (odom_robot_pose is None):
+                rate.sleep()
+        except KeyboardInterrupt:
+            odom_robot_pose = [0,0,0]
         robot_initialized = True
 
     if (use_audio):
-        print("Audio enabled")
-        assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            assock.connect((AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
-        except:
-            print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
-
+        # Run audio connection thread
+        t = Thread(target=audio_connect_thread, args=())
+        t.start()
 
 
 def end():
-    global assock
+    global robot_initialized
+    if not robot_initialized:
+        return
+
     if (use_robot):
         stop()
     print 'end'    
     if (use_audio):
-        assock.close()
-        assock=None
+        global run_audio_connect
+        run_audio_connect = False
+        global assock
+        if assock:
+            assock.close()
+            assock=None
     time.sleep(0.5) # make sure stuff ends
+
+
+def ready():
+    global robot_initialized
+    return robot_initialized
+
+
+# check if program can run now
+def marrtino_ok():
+    global robot_initialized, stop_request
+    return robot_initialized and not stop_request
 
 
 # Robot motion
 
-def setSpeed(lx,az,tm,stopend=True):
+def setSpeed(lx,az,tm,stopend=False):
     global cmd_pub, stop_request
 
     if (stop_request):

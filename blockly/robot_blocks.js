@@ -198,4 +198,17 @@ Blockly.Blocks['distance'] = {
   }
 };
 
+Blockly.Blocks['marrtino_ok'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("marrtino_ok");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(0);
+ this.setTooltip("returns True if MARRtino is correctly running");
+ this.setHelpUrl("");
+  }
+};
+
+
 

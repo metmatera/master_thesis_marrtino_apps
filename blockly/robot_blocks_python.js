@@ -86,5 +86,10 @@ Blockly.Python['random'] = function(block) {
   return [code, Blockly.Python.ORDER_NONE];
 };
 
+Blockly.Python['marrtino_ok'] = function(block) {
+  var code = 'marrtino_ok()';
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
 
 
