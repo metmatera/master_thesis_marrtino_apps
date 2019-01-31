@@ -363,12 +363,13 @@ def begin(nodename='robot_cmd'):
 
 
 def end():
-    global robot_initialized
+    global robot_initialized, stop_request
     if not robot_initialized:
         return
 
     if (use_robot):
         stop()
+    stop_request = True
     print 'end'    
     if (use_audio):
         global run_audio_connect
@@ -388,7 +389,7 @@ def ready():
 # check if program can run now
 def marrtino_ok():
     global robot_initialized, stop_request
-    return robot_initialized and not stop_request
+    return robot_initialized and not stop_request and not rospy.is_shutdown()
 
 
 # Robot motion

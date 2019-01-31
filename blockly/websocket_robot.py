@@ -128,7 +128,10 @@ def fncodeexcept():
     fncode_running = False
 
 
+run_code_thread = None
+
 def exec_thread(code):
+    global run_code_thread
     fncodestr = deffunctioncode(code)
     #print(fncodestr)
     try:
@@ -162,7 +165,7 @@ def exec_thread(code):
                 print e
                 #print "Thread already terminated"
     run_code_thread.join()
-
+    run_code_thread = None    
 
 
 def run_code(code):
@@ -209,5 +212,9 @@ if __name__ == "__main__":
     print("Web server quit.")
     run = False    
     print("Waiting for main loop to quit...")
+    t.join()
 
+
+#    if run_code_thread != None:
+#        print('Program execution still alive!!!')        
 
