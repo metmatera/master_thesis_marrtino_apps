@@ -42,7 +42,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         global code, status
         if (message=='stop'):
             print('Stop code and robot')
-            status = "Stop"
+            if status!='Idle':
+                status = 'Stop'
             robot_stop_request()
             time.sleep(0.5)
         elif (message[0:5]=='event'):
