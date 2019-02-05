@@ -53,6 +53,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
     def setStatus(self, st):
+        # do not use blank spaces in the status string
         global status
         status = st
         try:
@@ -64,7 +65,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
     def checkStatus(self):
-        self.setStatus('Checking')
+        self.setStatus('Checking...')
         self.write_message('VALUE marrtino_version %s' %self.getMARRtinoVersion())
         self.write_message('VALUE marrtino_apps_version %s' %self.getMARRtinoAppVersion())
         self.setStatus('Idle')
@@ -114,7 +115,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         if (message=='updatesystem'):
             print('system update')
-            self.setStatus('Updating')
+            self.setStatus('Updating...')
             self.tmux.cmd(3,'cd %s/install' %self.home)
             self.tmux.cmd(3,'python marrtino_update.py --yes', blocking=True)
             os.sleep(3)
@@ -122,20 +123,20 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         elif (message=='updatemarrtinoapps'):
             print('marrtino_apps update')
-            self.setStatus('Updating')
+            self.setStatus('Updating...')
             self.tmux.cmd(3,'cd %s' %self.mahome)
             self.tmux.cmd(3,'git pull', blocking=True)
             time.sleep(3)
             self.checkStatus()
 
         elif (message=='shutdown'):
-            self.setStatus('Shut down !!!')
+            self.setStatus('Shutdown!!!')
             self.tmux.quitall()
             self.checkStatus()
             self.tmux.cmd(0,'sudo shutdown -h now')
 
         elif (message=='reboot'):
-            self.setStatus('Reboot !!!')
+            self.setStatus('Reboot!!!')
             self.tmux.quitall()
             self.checkStatus()
             self.tmux.cmd(0,'sudo reboot')
