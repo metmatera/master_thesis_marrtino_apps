@@ -51,28 +51,48 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.mahome = self.home+'/src/marrtino_apps'
         self.checkStatus()
 
-    def checkStatus(self):
+
+    def setStatus(self, st):
         global status
-        status = 'Check ...'
+        status = st
+        try:
+            self.write_message("STATUS "+status)
+            #print(status)
+        except tornado.websocket.WebSocketClosedError:
+            print('-- WebSocketClosedError --')
+
+
+
+    def checkStatus(self):
+        self.setStatus('Checking')
         self.write_message('VALUE marrtino_version %s' %self.getMARRtinoVersion())
-        status = 'Idle'
         self.write_message('VALUE marrtino_apps_version %s' %self.getMARRtinoAppVersion())
+        self.setStatus('Idle')
+
+
+
 
     def getMARRtinoVersion(self):
+        print('Checking MARRtino version from MARRTINO_VERSION env ...')
         v = os.getenv('MARRTINO_VERSION')
         if (v==None):
+            print('    ... not found')
+            print('Checking MARRtino version from $HOME/.marrtino_version file ...')
             try:
                 f = open('%s/.marrtino_version' %self.home, 'r')
                 v = f.readline().strip()
                 f.close()
-            except:
+                print('    ... read %s' %v)
+            except Exception as e:
                 v = 'None'
+                print(e)
         return v
 
 
     def getMARRtinoAppVersion(self):
         self.tmux.cmd(3,'cd %s' %self.mahome)
         self.tmux.cmd(3,'git log | head -n 4 | grep Date > /tmp/.marrtinoapp_version', blocking=True)
+        time.sleep(1)
         try:
             f = open('/tmp/.marrtinoapp_version','r')
             v = f.readline().strip()
@@ -81,8 +101,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             lista = v.split('+')
             v=lista[0]
             f.close()
-        except:
+            print('    ... read %s' %v)
+        except Exception as e:
             v = 'None'
+            print(e)
         return v
 
 
@@ -92,6 +114,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         if (message=='updatesystem'):
             print('system update')
+            self.setStatus('Updating')
             self.tmux.cmd(3,'cd %s/install' %self.home)
             self.tmux.cmd(3,'python marrtino_update.py --yes', blocking=True)
             os.sleep(3)
@@ -99,17 +122,20 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         elif (message=='updatemarrtinoapps'):
             print('marrtino_apps update')
+            self.setStatus('Updating')
             self.tmux.cmd(3,'cd %s' %self.mahome)
             self.tmux.cmd(3,'git pull', blocking=True)
-            os.sleep(3)
+            time.sleep(3)
             self.checkStatus()
 
         elif (message=='shutdown'):
+            self.setStatus('Shut down !!!')
             self.tmux.quitall()
             self.checkStatus()
             self.tmux.cmd(0,'sudo shutdown -h now')
 
         elif (message=='reboot'):
+            self.setStatus('Reboot !!!')
             self.tmux.quitall()
             self.checkStatus()
             self.tmux.cmd(0,'sudo reboot')
