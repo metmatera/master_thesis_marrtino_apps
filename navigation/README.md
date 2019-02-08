@@ -3,23 +3,24 @@
 
 ## Install ##
 
-* ROS navigation packages
-
-```
-sudo apt-get install ros-kinetic-navigation
-```
+ROS navigation packages
 
 
-* ROS package: gradient_based_navigation
+    sudo apt-get install ros-kinetic-navigation
 
-```
-https://github.com/Imperoli/gradient_based_navigation
-```
+
+
+ROS package: gradient_based_navigation
+
+
+    git clone https://github.com/Imperoli/gradient_based_navigation
+
+add to catkin workspace and compile.
 
 
 ## Run ##
 
-* Standard navigation
+### Standard navigation ###
 
 To launch navigation modules, use the script 
 
@@ -37,13 +38,16 @@ To send target goals to the robot, use the script
 
 (GX,GY,GTheta): target pose in map coordinates
 
-* To launch only the obstacle avoidance behavior
 
+### Obstacle avoidance behavior only ###
+
+To launch only the obstacle avoidance behavior:
 
     roslaunch obstacle_avoidance.launch
 
 
-Note: to use obstacle avoidance, 
-controllers must publish on /desired_cmd_vel instead of /cmd_vel
+You need a controller (e.g., joystick teleop) to drive the robot.
+
+Note: Controllers must publish on /desired_cmd_vel instead of /cmd_vel
 
 

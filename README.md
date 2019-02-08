@@ -16,9 +16,13 @@ Teleoperation (joystick and keyboard) with obstacle avoidance.
 
 Simple Python programming with basic actions.
 
-## [xtion](https://bitbucket.org/iocchi/marrtino_apps/src/master/xtion/) ##
+## [camera](https://bitbucket.org/iocchi/marrtino_apps/src/master/camera/) ##
 
-RGBD xtion camera and laser2depth node.
+RBG and RGBD camera devices.
+
+## [laser](https://bitbucket.org/iocchi/marrtino_apps/src/master/laser/) ##
+
+Laser and depth2laser devices.
 
 ## [audio](https://bitbucket.org/iocchi/marrtino_apps/src/master/audio/) ##
 
@@ -34,10 +38,9 @@ Marker detection using [Apriltags](https://april.eecs.umich.edu/software/aprilta
 
 ## [navigation](https://bitbucket.org/iocchi/marrtino_apps/src/master/navigation/) ##
 
-Obstacle avoidance
+Obstacle avoidance and navigation in the environment
 
+## [mapping](https://bitbucket.org/iocchi/marrtino_apps/src/master/mapping/) ##
 
-## mapping ##
-
-TODO
+Creating a map of the environment with a range sensor
 
