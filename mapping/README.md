@@ -13,7 +13,7 @@
 
 1. Run robot with laser 
 
-    See [laser](https://bitbucket.org/iocchi/marrtino_apps/src/master/laser) section 
+    See  [robot](https://bitbucket.org/iocchi/marrtino_apps/src/master/robot/) and [laser](https://bitbucket.org/iocchi/marrtino_apps/src/master/laser) sections 
 
 2. Run mapper
 

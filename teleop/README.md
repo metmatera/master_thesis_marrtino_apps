@@ -4,45 +4,47 @@
 
 Download the following packages in your catkin workspace and compile them with catkin_make:
 
-```
-https://github.com/Imperoli/gradient_based_navigation
-```
+
+    https://github.com/Imperoli/gradient_based_navigation
+
 
 For joystick control, you also need the ROS node joy.
 
-```
-sudo apt install ros-kinetic-joy
-```
 
-For obstacle avoidance, you also need xtion and depth2laser (see xtion app).
+    sudo apt install ros-kinetic-joy
+
+
+For obstacle avoidance, you also need a laser device (see [laser](https://bitbucket.org/iocchi/marrtino_apps/src/master/laser/) section)
 
 
 ## Run ##
 
-* Joystick control
-
-```
-roslaunch robot_teleop.launch
-```
+* Joystick/keyboard control
 
 
-* Keyboard control
-
-```
-roslaunch robot_teleop.launch use_joystick:=false
-```
-
-* Keyboard/Joystick control with obstacle avoidance
+        roslaunch teleop.launch [use_joystick:=false]
 
 
-```
-roslaunch robot_teleop_nav.launch  (joystick control)
-roslaunch robot_teleop_nav.launch use_joystick:=false (keyboard control)
-```
+* Joystick/keyboard + real robot control
 
-* Visualizing the sensor data
 
-```
-rosrun rviz rviz -d robot_nav.rviz
-```
+        roslaunch robot_teleop.launch  [use_joystick:=false]
+
+
+* Keyboard/Joystick + real robot control with obstacle avoidance
+
+
+        roslaunch robot_teleop_nav.launch [use_joystick:=false]
+
+
+* Visualizing sensor data
+
+    If you want to display from a remote PC
+
+        export ROS_MASTER_URI=http://<ROBOT_IP>:11311/
+
+    Run the rviz visualizer
+
+        rosrun rviz rviz -d robot_nav.rviz
+
 
