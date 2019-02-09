@@ -151,7 +151,7 @@ def do_move(target_pose):
 # main
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='obstacle nearness navigation')
+    parser = argparse.ArgumentParser(description='move_base navigation')
     parser.add_argument('GX', type=float, help='Goal X')
     parser.add_argument('GY', type=float, help='Goal Y')
     parser.add_argument('GTH', type=float, help='Goal Theta [deg]')

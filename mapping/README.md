@@ -44,5 +44,6 @@
 
         rosrun map_server map_saver -f <MAP_NAME>
 
+    The origin of the map (0,0,0) is the initial pose of the robot when the mapping node is started.
 
 
