@@ -324,6 +324,7 @@ def begin(nodename='robot_cmd'):
         # Run audio connection thread
         t = Thread(target=audio_connect_thread, args=())
         t.start()
+        time.sleep(1)
 
     if (robot_initialized):
         return
