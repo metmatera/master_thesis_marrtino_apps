@@ -20,12 +20,17 @@ Astra:
 
 * Run xtion/astra node
 
-```
-$ roslaunch xtion.launch
-```
+Launch
 
-```
-$ roslaunch astra.launch
-```
+    roslaunch xtion.launch
+
+or
+
+    roslaunch astra.launch
+
+
+To visualize images and depth data
+
+    rosrun rviz rviz -d config/rgbd.rviz
 
 

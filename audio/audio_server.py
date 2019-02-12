@@ -261,7 +261,10 @@ class TTSServer(threading.Thread):
             print('Cannot play audio. No infrastructure available.')
 
         if (self.connection != None):
-            self.connection.send('OK')
+            try:
+                self.connection.send('OK')
+            except:
+                print('Connection closed')
 
     def play(self, name):
         if (use_alsaaudio):

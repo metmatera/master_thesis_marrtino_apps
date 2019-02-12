@@ -296,7 +296,7 @@ def localizer_cb(data):
 run_audio_connect = True
 
 def audio_connect_thread():
-    global run_audio_connect
+    global run_audio_connect, assock
     print("Audio enabled, Connecting...")
     run_audio_connect = True
     while run_audio_connect:
@@ -306,7 +306,7 @@ def audio_connect_thread():
             print("Audio connected.")
             run_audio_connect = False
         except:
-            #print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
+            print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
             time.sleep(2)
 
 
@@ -319,6 +319,11 @@ def begin(nodename='robot_cmd'):
     print 'begin'
 
     stop_request = False
+
+    if (use_audio):
+        # Run audio connection thread
+        t = Thread(target=audio_connect_thread, args=())
+        t.start()
 
     if (robot_initialized):
         return
@@ -356,10 +361,6 @@ def begin(nodename='robot_cmd'):
             odom_robot_pose = [0,0,0]
         robot_initialized = True
 
-    if (use_audio):
-        # Run audio connection thread
-        t = Thread(target=audio_connect_thread, args=())
-        t.start()
 
 
 def end():
@@ -375,7 +376,7 @@ def end():
         global run_audio_connect
         run_audio_connect = False
         global assock
-        if assock:
+        if assock != None:
             assock.close()
             assock=None
     time.sleep(0.5) # make sure stuff ends
