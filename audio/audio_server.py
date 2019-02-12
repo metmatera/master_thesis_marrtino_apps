@@ -209,13 +209,16 @@ class TTSServer(threading.Thread):
                         #print 'sending data back to the client'
                         #self.connection.sendall("OK")
                     elif (data == None or data==""):
-                        break     
+                        break
             finally:
                 print 'TTS Server Connection closed.'
                 # Clean up the connection
                 if (self.connection != None):
                     self.connection.close()
                     self.connection = None
+
+        self.say('Audio server has been closed.', 'en')
+        time.sleep(2)
 
 
 
@@ -268,7 +271,7 @@ class TTSServer(threading.Thread):
 
     def play(self, name):
         if (use_alsaaudio):
-            print 'Play ',name
+            print('Playing %s ...' %name)
             soundfile = None
             i = 0    
             while (i<3): #((not name in self.Sounds) and (i<3)):
@@ -282,9 +285,13 @@ class TTSServer(threading.Thread):
             
             if (soundfile != None and use_alsaaudio): #(name in self.Sounds):
                 self.playwav3(soundfile)
+            print('Play completed.')
 
         if (self.connection != None):
-            self.connection.send('OK')
+            try:
+                self.connection.send('OK')
+            except:
+                print('Connection closed')
 
 
     def playwav(self, soundfile):
