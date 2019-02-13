@@ -86,14 +86,15 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             v2 = 'None'
             print(e)
 
+        print('MARRtino version read %s %s' %(v1,v2))
         if (v1==None):
             return v2
         elif (v2==None):
             return v1
         elif (v1>v2):
-            return v2
-        else:
             return v1
+        else:
+            return v2
 
 
     def getMARRtinoAppVersion(self):
