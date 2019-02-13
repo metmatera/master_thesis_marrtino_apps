@@ -81,7 +81,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             f = open('%s/.marrtino_version' %self.home, 'r')
             v2 = f.readline().strip()
             f.close()
-            print('    ... read %s' %v)
         except Exception as e:
             v2 = 'None'
             print(e)
