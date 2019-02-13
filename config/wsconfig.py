@@ -75,19 +75,25 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def getMARRtinoVersion(self):
         print('Checking MARRtino version from MARRTINO_VERSION env ...')
-        v = os.getenv('MARRTINO_VERSION')
-        if (v==None):
-            print('    ... not found')
-            print('Checking MARRtino version from $HOME/.marrtino_version file ...')
-            try:
-                f = open('%s/.marrtino_version' %self.home, 'r')
-                v = f.readline().strip()
-                f.close()
-                print('    ... read %s' %v)
-            except Exception as e:
-                v = 'None'
-                print(e)
-        return v
+        v1 = os.getenv('MARRTINO_VERSION')
+        print('Checking MARRtino version from $HOME/.marrtino_version file ...')
+        try:
+            f = open('%s/.marrtino_version' %self.home, 'r')
+            v2 = f.readline().strip()
+            f.close()
+            print('    ... read %s' %v)
+        except Exception as e:
+            v2 = 'None'
+            print(e)
+
+        if (v1==None):
+            return v2
+        elif (v2==None):
+            return v1
+        elif (v1>v2):
+            return v2
+        else:
+            return v1
 
 
     def getMARRtinoAppVersion(self):
@@ -118,7 +124,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.setStatus('Updating...')
             self.tmux.cmd(3,'cd %s/install' %self.home)
             self.tmux.cmd(3,'python marrtino_update.py --yes', blocking=True)
-            os.sleep(3)
+            time.sleep(3)
             self.checkStatus()
 
         elif (message=='updatemarrtinoapps'):
