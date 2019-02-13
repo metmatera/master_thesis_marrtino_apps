@@ -163,7 +163,7 @@ class TTSServer(threading.Thread):
     def run(self):
         global asr_server
 
-        if (self.soundhandle == None):
+        if (use_sound_play and self.soundhandle == None):
             self.soundhandle = SoundClient()
             time.sleep(3)
 
