@@ -505,8 +505,9 @@ def bop(r=1):
     for i in range(0,r):
         audioplay('bop')
 
-def boom():
-    audioplay('cannon5')
+def boom(r=1):
+    for i in range(0,r):
+        audioplay('cannon5')
 
 # TTS
 
