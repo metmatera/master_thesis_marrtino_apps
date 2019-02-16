@@ -352,7 +352,7 @@ def begin(nodename='robot_cmd'):
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
 
         odom_robot_pose = [0,0,0]  # default value
-        print("Waiting for robot pose...")
+        print("Waiting for robot pose... (CTRL-C to interrupt)")
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
         try:
@@ -507,6 +507,10 @@ def bip(r=1):
 def bop(r=1):
     for i in range(0,r):
         audioplay('bop')
+
+def boom(r=1):
+    for i in range(0,r):
+        audioplay('cannon5')
 
 # TTS
 

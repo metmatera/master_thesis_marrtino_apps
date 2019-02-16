@@ -124,7 +124,8 @@ if __name__ == "__main__":
     print('ALL DATA FROM SD CARD WILL BE ERASED!!!')
     val = raw_input('Please confirm [yes/no] ')
     if val=='yes':
-        print("Use command  'sudo tmux a -t sdconfig'  in a new terminal if you want to check progresses")
+        print("Running  'sudo tmux a -t sdconfig'  in a new terminal to check progresses.")
+        os.system('xterm -e "sudo tmux a -t sdconfig" &')
         format(tmux)
         write(tmux,args.imagefile)
         check(tmux)

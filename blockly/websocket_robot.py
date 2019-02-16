@@ -1,19 +1,23 @@
 # http://www.html.it/pag/53419/websocket-server-con-python/
-# sudo -H easy_install tornado
+# sudo -H pip install tornado
 
 import sys, os, socket, time, random
 import thread2
 #from thread2 import Thread
 
-import tornado.httpserver
-import tornado.websocket
-import tornado.ioloop
-import tornado.web
-
-#from dummy_robot import begin,end,forward,backward,left,right
-
 import sys
 sys.path.append('../program')
+
+try:
+    import tornado.httpserver
+    import tornado.websocket
+    import tornado.ioloop
+    import tornado.web
+except Exception as e:
+    print(e)
+    print('Install tornado:   sudo -H pip install tornado')
+    sys.exit(0)
+
 
 import robot_cmd_ros
 from robot_cmd_ros import *

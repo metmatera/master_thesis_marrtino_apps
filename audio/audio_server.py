@@ -24,7 +24,7 @@ import argparse
 
 import rospy
 
-use_sound_play = True
+use_sound_play = False
 use_alsaaudio = True
 
 try:

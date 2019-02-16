@@ -49,7 +49,12 @@
   <td>
 
 <table border=1>
-<tr><td></td><td><button id="f_btn" onclick="command('F')"><img src="img/up.png"></button></td><td></td></tr>
+
+<tr>
+  <td><button id="bip_btn" onclick="command('A')"><img src="img/bip.png"></button></td>
+  <td><button id="f_btn" onclick="command('F')"><img src="img/up.png"></button></td>
+  <td><button id="boom_btn" onclick="command('C')"><img src="img/boom.png"></button></td>
+</tr>
 <tr>
   <td><button id="l_btn" onclick="command('L')"><img src="img/rotleft.png"></button></td>
   <td><button id="run_btn" onclick="runCode()"><img src="img/run.png"></button></td>
@@ -104,6 +109,8 @@
        if (c=='B') return "backward";
        if (c=='L') return "left";
        if (c=='R') return "right";
+       if (c=='A') return "bip";
+       if (c=='C') return "boom";
     }
 
     function clearCode() {
