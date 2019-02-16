@@ -26,7 +26,13 @@ function wsrobot_init(port) {
 
     websocket.onmessage = function(event){
       append("message received: "+event.data);
-      document.getElementById("status").innerHTML = event.data;
+      if (event.data.startsWith("display")) {
+        val = event.data.substring(8);
+        document.getElementById("display").innerHTML = val;
+      }
+      else 
+        document.getElementById("status").innerHTML = event.data;
+
     } 
 
     websocket.onopen = function(){

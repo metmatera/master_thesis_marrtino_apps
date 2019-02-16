@@ -108,7 +108,7 @@
 
     function clearCode() {
        program = ""; last_command = ""; last_index = 0;
-       document.getElementById("codeDiv").innerHTML = "<pre>" + currentcode() + "<pre>";        
+       document.getElementById("codeDiv").innerHTML = "<pre>" + currentcode() + "</pre>";        
     }
 
     function command(c) {
@@ -122,7 +122,7 @@
        else {
           last_index++;
        }
-       document.getElementById("codeDiv").innerHTML = "<pre>" + currentcode() + "<pre>";        
+       document.getElementById("codeDiv").innerHTML = "<pre>" + currentcode() + "</pre>";        
     }
 
     function currentcode() {

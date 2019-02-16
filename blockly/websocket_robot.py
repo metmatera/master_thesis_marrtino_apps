@@ -37,7 +37,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         websocket_server = self
         self.run_thread = None
         print('New connection')
-       
+    
+    # messages from Javascript
     def on_message(self, message):
         global code, status
         if (message=='stop'):
@@ -76,6 +77,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         return True
 
 
+# function to be called by programs to display text on web interface
+def display(text):
+    global websocket_server
+    try:
+        #print('  -- writing on websocket: %s' %text)
+        websocket_server.write_message('display %s' %text)
+    except tornado.websocket.WebSocketClosedError:
+        print('Cannot write on websocket')
 
 # Main loop (asynchrounous thread)
 

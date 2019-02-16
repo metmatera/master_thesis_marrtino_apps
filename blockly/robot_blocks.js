@@ -210,5 +210,16 @@ Blockly.Blocks['marrtino_ok'] = {
   }
 };
 
+Blockly.Blocks['display'] = {
+  init: function() {
+    this.appendValueInput("text").appendField("display");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(150);
+ this.setTooltip("displays the argument on the web interface");
+ this.setHelpUrl("");
+  }
+};
 
 

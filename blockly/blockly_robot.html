@@ -171,6 +171,11 @@
         </value>
       </block>
 
+      <block type="display">
+        <value name="TEXT">
+        </value>
+      </block>
+
       <block type="math_number">
         <field name="NUM">1</field>
       </block>
@@ -179,14 +184,6 @@
 
       <block type="text">
         <field name="TEXT"></field>
-      </block>
-
-      <block type="text_print">
-        <value name="TEXT">
-          <shadow type="text">
-            <field name="TEXT">abc</field>
-          </shadow>
-        </value>
       </block>
 
     </category>
@@ -211,6 +208,20 @@
   <td>
     <div id="codeDiv" style="height: 480px; width: 240px; background-color: #DDDDDD; font-size: 120%;"></div>
     
+  </td>
+  </tr>
+  </table>
+
+<br>
+
+  <table border=0>
+  <tr>  <th>Display</th>  </tr>
+  <tr>
+  <td>
+    <div>
+<textarea id="display" rows=1 cols=60>
+</textarea>
+    </div>    
   </td>
   </tr>
   </table>

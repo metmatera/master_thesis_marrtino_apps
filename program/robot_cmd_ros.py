@@ -351,13 +351,16 @@ def begin(nodename='robot_cmd'):
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
 
+        odom_robot_pose = [0,0,0]  # default value
         print("Waiting for robot pose...")
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
         try:
             rate.sleep()
-            while (odom_robot_pose is None):
+            timeout = 5 #seconds
+            while (odom_robot_pose is None and timeout>0):
                 rate.sleep()
+                timeout -= delay
         except KeyboardInterrupt:
             odom_robot_pose = [0,0,0]
         robot_initialized = True

@@ -91,5 +91,9 @@ Blockly.Python['marrtino_ok'] = function(block) {
   return [code, Blockly.Python.ORDER_NONE];
 };
 
-
+Blockly.Python['display'] = function(block) {
+  var value_text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
+  var code = 'display('+value_text+')\n';
+  return code;
+};
 
