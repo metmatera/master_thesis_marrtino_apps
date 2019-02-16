@@ -31,7 +31,7 @@
 
 <table>
 <tr>
-<td>MARRtino version </td>
+<td>MARRtino System version </td>
 <td> <div id="marrtino_version" style="color: blue;" ></div> </td>
 </tr>
 
@@ -41,8 +41,39 @@
 </tr>
 </table>
 
+<hr>
+
+<h1>System update</h1>
+
+<ol>
+<li> Connect to the robot (step above)
+<li> Access through
+<script>
+document.write("<a target=\"_blank\" href=\"https://" + window.location.hostname + ":9200\"/>")
+document.write("ssh " + window.location.hostname+ " (click here)")
+document.write("</a>")
+</script>
+
+<li> Login
+<pre style="font-size:140%;">
+Username: ubuntu
+Password: marrtino
+</pre>
+
+<li> Update
+<pre style="font-size:140%;">
+cd install
+python marrtino_update.py
+</pre>
+
+Confirm and enter password (<tt style="font-size:120%;">marrtino</tt>) when asked for.
+</ol>
+
+<!-- button id="btn_upsys" onclick="send_cmd('updatesystem')">System Update</button -->
+
+<h1>MARRtino Apps Update</h1>
+
 <p>
-<button id="btn_upsys" onclick="send_cmd('updatesystem')">System Update</button>
 <button id="btn_upapp" onclick="send_cmd('updatemarrtinoapps')">marrtino_apps Update</button>
 </p>
 
