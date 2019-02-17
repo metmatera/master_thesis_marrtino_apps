@@ -35,7 +35,7 @@ class TmuxSend:
     def cmd(self, wid, cmd, sleeptime=0.1, blocking=False):
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         if blocking:
-            os.system('tmux send-keys "%s; tmux wait-for -S tmux-end" C-m' %(cmd))
+            os.system('tmux send-keys "%s; sleep 1; tmux wait-for -S tmux-end" C-m' %(cmd))
             self.waitfor('tmux-end')            
         else:
             os.system('tmux send-keys "%s" C-m' %(cmd))
@@ -43,7 +43,9 @@ class TmuxSend:
 
 
     def waitfor(self, wforlabel):
+        print('Waiting for tmux laber %s ...' %wforlabel)
         os.system('tmux wait-for %s' %(wforlabel))
+        print('  ... done')
 
     def killall(self, wid):
         self.Cc(wid)
