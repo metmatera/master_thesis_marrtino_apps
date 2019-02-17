@@ -294,37 +294,42 @@ def localizer_cb(data):
     loc_robot_pose[2] = euler[2] # yaw
 
 run_audio_connect = True
+audio_connected = False
 
 def audio_connect_thread():
     global run_audio_connect, assock
     print("Audio enabled, Connecting...")
     run_audio_connect = True
-    while run_audio_connect:
+    timeout = 5
+    while run_audio_connect and timeout>0:
         assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             assock.connect((AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
             print("Audio connected.")
             run_audio_connect = False
+            audio_connected = True
         except:
             print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
-            time.sleep(2)
-
+            time.sleep(1)
+            timeout -= 1
+    run_audio_connect = False
 
 # Begin/end
 
 def begin(nodename='robot_cmd'):
     global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
     global odom_robot_pose, robot_initialized, stop_request
+    global use_audio, audio_connected
 
     print 'begin'
 
     stop_request = False
 
-    if (use_audio):
+    if (use_audio and not audio_connected):
         # Run audio connection thread
         t = Thread(target=audio_connect_thread, args=())
         t.start()
-        time.sleep(1)
+        time.sleep(0.5)
 
     if (robot_initialized):
         return
@@ -371,20 +376,24 @@ def begin(nodename='robot_cmd'):
 
 def end():
     global robot_initialized, stop_request
+
     if not robot_initialized:
         return
+
+    print 'end'    
 
     if (use_robot):
         stop()
     stop_request = True
-    print 'end'    
+
     if (use_audio):
-        global run_audio_connect
+        global run_audio_connect, audio_connected
         run_audio_connect = False
         global assock
         if assock != None:
             assock.close()
             assock=None
+            audio_connected = False
     time.sleep(0.5) # make sure stuff ends
 
 
