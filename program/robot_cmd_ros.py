@@ -502,7 +502,7 @@ def wait(r=1):
 
 def sound(name):
     global assock
-    print('audioplay %s' %name)
+    print('sound %s' %name)
     try:
         assock.send('SOUND %s\n\r' %name)
         time.sleep(0.5)
