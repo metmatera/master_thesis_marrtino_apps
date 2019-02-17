@@ -160,6 +160,14 @@ class TTSServer(threading.Thread):
                 pass #print "Listen again ..."    
 
 
+    def reply(self,mstr):
+        if (self.connection != None):
+            try:
+                self.connection.send(mstr+'\n\r')
+            except:
+                print('Connection closed')
+
+
     def run(self):
         global asr_server
 
@@ -178,10 +186,10 @@ class TTSServer(threading.Thread):
         while (self.dorun):
             self.connect()
             try:
-                # Receive the data in small chunks and retransmit it
+                # Receive the data in small chunks 
                 while (self.dorun):
                     try:
-                        data = self.connection.recv(80)
+                        data = self.connection.recv(320)
                         data = data.strip()
                     except socket.timeout:
                         data = "***"
@@ -198,16 +206,22 @@ class TTSServer(threading.Thread):
                                 lang = vd[1]
                                 strsay = vd[2]
                             self.say(strsay,lang)
+                            self.reply('OK')
+
                         elif (data=="ASR"):
                             print('asr request')
                             bh = asr_server.get_asr()
-                            self.connection.send(bh+'\n\r')
+                            self.reply(bh)
                             print('asr sent %s' %bh)
 
-                        else:
-                            self.play(data)
+                        elif (data.startswith('SOUND')):
+                            self.play(data[6:]) # play this sound
+                            self.reply('OK')
                         #print 'sending data back to the client'
                         #self.connection.sendall("OK")
+                        else:
+                            print('Message not understood: %s' %data)
+                            self.reply('ERR')
                     elif (data == None or data==""):
                         break
             finally:
@@ -263,11 +277,6 @@ class TTSServer(threading.Thread):
         else:
             print('Cannot play audio. No infrastructure available.')
 
-        if (self.connection != None):
-            try:
-                self.connection.send('OK')
-            except:
-                print('Connection closed')
 
     def play(self, name):
         if (use_alsaaudio):
@@ -284,48 +293,36 @@ class TTSServer(threading.Thread):
                 i += 1
             
             if (soundfile != None and use_alsaaudio): #(name in self.Sounds):
-                self.playwav3(soundfile)
+                self.playwav_aa(soundfile)
             print('Play completed.')
 
-        if (self.connection != None):
-            try:
-                self.connection.send('OK')
-            except:
-                print('Connection closed')
 
-
-    def playwav(self, soundfile):
-        chunk = 2048
-        data = soundfile.readframes(chunk)
-        while (len(data)>0):
-            self.stream.write(data)  
-            data = soundfile.readframes(chunk)  
-
-    def playwav2(self, sfile):
-        global soundfile
-        self.streaming = True
-        self.stream = self.pa.open(format = 8, #self.pa.get_format_from_width(f.getsampwidth()),  
-                channels = 1, #f.getnchannels(),  
-                rate = 44100, #f.getframerate(),  
-                output = True,
-                stream_callback = TTS_callback,
-                output_device_index = self.output_device)
-        soundfile = sfile
-        soundfile.setpos(0)
-        self.stream.start_stream()
-        while self.stream.is_active():
-            time.sleep(1.0)
-        self.stream.stop_stream()  
-        self.stream.close()  
-        self.streaming = False
-
-    def playwav3(self, soundfile):
+    def playwav_aa(self, soundfile):
         soundfile.setpos(0)
         data = soundfile.readframes(self.periodsize)
         while (len(data)>0):
             # print('stream data %d' %(len(data)))
             self.aa_stream.write(data)  
             data = soundfile.readframes(self.periodsize)  
+ 
+
+#    def playwav_pa(self, sfile):
+#        global soundfile
+#        self.streaming = True
+#        self.stream = self.pa.open(format = 8, #self.pa.get_format_from_width(f.getsampwidth#()),  
+#                channels = 1, #f.getnchannels(),  
+#                rate = 44100, #f.getframerate(),  
+#                output = True,
+#                stream_callback = TTS_callback,
+#                output_device_index = self.output_device)
+#        soundfile = sfile
+#        soundfile.setpos(0)
+#        self.stream.start_stream()
+#        while self.stream.is_active():
+#            time.sleep(1.0)
+#        self.stream.stop_stream()  
+#        self.stream.close()  
+#        self.streaming = False
 
 
 

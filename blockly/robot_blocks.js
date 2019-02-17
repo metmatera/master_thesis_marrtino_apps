@@ -222,4 +222,31 @@ Blockly.Blocks['display'] = {
   }
 };
 
+Blockly.Blocks['say'] = {
+  init: function() {
+    this.appendDummyInput().appendField("say");
+    this.appendValueInput("text");
+    this.appendValueInput("lang").appendField("language");
+    this.setInputsInline(true); 
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(50);
+ this.setTooltip("says the argument through audio server. languages: en, it, fr, de, es");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Blocks['sound'] = {
+  init: function() {
+    this.appendDummyInput().appendField("sound");
+    this.appendValueInput("name");
+    this.setInputsInline(true); 
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(50);
+ this.setTooltip("plays the sound through audio server");
+ this.setHelpUrl("");
+  }
+};
+
 

@@ -97,3 +97,18 @@ Blockly.Python['display'] = function(block) {
   return code;
 };
 
+
+Blockly.Python['say'] = function(block) {
+  var value_text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC);
+  var value_lang = Blockly.Python.valueToCode(block, 'lang', Blockly.Python.ORDER_ATOMIC);
+  var code = 'say('+value_text+','+value_lang+')\n';
+  return code;
+};
+
+Blockly.Python['sound'] = function(block) {
+  var value_name = Blockly.Python.valueToCode(block, 'name', Blockly.Python.ORDER_ATOMIC);
+  var code = 'sound('+value_name+')\n';
+  return code;
+};
+
+

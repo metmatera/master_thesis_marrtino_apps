@@ -134,6 +134,30 @@
 
     </category>
 
+    <category colour="50" name="Audio">
+
+      <block type="say">
+        <value name="text">
+          <block type="text">
+            <field name="TEXT">hello</field>
+          </block>
+        </value>
+        <value name="lang">
+          <block type="text">
+            <field name="TEXT">en</field>
+          </block>
+        </value>
+      </block>
+      <block type="sound">
+        <value name="name">
+          <block type="text">
+            <field name="TEXT">bip</field>
+          </block>
+        </value>
+      </block>
+
+    </category>
+
     <category colour="200" name="Controls">
 
       <block type="controls_if"></block>
@@ -217,10 +241,8 @@
   <table border=0>
   <tr>  <th>Display</th>  </tr>
   <tr>
-  <td>
-    <div>
-<textarea id="display" rows=1 cols=60 style="color:#0000FF; background-color: #EEFFCC; font-size: 150%;">
-</textarea>
+  <td style="color:#0000FF; background-color: #EEFFCC; font-size: 150%;" width=500 height=20>
+    <div id="display">
     </div>    
   </td>
   </tr>

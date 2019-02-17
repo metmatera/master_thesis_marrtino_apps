@@ -351,8 +351,7 @@ def begin(nodename='robot_cmd'):
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
 
-        odom_robot_pose = [0,0,0]  # default value
-        print("Waiting for robot pose... (CTRL-C to interrupt)")
+        print("Waiting for robot pose... (5 seconds)")
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
         try:
@@ -362,7 +361,10 @@ def begin(nodename='robot_cmd'):
                 rate.sleep()
                 timeout -= delay
         except KeyboardInterrupt:
-            odom_robot_pose = [0,0,0]
+            pass
+        if (odom_robot_pose is None):
+            print("Robot pose not received. Using [0,0,0]")
+            odom_robot_pose = [0,0,0]  # default value
         robot_initialized = True
 
 
@@ -489,11 +491,11 @@ def wait(r=1):
 
 # Sounds
 
-def audioplay(name):
+def sound(name):
     global assock
     print('audioplay %s' %name)
     try:
-        assock.send('%s\n\r' %name)
+        assock.send('SOUND %s\n\r' %name)
         time.sleep(0.5)
         data = assock.recv(80)
         print data
@@ -502,15 +504,15 @@ def audioplay(name):
 
 def bip(r=1):
     for i in range(0,r):
-        audioplay('bip')
+        sound('bip')
 
 def bop(r=1):
     for i in range(0,r):
-        audioplay('bop')
+        sound('bop')
 
 def boom(r=1):
     for i in range(0,r):
-        audioplay('cannon5')
+        sound('boom')
 
 # TTS
 
