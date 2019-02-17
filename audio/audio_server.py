@@ -13,6 +13,8 @@
 
 # Note: some initial sound may not be played.
 
+# alsaaudio examples
+# https://larsimmisch.github.io/pyalsaaudio/libalsaaudio.html
 
 import threading
 import time
@@ -126,25 +128,40 @@ class TTSServer(threading.Thread):
         if (self.output_device=='sysdefault'):
             # select proper sysdefault name
             for l in pp:
-                print l
+                print('  %s' %l)
                 if (l[0:10]=='sysdefault'):
                     print "choose ",l
                     self.output_device = l # choose default device
                     break
         print("Audio device used: %s" %self.output_device)
 
-        self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
-        self.aa_stream.setformat(alsaaudio.PCM_FORMAT_S16_LE)
-        self.aa_stream.setchannels(1)
-        self.audio_rate = 44100
-        self.periodsize = self.audio_rate / 8
-        self.aa_stream.setrate(self.audio_rate)
-        self.aa_stream.setperiodsize(self.periodsize)
+        self.aa_stream = None
+        try:
+            self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
+        except Exception as e:
+            print(e)
+
+        if self.aa_stream == None:
+            try:
+                self.output_device='default'
+                print("Audio device used: %s" %self.output_device)
+                self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
+            except Exception as e:
+                print(e)
+
+        if self.aa_stream != None:
+            self.aa_stream.setformat(alsaaudio.PCM_FORMAT_S16_LE)
+            self.aa_stream.setchannels(1)
+            self.audio_rate = 44100
+            self.periodsize = self.audio_rate / 8
+            self.aa_stream.setrate(self.audio_rate)
+            self.aa_stream.setperiodsize(self.periodsize)
 
 
 
     def stop(self):
         self.dorun = False
+        
 
     def connect(self):
         connected = False
@@ -233,7 +250,7 @@ class TTSServer(threading.Thread):
 
         self.say('Audio server has been closed.', 'en')
         time.sleep(2)
-
+        self.aa_stream = None
 
 
     def say(self, data, lang):
@@ -302,7 +319,8 @@ class TTSServer(threading.Thread):
         data = soundfile.readframes(self.periodsize)
         while (len(data)>0):
             # print('stream data %d' %(len(data)))
-            self.aa_stream.write(data)  
+            if self.aa_stream != None:
+                self.aa_stream.write(data)  
             data = soundfile.readframes(self.periodsize)  
  
 
