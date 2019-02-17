@@ -4,6 +4,7 @@
 import sys, os, socket, time, random
 import thread2
 #from thread2 import Thread
+from numbers import Number
 
 import sys
 sys.path.append('../program')
