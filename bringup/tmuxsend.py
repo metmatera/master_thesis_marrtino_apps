@@ -43,9 +43,9 @@ class TmuxSend:
 
 
     def waitfor(self, wforlabel):
-        print('Waiting for tmux laber %s ...' %wforlabel)
+        #print('Waiting for tmux laber %s ...' %wforlabel)
         os.system('tmux wait-for %s' %(wforlabel))
-        print('  ... done')
+        #print('  ... done')
 
     def killall(self, wid):
         self.Cc(wid)
