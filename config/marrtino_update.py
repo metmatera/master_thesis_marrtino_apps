@@ -13,6 +13,9 @@ def getversion(upstr):
     return r
 
 
+# cd ~/install'
+os.chdir(os.getenv('HOME')+'/install')
+
 cmd = 'wget -N '+URLbase+updatesfile
 os.system(cmd)
 
