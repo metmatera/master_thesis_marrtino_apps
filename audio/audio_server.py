@@ -196,7 +196,7 @@ class TTSServer(threading.Thread):
             self.soundhandle = SoundClient()
             time.sleep(3)
 
-        self.setVolume(100)  # max volume
+        self.setVolume(99)  # set volume (99% = +3 dB)
 
         print 'bip'
         self.play('bip')
