@@ -185,12 +185,18 @@ class TTSServer(threading.Thread):
                 print('Connection closed')
 
 
+    def setVolume(volperc): # volume in percentag [0-100]
+        cmdstr = 'amixer set PCM %d%%' %volperc
+        os.system(cmdstr)
+
     def run(self):
         global asr_server
 
         if (use_sound_play and self.soundhandle == None):
             self.soundhandle = SoundClient()
             time.sleep(3)
+
+        setVolume(100)  # max volume
 
         print 'bip'
         self.play('bip')
