@@ -4,6 +4,8 @@ import argparse
 import sys
 sys.path.append('../bringup')
 
+devicename = '/dev/mmcblk0'
+
 from tmuxsend import TmuxSend
 
 #        Device Boot      Start         End      Blocks   Id  System
@@ -20,16 +22,16 @@ from tmuxsend import TmuxSend
 
 def umount(tmux):
     #tmux.cmd(1,'df -h')
-    tmux.cmd(1,'umount /dev/mmcblk0p1',blocking=True)
-    tmux.cmd(1,'umount /dev/mmcblk0p2',blocking=True)
-    tmux.cmd(1,'umount /dev/mmcblk0p3',blocking=True)
+    tmux.cmd(1,'umount %sp1' %devicename,blocking=True)
+    tmux.cmd(1,'umount %sp2' %devicename,blocking=True)
+    tmux.cmd(1,'umount %sp3' %devicename,blocking=True)
     #tmux.cmd(1,'df -h')
     time.sleep(3)
 
 
 def mount(tmux):
     tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT',blocking=True)
-    tmux.cmd(1,'mount /dev/mmcblk0p2 /media/$SUDO_USER/PI_ROOT',blocking=True)
+    tmux.cmd(1,'mount %sp2 /media/$SUDO_USER/PI_ROOT' %devicename,blocking=True)
     #tmux.cmd(1,'df -h')
     time.sleep(3)
 
@@ -45,10 +47,10 @@ def format(tmux):
 
     wid = 1
     umount(tmux)
-    tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(wid,'fdisk %s' %devicename,2)
     tmux.cmd(wid,'p\no\nw\n')
     time.sleep(1)
-    tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(wid,'fdisk %s' %devicename,2)
     tmux.cmd(wid,'n\np\n1\n2048\n133119\nt\ne\np\n')
     time.sleep(1)
     tmux.cmd(wid,'n\np\n2\n133120\n20613119\np\n')
@@ -57,21 +59,29 @@ def format(tmux):
 
     umount(tmux)
 
-    tmux.cmd(wid,'mkfs.fat -n PI_BOOT /dev/mmcblk0p1',blocking=True)
-    tmux.cmd(wid,'mkfs.ext4 -F -L PI_ROOT /dev/mmcblk0p2',blocking=True)
-    tmux.cmd(wid,'mkfs.ext4 -F -L data /dev/mmcblk0p3',blocking=True)
+    tmux.cmd(wid,'mkfs.fat -n PI_BOOT %sp1' %devicename,blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -F -L PI_ROOT %sp2' %devicename,blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -F -L data %sp3' %devicename,blocking=True)
     time.sleep(3)
 
-    tmux.cmd(wid,'fdisk /dev/mmcblk0',2)
+    tmux.cmd(wid,'fdisk %s' %devicename,2)
     tmux.cmd(wid,'a\n1\np\nw\n',3)
 
     umount(tmux)
 
 def write(tmux, imagefile):
     print('Writing ...')
-    umount(tmux)
+    #umount(tmux)
     wid=2
-    tmux.cmd(wid,'./writeimg.bash %s' %imagefile, blocking=True)
+
+    #tmux.cmd(wid,'./writeimg.bash %s' %imagefile, blocking=True)
+
+    cmd = 'dd if=%s_boot.img bs=512 of=%sp1' %(imagefile,devicename)
+    tmux.cmd(wid, cmd, blocking=True)
+    cmd = 'dd if=%s_root.img | pv -s 11G | dd bs=512 of=%sp2' %(imagefile,devicename)
+    tmux.cmd(wid, cmd, blocking=True)
+    tmux.cmd(wid, 'sudo sync', blocking=True)
+
     umount(tmux)
     
 
