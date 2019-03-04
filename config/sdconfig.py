@@ -5,6 +5,9 @@ import sys
 sys.path.append('../bringup')
 
 devicename = '/dev/mmcblk0'
+devicenamep1 = '/dev/mmcblk0p1'
+devicenamep2 = '/dev/mmcblk0p2'
+devicenamep3 = '/dev/mmcblk0p3'
 
 from tmuxsend import TmuxSend
 
@@ -22,16 +25,16 @@ from tmuxsend import TmuxSend
 
 def umount(tmux):
     #tmux.cmd(1,'df -h')
-    tmux.cmd(1,'umount %sp1' %devicename,blocking=True)
-    tmux.cmd(1,'umount %sp2' %devicename,blocking=True)
-    tmux.cmd(1,'umount %sp3' %devicename,blocking=True)
+    tmux.cmd(1,'umount %s' %devicenamep1, blocking=True)
+    tmux.cmd(1,'umount %s' %devicenamep2, blocking=True)
+    tmux.cmd(1,'umount %s' %devicenamep3, blocking=True)
     #tmux.cmd(1,'df -h')
     time.sleep(3)
 
 
 def mount(tmux):
     tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT',blocking=True)
-    tmux.cmd(1,'mount %sp2 /media/$SUDO_USER/PI_ROOT' %devicename,blocking=True)
+    tmux.cmd(1,'mount %s /media/$SUDO_USER/PI_ROOT' %devicenamep2,blocking=True)
     #tmux.cmd(1,'df -h')
     time.sleep(3)
 
@@ -59,9 +62,9 @@ def format(tmux):
 
     umount(tmux)
 
-    tmux.cmd(wid,'mkfs.fat -n PI_BOOT %sp1' %devicename,blocking=True)
-    tmux.cmd(wid,'mkfs.ext4 -F -L PI_ROOT %sp2' %devicename,blocking=True)
-    tmux.cmd(wid,'mkfs.ext4 -F -L data %sp3' %devicename,blocking=True)
+    tmux.cmd(wid,'mkfs.fat -n PI_BOOT %s' %devicenamep1,blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -F -L PI_ROOT %s' %devicenamep2,blocking=True)
+    tmux.cmd(wid,'mkfs.ext4 -F -L data %s' %devicenamep3,blocking=True)
     time.sleep(3)
 
     tmux.cmd(wid,'fdisk %s' %devicename,2)
@@ -76,9 +79,9 @@ def write(tmux, imagefile):
 
     #tmux.cmd(wid,'./writeimg.bash %s' %imagefile, blocking=True)
 
-    cmd = 'dd if=%s_boot.img bs=512 of=%sp1' %(imagefile,devicename)
+    cmd = 'dd if=%s_boot.img bs=512 of=%s' %(imagefile,devicenamep1)
     tmux.cmd(wid, cmd, blocking=True)
-    cmd = 'dd if=%s_root.img | pv -s 11G | dd bs=512 of=%sp2' %(imagefile,devicename)
+    cmd = 'dd if=%s_root.img | pv -s 11G | dd bs=512 of=%s' %(imagefile,devicenamep2)
     tmux.cmd(wid, cmd, blocking=True)
     tmux.cmd(wid, 'sudo sync', blocking=True)
 
@@ -122,18 +125,37 @@ def test(tmux):
 
 if __name__ == "__main__":
 
-    if os.geteuid() != 0:
-        exit("You need to have root privileges to run this script.")
 
     parser = argparse.ArgumentParser(description='MARRtino SD config')
     parser.add_argument('imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_v2.0)')
+    parser.add_argument('-device', type=str, help='device name (default: %s)' %devicename, default=devicename)
     args = parser.parse_args()
-    tmux = TmuxSend('sdconfig',['format','write','check'])
+    devicename = args.device
 
-    print('Format SD card with image file %s' %args.imagefile)
-    print('ALL DATA FROM SD CARD WILL BE ERASED!!!')
+    if (devicename[0:7]=='/dev/mm'):
+        devicenamep1 = devicename + 'p1'
+        devicenamep2 = devicename + 'p2'
+        devicenamep3 = devicename + 'p3'
+        print('%s' %devicenamep1)
+    elif (devicename[0:7]=='/dev/sd'):
+        devicenamep1 = devicename + '1'
+        devicenamep2 = devicename + '2'
+        devicenamep3 = devicename + '3'
+  
+    print('Device: %s (%s, %s, %s)' %(devicename,devicenamep1,devicenamep2,devicenamep3))
+        
+
+    print('Format SD card %s with image file %s' %(devicename,args.imagefile))
+
+    if os.geteuid() != 0:
+        exit("You need to have root privileges to run this script.")
+    
+    print('ALL DATA FROM SD CARD %s WILL BE ERASED!!!' %(devicename))
     val = raw_input('Please confirm [yes/no] ')
     if val=='yes':
+
+        tmux = TmuxSend('sdconfig',['format','write','check'])
+
         print("Running  'sudo tmux a -t sdconfig'  in a new terminal to check progresses.")
         os.system('xterm -e "sudo tmux a -t sdconfig" &')
         format(tmux)
