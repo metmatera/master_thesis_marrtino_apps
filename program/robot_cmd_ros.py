@@ -563,7 +563,7 @@ try:
     from ws_client import *
     mws = ModimWSClient()
 except:
-    print("%sNo MODIM found!%s" %(RED,RESET))
+    print("No MODIM found!")
 
 # example: show('image_default', 'img/red.jpg')
 
