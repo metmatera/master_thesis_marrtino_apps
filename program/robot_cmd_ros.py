@@ -559,7 +559,7 @@ def asr():
 mws = None  # MODIM websocket connection
 
 try:
-    sys.path.append(os.getenv('MODIM_HOME2')+"/src/GUI")
+    sys.path.append(os.getenv('MODIM_HOME')+"/src/GUI")
     from ws_client import *
     mws = ModimWSClient()
 except:
