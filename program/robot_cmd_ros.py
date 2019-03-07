@@ -334,10 +334,9 @@ def begin(nodename='robot_cmd'):
     if (robot_initialized):
         return
 
-    try:
-        rospy.init_node(nodename,  disable_signals=True)
-    except:
-        return
+    # blocking function if roscore not available !!!
+    # do not throw exception
+    rospy.init_node(nodename,  disable_signals=True)
 
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
@@ -553,6 +552,37 @@ def asr():
         return data
     except:
         return ''
+
+
+# MODIM
+
+mws = None  # MODIM websocket connection
+
+try:
+    sys.path.append(os.getenv('MODIM_HOME2')+"/src/GUI")
+    from ws_client import *
+    mws = ModimWSClient()
+except:
+    print("%sNo MODIM found!%s" %(RED,RESET))
+
+# example: show('image_default', 'img/red.jpg')
+
+def show_image(value, which='default'):
+    global mws
+    if mws!=None:
+        cstr = "im.executeModality('image_%s', 'img/%s')" %(which,value)
+        #print(cstr)
+        r = mws.csend(cstr)
+        print(r)
+
+
+def show_text(value, which='default'):
+    global mws
+    if mws!=None:
+        cstr = "im.executeModality('text_%s', '%s')" %(which,value)
+        #print(cstr)
+        r = mws.csend(cstr)
+        print(r)
 
 
 # Precise move and turn

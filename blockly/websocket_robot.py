@@ -6,6 +6,15 @@ import thread2
 #from thread2 import Thread
 from numbers import Number
 
+RED   = "\033[1;31m"  
+BLUE  = "\033[1;34m"
+CYAN  = "\033[1;36m"
+GREEN = "\033[0;32m"
+RESET = "\033[0;0m"
+BOLD    = "\033[;1m"
+REVERSE = "\033[;7m"
+
+
 import sys
 sys.path.append('../program')
 
@@ -29,7 +38,7 @@ robot_cmd_ros.use_robot = True
 
 websocket_server = None     # websocket handler
 run = True                  # main_loop run flag
-server_port = 9010          # web server port
+server_port = 9020          # web server port
 code = None
 status = "Idle"             # robot status sent to websocket
 
@@ -213,7 +222,7 @@ if __name__ == "__main__":
             (r'/websocketserver', MyWebSocketServer),])  
         http_server = tornado.httpserver.HTTPServer(application)
         http_server.listen(server_port)
-        print("Websocket server listening on port %d" %(server_port))
+        print("%sWebsocket server listening on port %d%s" %(GREEN,server_port,RESET))
         try:
             tornado.ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
