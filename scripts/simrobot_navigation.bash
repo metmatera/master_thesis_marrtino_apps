@@ -3,6 +3,12 @@ SESSION=$USER
 
 tmux -2 new-session -d -s $SESSION
 
+# arg 1 contains the name of the map [default is 'map']
+set map = "map"
+if [ "x$1" != "x" ]; then
+  set map = "$1"
+fi
+
 # window 0
 tmux rename-window 'Robot'
 
@@ -24,7 +30,7 @@ sleep 1
 
 tmux select-pane -t 2
 tmux send-keys "cd $HOME/src/marrtino_apps/navigation" C-m
-tmux send-keys "roslaunch amcl.launch map_name:=map" C-m
+tmux send-keys "roslaunch srrg_localizer.launch map_name:=$map" C-m
 sleep 1
 
 tmux select-pane -t 3
@@ -34,5 +40,5 @@ sleep 1
 
 
 # Attach to session
-tmux -2 attach-session -t $SESSION
+xterm -e "tmux -2 attach-session -t $SESSION" &
 

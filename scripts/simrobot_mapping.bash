@@ -44,12 +44,12 @@ sleep 1
 tmux split-window -v
 
 tmux send-keys "cd $HOME/src/marrtino_apps/mapping/maps" C-m
-tmux send-keys "rosrun map_server map_saver -f map"
+tmux send-keys "rosrun map_server map_saver -f mymap"
 sleep 1
 
 # Set default window
 tmux select-window -t $SESSION:1
 
 # Attach to session
-tmux -2 attach-session -t $SESSION
+xterm -e "tmux -2 attach-session -t $SESSION" &
 
