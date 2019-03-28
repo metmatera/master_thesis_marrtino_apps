@@ -570,7 +570,7 @@ except:
 def show_image(value, which='default'):
     global mws
     if mws!=None:
-        cstr = "im.executeModality('image_%s', 'img/%s')" %(which,value)
+        cstr = 'im.executeModality("image_%s", "img/%s")' %(which,value)
         #print(cstr)
         r = mws.csend(cstr)
         print(r)
@@ -579,7 +579,7 @@ def show_image(value, which='default'):
 def show_text(value, which='default'):
     global mws
     if mws!=None:
-        cstr = "im.executeModality('text_%s', '%s')" %(which,value)
+        cstr = 'im.executeModality("text_%s", "%s")' %(which,value)
         #print(cstr)
         r = mws.csend(cstr)
         print(r)

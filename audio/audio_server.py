@@ -180,6 +180,7 @@ class TTSServer(threading.Thread):
     def reply(self,mstr):
         if (self.connection != None):
             try:
+                mstr = mstr.encode('utf-8')
                 self.connection.send(mstr+'\n\r')
             except:
                 print('Connection closed')
@@ -220,7 +221,8 @@ class TTSServer(threading.Thread):
                         data = None
                     
                     if (data!=None and data !="" and data!="***"):
-                        print 'TTS Received "%s"' % data
+                        if data!="ASR":
+                            print 'TTS Received [%s]' % data
                         if (data.startswith('TTS')):
                             lang = 'en-US' # default language
                             strsay = data[4:]
@@ -232,10 +234,11 @@ class TTSServer(threading.Thread):
                             self.reply('OK')
 
                         elif (data=="ASR"):
-                            print('asr request')
+                            #print('asr request')
                             bh = asr_server.get_asr()
                             self.reply(bh)
-                            print('asr sent %s' %bh)
+                            if bh!='':
+                                print('ASR sent [%s]' %bh)
 
                         elif (data.startswith('SOUND')):
                             self.play(data[6:]) # play this sound

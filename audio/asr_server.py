@@ -58,7 +58,8 @@ class ASRServer(threading.Thread):
                         data = None
                     
                     if (data!=None and data !="" and data!="***" and data[0]!='$' and data!='KEEP_AWAKE'):
-                        print 'ASR Received %s' % data
+                        if data!='REQ':
+                            print 'ASR Received %s' % data
                         self.received = data
                         if (data[0]=='{'): # json string                        
                             transcriptions = json.loads(data)
@@ -79,7 +80,7 @@ class ASRServer(threading.Thread):
 
     def get_asr(self):
         dt = time.time() - self.rcv_time
-        print "dtime ",dt
+        #print "dtime ",dt
         if (dt < 5): # only if in the last 5 seconds
             r = self.best_hypo  # send only once
             self.best_hypo = ''
