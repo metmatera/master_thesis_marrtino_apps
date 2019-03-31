@@ -489,12 +489,15 @@ def turn(deg):
 # Wait
 
 def wait(r=1):
+    global stop_request
     print 'wait',r
     if (r==0):
         time.sleep(0.1)
     else:
-        for i in range(0,r):
+        i = 0
+        while i<r and not stop_request:
             time.sleep(1)
+            i += 1
 
 
 # Sounds
@@ -541,13 +544,15 @@ def say(text, language='en'):
 # ASR
 
 def asr():
-    global assock
+    global assock, stop_request
     #print 'ASR received: ',
     try:
-        assock.send('ASR\n\r')  # ask for ASR results
-        time.sleep(0.5)
-        data = assock.recv(160)
-        data = data.strip()
+        data = ''
+        while data=='' and not stop_request:
+            assock.send('ASR\n\r')  # ask for ASR results
+            time.sleep(0.5)
+            data = assock.recv(160)
+            data = data.strip()
         #print data
         return data
     except:
