@@ -136,6 +136,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
 
+        elif (message=='updatemodim'):
+            print('MODIM update')
+            self.setStatus('Updating...')
+            self.tmux.cmd(3,'cd %s/src/modim' %self.home)
+            self.tmux.cmd(3,'git pull', blocking=True)
+            time.sleep(3)
+            self.checkStatus()
+
         elif (message=='shutdown'):
             self.setStatus('Shutdown!!!')
             self.tmux.quitall()
