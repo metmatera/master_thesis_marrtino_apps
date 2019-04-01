@@ -1,13 +1,15 @@
 #!/bin/bash
 SESSION=$USER
 
-tmux -2 new-session -d -s $SESSION
-
 # arg 1 contains the name of the map [default is 'map']
-set map = "map"
+map="map"
 if [ "x$1" != "x" ]; then
-  set map = "$1"
+  map="$1"
 fi
+
+echo "Running navigation with map $map"
+
+tmux -2 new-session -d -s $SESSION
 
 # window 0
 tmux rename-window 'Robot'
