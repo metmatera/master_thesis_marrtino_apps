@@ -282,6 +282,29 @@ def check_tfs():
     check_tf('base_frame', 'rgb_camera_frame')
     check_tf('base_frame', 'depth_camera_frame')
 
+def check_nav(m, r):
+    print '  --',m,
+    if '/'+m in nodenames:
+        printOK()
+        t = True
+    else:
+        printFail()
+        t = False
+    r.append([m,t])
+
+
+def check_navigation():
+    r = []
+    print('Check navigation modules ...')
+    check_nav('gmapping',r)
+    check_nav('srrg_mapper2d',r)
+    check_nav('amcl',r)
+    check_nav('srrg_localizer',r)
+    check_nav('move_base_node',r)
+    check_nav('gradient_based_navigation',r)
+
+    return r
+
 
 def main():
     r = check_ROS()
@@ -295,6 +318,7 @@ def main():
         check_rgb_camera()
         check_depth_camera()
         check_tfs()
+        check_navigation()
 
 
 if __name__=='__main__':

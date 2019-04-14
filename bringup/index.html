@@ -2,6 +2,37 @@
 <head>
   <title>MARRtino bringup</title>
   <script src="../blockly/websocket_robot.js"></script>
+
+
+  <style>
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 10%;
+      top: 20%;
+      width: 80%; /* Full width */
+      height: 50%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 3px solid #888;
+      left: 10%;
+      width: 80%;
+    }
+
+  </style>
+
 </head>
 <body>
 <h1 align="center">MARRtino bringup</h1>
@@ -79,6 +110,8 @@ ROS topics:
 <h1> Simulator start-up actions </h1>
 
 <p>
+
+Simrobot status: <span id="simrobot_status" style="color: red;">OFF</span> &nbsp;&nbsp;&nbsp;
 <button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')">Simrobot start</button>
 <button id="simrobot_quit_btn" onclick="send_cmd('simrobot_kill')">Simrobot quit</button>
 </p>
@@ -172,9 +205,111 @@ ROS topics:
 <hr>
 
 
+<h1> Functionalities </h1>
+
+
+<hr>
+
+<h2>Mapping & Navigation</h2>
+
+<table>
+
+<tr> <td colspan=4> 
+Run <b>rviz</b> to see the map under construction and set target goals.<br>
+<p>
+Mapping and navigation with the robot:
+<listing style="color: blue; font-size: 140%;">
+export ROS_MASTER_URI=http://10.3.1.1/11311 
+cd src/marrtino_apps/mapping
+rosrun rviz rviz -d mapping.rviz
+</listing>
+</p>
+<p>
+Mapping and navigation with the simulator:
+<listing style="color: blue; font-size: 140%;">
+cd src/marrtino_apps/mapping
+rosrun rviz rviz -d mapping.rviz
+</listing>
+</p>
+</td> 
+</tr>
+
+<tr> <td colspan=4> <h3>Mapper</h3> </td> </tr>
+
+<tr height=40>
+<td width=160>GMapping</td> 
+<td width=80><span id="gmapping_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="gmapping_start_btn" onclick="send_cmd('gmapping_start')">GMapping start</button>
+<button id="gmapping_quit_btn" onclick="send_cmd('gmapping_kill')">GMapping quit</button>
+</td>
+</tr>
+
+<tr height=40>
+<td>SRRG mapper</td>
+<td><span id="srrg_mapper2d_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="srrg_mapper2d_start_btn" onclick="send_cmd('srrg_mapper2d_start')">SRRG mapper start</button>
+<button id="srrg_mapper2d_quit_btn" onclick="send_cmd('srrg_mapper2d_kill')">SRRG mapper quit</button>
+</td>
+</tr>
+
+
+<tr> <td> </td> <td> </td> <td> <button id="save_map_btn" onclick="send_cmd('save_map')">Save Map</button> </td> </tr>
+
+
+<tr> <td colspan=4> <hr> </td> </tr>
+
+<tr> <td colspan=4> <h3>Localizer</h3> </td> </tr>
+
+<tr height=40>
+<td>AMCL</td> 
+<td><span id="amcl_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="amcl_start_btn" onclick="send_cmd('amcl_start')">AMCL start</button>
+<button id="amcl_quit_btn" onclick="send_cmd('amcl_kill')">AMCL quit</button>
+</td>
+</tr>
+
+<tr height=40>
+<td>SRRG Localizer</td> 
+<td><span id="srrg_localizer_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="srrg_localizer_start_btn" onclick="send_cmd('srrg_localizer_start')">SRRG Localizer start</button>
+<button id="srrg_localizer_quit_btn" onclick="send_cmd('srrg_localizer_kill')">SRRG Localizer quit</button>
+</td>
+</tr>
+
+<tr> <td colspan=4> <hr> </td> </tr>
+
+<tr> <td colspan=4> <h3>Navigator</h3> </td> </tr>
+
+<tr height=40>
+<td>MoveBase</td> 
+<td><span id="move_base_node_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="move_base_node_start_btn" onclick="send_cmd('move_base_node_start')">MoveBase start</button>
+<button id="move_base_node_quit_btn" onclick="send_cmd('move_base_node_kill')">MoveBase quit</button>
+</td>
+</tr>
+
+
+</table>
+
 <hr>
 
 <br><br><br>
+
+
+<!-- The Modal -->
+<div id="waitModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <h2 align='center'>Please wait..</h2>
+  </div>
+
+</div>
 
 </body>
 
@@ -183,7 +318,24 @@ ROS topics:
 
 <script>
 
+
+    function waitwindow_on() {
+        var modal = document.getElementById('waitModal');
+        modal.style.display = "block";
+        console.log("waitwindow_on")
+    }
+
+    function waitwindow_off() {
+        var modal = document.getElementById('waitModal');
+        modal.style.display = "none";
+        console.log("waitwindow_off")
+    }
+
+    // setTimeout(waitwindow_on(), 4000);
+    
+
     //document.getElementById("simrobot_start_btn").disabled = false;
+
 
     // messages received from wsserver
     eventproc = function(event){
@@ -193,24 +345,51 @@ ROS topics:
           vs = '';
           for (i=1; i<v.length ; i++)
              vs += v[i]+' '
-
+          vs = vs.trim();
           document.getElementById("status").innerHTML = vs;
+          var d = new Date();
+          console.log(d+" - status ["+vs+"]");
+          if (vs=="Idle")
+            waitwindow_off();
+          else
+            waitwindow_on();
       }
       else if (v[0]=='RESULT') {
           cv = v[2];
+          console.log("log: "+ v[1] + " " + v[2])
           if (v[2]=='True') {
             cv = "<font color='green'>"+v[2]+"</font>"
-            document.getElementById(v[1]).style.color = 'green';
+            d = document.getElementById(v[1])
+            if (d!=null)
+                d.style.color = 'green';
             //document.getElementById(v[1]+"_btn").style.color = 'green';
 
             //document.getElementById(v[1]+"_start_btn").disabled = false;
             //document.getElementById(v[1]+"_quit_btn").disabled = false;
+
+            vst = v[1]+"_status"; // status label
+            d = document.getElementById(vst);
+            if (d!=null) {
+                d.innerHTML = 'OK';
+                d.style.color = 'green';
+            }
+
           }
           else if (v[2]=='False') {
             cv = "<font color='red'>"+v[2]+"</font>"
-            document.getElementById(v[1]).style.color = 'red';
+            d = document.getElementById(v[1]);
+            if (d!=null)
+                d.style.color = 'red'
             //document.getElementById(v[1]+"_start_btn").disabled = false;
             //document.getElementById(v[1]+"_quit_btn").disabled = false;
+
+            vst = v[1]+"_status"; // status label
+            d = document.getElementById(vst);
+            if (d!=null) {
+                d.innerHTML = 'OFF';
+                d.style.color = 'red';
+            }
+
           }
       }
       else if (v[0]=='VALUE') {
