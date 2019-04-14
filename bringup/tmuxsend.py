@@ -9,9 +9,9 @@ class TmuxSend:
         self.sessionname = sessionname
         os.system('tmux -2 new-session -d -s %s' %self.sessionname) # tmux session
         os.system('tmux select-window -t %s:0' %self.sessionname)
-        os.system('tmux rename-window \'quit\'')                  # window 0 - quit
-        for i in range(0,self.nwindows):
-            os.system('tmux new-window -t %s:%d -n \'%s\'' %(self.sessionname, i+1, listwindows[i]))    
+        os.system('tmux rename-window \'%s\'' %listwindows[0])      # window 0
+        for i in range(1,self.nwindows):
+            os.system('tmux new-window -t %s:%d -n \'%s\'' %(self.sessionname, i, listwindows[i]))    
 
     def roslaunch(self, wid, mdir, mlaunch, mparams=''):
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
