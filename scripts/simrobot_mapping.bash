@@ -15,7 +15,7 @@ tmux split-window -h
 tmux select-pane -t 0
 tmux send-keys "cd $HOME/src/marrtino_apps/stage" C-m
 tmux send-keys "roslaunch simrobot.launch" C-m
-sleep 1
+sleep 3
 
 tmux select-pane -t 1
 tmux send-keys "cd $HOME/src/marrtino_apps/mapping" C-m
@@ -24,8 +24,8 @@ sleep 1
 
 tmux select-pane -t 2
 tmux send-keys "cd $HOME/src/marrtino_apps/mapping" C-m
-#tmux send-keys "roslaunch gmapping.launch" C-m
 tmux send-keys "roslaunch srrg_mapper.launch" C-m
+#tmux send-keys "roslaunch gmapping.launch" C-m
 sleep 1
 
 tmux select-pane -t 3
