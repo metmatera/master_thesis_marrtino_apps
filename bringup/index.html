@@ -234,6 +234,11 @@ rosrun rviz rviz -d mapping.rviz
 </td> 
 </tr>
 
+<tr> <td colspan=4> <hr> </td> </tr>
+
+<tr> <td colspan=4> <b style="color: red;">Start only one mapper OR one localizer</b><br><br> </td> </tr>
+
+
 <tr> <td colspan=4> <h3>Mapper</h3> </td> </tr>
 
 <tr height=40>
@@ -255,12 +260,18 @@ rosrun rviz rviz -d mapping.rviz
 </tr>
 
 
-<tr> <td> </td> <td> </td> <td> <button id="save_map_btn" onclick="send_cmd('save_map')">Save Map</button> </td> </tr>
+<tr> <td colspan=2>Save the current map</td> <td> <button id="save_map_btn" onclick="send_cmd('save_map')">Save Map</button> </td> </tr>
 
 
-<tr> <td colspan=4> <hr> </td> </tr>
+<tr> <td colspan=4> &nbsp; </td> </tr>
 
-<tr> <td colspan=4> <h3>Localizer</h3> </td> </tr>
+<tr> <td colspan=4> <h3>Localizer</h3> 
+<p>Using default map Montreal.<br>
+To load your own map, you need to do some manual configurations<br> 
+(instructions will be provided soon).
+</p>
+</td> </tr>
+
 
 <tr height=40>
 <td>AMCL</td> 
@@ -282,7 +293,10 @@ rosrun rviz rviz -d mapping.rviz
 
 <tr> <td colspan=4> <hr> </td> </tr>
 
-<tr> <td colspan=4> <h3>Navigator</h3> </td> </tr>
+<tr> <td colspan=4> <h3>Navigator</h3>
+<p>Requires a mapper or a localizer module.<br>
+Start after mapper or localizer</p>
+</td> </tr>
 
 <tr height=40>
 <td>MoveBase</td> 
