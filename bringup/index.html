@@ -219,7 +219,8 @@ Run <b>rviz</b> to see the map under construction and set target goals.<br>
 <p>
 Mapping and navigation with the robot:
 <listing style="color: blue; font-size: 140%;">
-export ROS_MASTER_URI=http://10.3.1.1/11311 
+export ROS_IP=`hostname -I`
+export ROS_MASTER_URI=http://10.3.1.1:11311 
 cd src/marrtino_apps/mapping
 rosrun rviz rviz -d mapping.rviz
 </listing>

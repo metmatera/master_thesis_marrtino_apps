@@ -136,7 +136,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         # robot start/stop
         elif (message=='robot_start'):
             self.tmux.roslaunch(self.wrobot,'robot','robot')
-            time.sleep(3)
+            time.sleep(5)
             self.wsrobot()
             self.checkStatus()
         elif (message=='robot_kill'):
@@ -152,7 +152,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         # simrobot start/stop
         elif (message=='simrobot_start'):
             self.tmux.roslaunch(self.wrobot,'stage','simrobot')
-            time.sleep(3)
+            time.sleep(5)
             self.wsrobot()
             self.checkStatus()
         elif (message=='simrobot_kill'):
