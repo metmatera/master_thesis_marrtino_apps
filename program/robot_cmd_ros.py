@@ -570,7 +570,7 @@ try:
 except:
     print("No MODIM found!")
 
-# example: show('image_default', 'img/red.jpg')
+# example: show_image('red.jpg', 'default')
 
 def show_image(value, which='default'):
     global mws
