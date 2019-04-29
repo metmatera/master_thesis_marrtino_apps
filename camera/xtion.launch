@@ -2,6 +2,7 @@
   <arg name="rgbcameraframe" default="rgb_camera_frame" />
   <arg name="depthcameraframe" default="depth_camera_frame" />
   <arg name="viewimage" default="false" />
+  <arg name="nodename" default="xtion" />
 
   <!-- transforms -->
   <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_xtion"
@@ -9,7 +10,7 @@
   </node>
 
   <!-- thin_xtion node -->
-  <node pkg="thin_xtion" type="thin_xtion_node" name="xtion" output="screen">
+  <node pkg="thin_xtion" type="thin_xtion_node" name="$(arg nodename)" output="screen">
       <param name="device_num" value="0"/>
       <param name="rgb_mode" value="9"/>
       <param name="depth_mode" value="0"/>

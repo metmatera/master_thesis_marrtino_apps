@@ -282,7 +282,7 @@ def check_tfs():
     check_tf('base_frame', 'rgb_camera_frame')
     check_tf('base_frame', 'depth_camera_frame')
 
-def check_nav(m, r):
+def check_node(m, r):
     print '  --',m,
     if '/'+m in nodenames:
         printOK()
@@ -293,15 +293,22 @@ def check_nav(m, r):
     r.append([m,t])
 
 
-def check_navigation():
+def check_nodes():
     r = []
     print('Check navigation modules ...')
-    check_nav('gmapping',r)
-    check_nav('srrg_mapper2d',r)
-    check_nav('amcl',r)
-    check_nav('srrg_localizer',r)
-    check_nav('move_base_node',r)
-    check_nav('gradient_based_navigation',r)
+    check_node('gmapping',r)
+    check_node('srrg_mapper2d',r)
+    check_node('amcl',r)
+    check_node('srrg_localizer',r)
+    check_node('move_base_node',r)
+    check_node('gradient_based_navigation',r)
+    check_node('astra',r)
+    check_node('xtion',r)
+    check_node('usbcam',r)
+    check_node('astralaser',r)
+    check_node('xtionlaser',r)
+    check_node('hokuyo',r)
+    check_node('rplidar',r)
 
     return r
 
@@ -318,7 +325,7 @@ def main():
         check_rgb_camera()
         check_depth_camera()
         check_tfs()
-        check_navigation()
+        check_nodes()
 
 
 if __name__=='__main__':

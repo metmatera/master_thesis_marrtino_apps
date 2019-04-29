@@ -75,7 +75,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.write_message('RESULT tf_base_rgb '+str(r))
         r = check_tf('base_frame', 'depth_camera_frame')
         self.write_message('RESULT tf_base_depth '+str(r))
-        rr = check_navigation()
+        rr = check_nodes()
         for [m,t] in rr:
             self.write_message('RESULT %s %s ' %(m,t))
         self.setStatus('Idle')

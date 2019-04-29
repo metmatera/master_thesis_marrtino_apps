@@ -3,7 +3,7 @@
   <arg name="viewimage" default="false" />
   <arg name="device" default="/dev/video0" />
 
-  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="log" >
+  <node pkg="usb_cam" type="usb_cam_node" name="usbcam" output="log" >
     <param name="video_device" value="$(arg device)" />
     <param name="image_width" value="640" /> <!-- OK for Logitech C920 -->
     <param name="image_height" value="360" />
