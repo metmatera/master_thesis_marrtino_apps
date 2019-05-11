@@ -455,6 +455,42 @@ def getImage():
     return cvimage
 
 
+def getWebImage():
+    rchomelearnros_import()
+    return webimages.take_image()
+
+
+# rc-home-learn-ros import
+rchomelearnros_imported = False
+mobilenet_objrec = None 
+webimages = None
+
+def rchomelearnros_import():
+    global rchomelearnros_imported, mobilenet_objrec, webimages
+    if rchomelearnros_imported:
+        return
+
+    path = None
+    try:
+        import rospkg
+        # get an instance of RosPack with the default search paths
+        rospack = rospkg.RosPack()
+        # get the file path for rospy_tutorials
+        path = rospack.get_path('rc-home-edu-learn-ros')
+    except Exception as e:
+        #print(e)
+        path = os.getenv('HOME')+'/src/rc-home-edu-learn-ros'
+    print('rc-home-edu-learn-ros path: %s' %path) 
+
+    try:
+        sys.path.append(path+'/rchomeedu_vision/scripts')
+        import mobilenet_objrec, webimages
+        rchomelearnros_imported = True
+    except Exception as e:
+        print(e)
+        print('Cannot import mobilenet_objrec, webimages modules')
+
+
 # Object recognition with mobilenet
 
 monet = None
@@ -462,21 +498,8 @@ monet = None
 def mobilenet_objrec(img):
     global monet
     if monet is None:
-        path = None
+        rchomelearnros_import()
         try:
-            import rospkg
-            # get an instance of RosPack with the default search paths
-            rospack = rospkg.RosPack()
-            # get the file path for rospy_tutorials
-            path = rospack.get_path('rc-home-edu-learn-ros')
-        except Exception as e:
-            #print(e)
-            path = os.getenv('HOME')+'/src/rc-home-edu-learn-ros'
-        print('rc-home-edu-learn-ros path: %s' %path) 
-
-        try:
-            sys.path.append(path+'/rchomeedu_vision/scripts')
-            import mobilenet_objrec
             monet = mobilenet_objrec.MNetObjRec()
         except Exception as e:
             print(e)
