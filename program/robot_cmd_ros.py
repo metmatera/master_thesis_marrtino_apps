@@ -452,6 +452,8 @@ def stopCameraGrabber():
 
 def getImage():
     global cvimage
+    startCameraGrabber() # wait 1 sec for an image
+    stopCameraGrabber()
     return cvimage
 
 
