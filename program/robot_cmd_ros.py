@@ -10,11 +10,14 @@ import tf
 import actionlib
 from threading import Thread
 
+import cv2
+
+from std_msgs.msg import String
 from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
-from sensor_msgs.msg import LaserScan
-from sensor_msgs.msg import Range
+from sensor_msgs.msg import LaserScan, Range, Image
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from cv_bridge import CvBridge, CvBridgeError
 
 try:
     from apriltags_ros.msg import AprilTagDetectionArray
@@ -293,6 +296,33 @@ def localizer_cb(data):
     euler = tf.transformations.euler_from_quaternion(q)
     loc_robot_pose[2] = euler[2] # yaw
 
+
+cvbridge = None
+cvimage = None
+
+def image_cb(data):
+    global cvbridge, cvimage
+    # Convert image to OpenCV format
+    try:
+        if cvbridge is None:
+            cvbridge = CvBridge()
+        cvimage = cvbridge.imgmsg_to_cv2(data, "bgr8")
+    except CvBridgeError as e:
+        print(e)
+
+
+
+# select topic of type sensor_msgs/Image
+def autoImageTopic():
+    topics = rospy.get_published_topics()
+    for t in topics:
+        if t[1]=='sensor_msgs/Image' and 'depth' not in t[0]:
+            return t[0]
+    return None
+
+
+# Audio client
+
 run_audio_connect = True
 audio_connected = False
 
@@ -319,7 +349,7 @@ def audio_connect_thread():
 def begin(nodename='robot_cmd'):
     global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
     global odom_robot_pose, robot_initialized, stop_request
-    global use_audio, audio_connected
+    global use_robot, use_audio, audio_connected
 
     print 'begin'
 
@@ -394,6 +424,66 @@ def end():
             assock=None
             audio_connected = False
     time.sleep(0.5) # make sure stuff ends
+
+
+# to unregister all the subscribers
+def unregisterAll():
+    #sub_XXX.unregister()
+    pass
+
+
+sub_image = None
+
+def startCameraGrabber():
+    global sub_image
+    img_topic = autoImageTopic()
+    if img_topic != None:
+        print("Image topic: %s" %img_topic)
+        sub_image = rospy.Subscriber(img_topic, Image, image_cb)
+        time.sleep(1)
+
+
+
+def stopCameraGrabber():
+    global sub_image
+    if sub_image !=  None:
+        sub_image.unregister()
+
+
+def getImage():
+    global cvimage
+    return cvimage
+
+
+# Object recognition with mobilenet
+
+monet = None
+
+def mobilenet_objrec(img):
+    global monet
+    if monet is None:
+        path = None
+        try:
+            import rospkg
+            # get an instance of RosPack with the default search paths
+            rospack = rospkg.RosPack()
+            # get the file path for rospy_tutorials
+            path = rospack.get_path('rc-home-edu-learn-ros')
+        except Exception as e:
+            #print(e)
+            path = os.getenv('HOME')+'/src/rc-home-edu-learn-ros'
+        print('rc-home-edu-learn-ros path: %s' %path) 
+
+        try:
+            sys.path.append(path+'/rchomeedu_vision/scripts')
+            import mobilenet_objrec
+            monet = mobilenet_objrec.MNetObjRec()
+        except Exception as e:
+            print(e)
+            return 'ERROR Mobilenet not available'
+    
+    r = monet.evalCVImage(img)
+    return r
 
 
 def ready():
