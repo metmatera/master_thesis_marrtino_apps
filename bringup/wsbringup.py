@@ -110,10 +110,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         self.tmux = TmuxSend('bringup',self.winlist)
         self.tmux.roscore(self.wroscore)
-        time.sleep(3)
+        time.sleep(5)
         self.tmux.cmd(self.wmodim,'cd $MODIM_HOME/src/GUI')
         self.tmux.cmd(self.wmodim,'python ws_server.py')
+        time.sleep(5)
+        self.wsrobot()
         time.sleep(3)
+
+
         self.checkStatus()
 
     def on_message(self, message):
@@ -137,7 +141,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='robot_start'):
             self.tmux.roslaunch(self.wrobot,'robot','robot')
             time.sleep(5)
-            self.wsrobot()
             self.checkStatus()
         elif (message=='robot_kill'):
             self.tmux.roskill('orazio')
@@ -152,8 +155,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         # simrobot start/stop
         elif (message=='simrobot_start'):
             self.tmux.roslaunch(self.wrobot,'stage','simrobot')
-            time.sleep(5)
-            self.wsrobot()
+            time.sleep(7)
             self.checkStatus()
         elif (message=='simrobot_kill'):
             self.tmux.roskill('stageros')
