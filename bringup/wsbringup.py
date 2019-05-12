@@ -212,11 +212,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # xtion
         elif (message=='xtion_start'):
-            self.tmux.roslaunch(self.wcamera,'camera','xtion')
+            self.tmux.roslaunch(self.wcamera,'camera','xtion2')
             time.sleep(5)
             self.checkStatus()
         elif (message=='xtion_kill'):
-            self.tmux.roskill('xtion')
+            self.tmux.roskill('xtion2')
             self.tmux.roskill('state_pub_xtion')
             time.sleep(3)
             self.tmux.killall(self.wcamera)
@@ -255,7 +255,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(5)
             self.checkStatus()
         elif (message=='astralaser_kill'):
-            self.tmux.roskill('astra')
+            self.tmux.roskill('astralaser')
             self.tmux.roskill('depth2laser')
             self.tmux.roskill('state_pub_astra_laser')
             time.sleep(3)
@@ -265,11 +265,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # xtionlaser
         elif (message=='xtionlaser_start'):
-            self.tmux.roslaunch(self.wlaser,'laser','xtion_laser')
+            self.tmux.roslaunch(self.wlaser,'laser','xtion2_laser')
             time.sleep(5)
             self.checkStatus()
         elif (message=='xtionlaser_kill'):
-            self.tmux.roskill('xtion')
+            self.tmux.roskill('xtion2laser')
             self.tmux.roskill('depth2laser')
             self.tmux.roskill('state_pub_xtion_laser')
             time.sleep(3)

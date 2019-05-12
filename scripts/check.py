@@ -303,10 +303,10 @@ def check_nodes():
     check_node('move_base_node',r)
     check_node('gradient_based_navigation',r)
     check_node('astra',r)
-    check_node('xtion',r)
+    check_node('xtion2',r)
     check_node('usbcam',r)
     check_node('astralaser',r)
-    check_node('xtionlaser',r)
+    check_node('xtion2laser',r)
     check_node('hokuyo',r)
     check_node('rplidar',r)
 

@@ -156,9 +156,9 @@ def obstacle_distance(direction=0):
         return laser_center_dist
     elif (direction==90): #left
         return laser_left_dist
-    elif (direction==-90): # right
+    elif (direction==-90 or direction==270): # right
         return laser_right_dist
-    elif (direction==-180): # right
+    elif (abs(direction)==180): # back
         return laser_back_dist
 
 def distance(p1,p2):
@@ -253,8 +253,9 @@ def laser_cb(data):
         laser_left_dist = min(data.ranges[nl-10:nl+10])
         laser_right_dist = min(data.ranges[nr-10:nr+10])
     except:
-        laser_left_dist = -1
-        laser_right_dist = -1
+        pass
+        #laser_left_dist = -1
+        #laser_right_dist = -1
     #print("angle min %.3f max %.3f inc %.6f" %(data.angle_min, data.angle_max, data.angle_increment))
     #print("center %.3f left %.3f right %.3f" %(laser_center_dist, laser_left_dist, laser_right_dist))
 

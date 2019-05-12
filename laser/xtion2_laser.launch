@@ -6,7 +6,7 @@
   <arg name="lasertopic" default="/scan" />
 
   <include file="$(env MARRTINO_APPS_HOME)/camera/xtion2.launch">
-    <arg name="nodename" default="xtionlaser" />
+    <arg name="nodename" default="xtion2laser" />
     <arg name="rgbcameraframe" default="$(arg rgbcameraframe)" />
     <arg name="depthcameraframe" default="$(arg depthcameraframe)" />
   </include>
