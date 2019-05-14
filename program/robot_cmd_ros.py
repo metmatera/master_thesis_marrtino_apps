@@ -458,9 +458,36 @@ def getImage():
     return cvimage
 
 
-def getWebImage():
+def getWebImage(objcat=None):
     rchomelearnros_import()
-    return webimages.take_image()
+    return webimages.take_image(objcat)
+
+# Haar detector
+def findCascadeModel():
+    trylist = ['/usr/share/opencv/', '/opt/ros/kinetic/share/OpenCV-3.3.1-dev/' ]
+    for t in trylist:
+        f = t + 'haarcascades/haarcascade_frontalface_default.xml'
+        if os.path.isfile(t):
+            return cv2.CascadeClassifier(f)
+    return None
+
+faceCascade = None
+
+def faceDetection(img):
+    global faceCascade
+    if faceCascade is None:
+        faceCascade = findCascadeModel()
+        if faceCascade is None:
+            print("ERROR Cannot find Haar cascade model")
+            return -1
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Detect faces in the image
+    faces = faceCascade.detectMultiScale(gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30)
+    )
+    return len(faces)
 
 
 # rc-home-learn-ros import

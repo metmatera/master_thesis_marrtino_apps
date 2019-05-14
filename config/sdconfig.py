@@ -154,7 +154,7 @@ if __name__ == "__main__":
     val = raw_input('Please confirm [yes/no] ')
     if val=='yes':
 
-        tmux = TmuxSend('sdconfig',['format','write','check'])
+        tmux = TmuxSend('sdconfig',['bash','format','write','check'])
 
         print("Running  'sudo tmux a -t sdconfig'  in a new terminal to check progresses.")
         os.system('xterm -e "sudo tmux a -t sdconfig" &')
