@@ -467,7 +467,7 @@ def findCascadeModel():
     trylist = ['/usr/share/opencv/', '/opt/ros/kinetic/share/OpenCV-3.3.1-dev/' ]
     for t in trylist:
         f = t + 'haarcascades/haarcascade_frontalface_default.xml'
-        if os.path.isfile(t):
+        if os.path.isfile(f):
             return cv2.CascadeClassifier(f)
     return None
 
@@ -619,6 +619,7 @@ def right(r=1):
 def goto(gx, gy, gth_deg):
     exec_movebase(gx, gy, gth_deg)
 
+# odom frame direct control (no path planning)
 def goto_target(gx, gy):
     exec_goto_target(gx, gy)
 
