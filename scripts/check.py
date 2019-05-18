@@ -301,6 +301,7 @@ def check_nodes():
     check_node('amcl',r)
     check_node('srrg_localizer',r)
     check_node('move_base_node',r)
+    check_node('spqrel_planner',r)
     check_node('gradient_based_navigation',r)
     check_node('astra',r)
     check_node('xtion2',r)
