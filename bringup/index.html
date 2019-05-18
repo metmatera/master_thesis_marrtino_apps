@@ -214,11 +214,16 @@ ROS topics:
 
 <h2> Joystick </h2>
 
+<table>
 
-<p>
-<button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button>
-<button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button>
-</p>
+<tr height=40>
+<td width=60>Joystick</td> 
+<td width=80 align='center'><span id="joystick_status" style="color: red;">OFF</span></td>
+<td><button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button></td>
+<td><button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button></td>
+</tr>
+
+</table>
 
 <hr>
 

@@ -309,6 +309,7 @@ def check_nodes():
     check_node('xtion2laser',r)
     check_node('hokuyo',r)
     check_node('rplidar',r)
+    check_node('joystick',r)
 
     return r
 
