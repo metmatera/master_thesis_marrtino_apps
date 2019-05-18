@@ -306,9 +306,10 @@ rosrun rviz rviz -d mapping.rviz
 
 <tr> <td colspan=4> &nbsp; </td> </tr>
 
-<tr> <td colspan=4> <h3>Localizer (default map)</h3> 
+<tr> <td colspan=4> <h3>Localizer</h3> 
 <p>
-Default map: src/marrtino_apps/mapping/maps/map.yaml (symbolic link)
+Default map: src/marrtino_apps/mapping/maps/map.yaml (symbolic link)<br>
+Last saved map: playground/lastmap.yaml<br>
 </p>
 
 </td> </tr>
@@ -318,6 +319,7 @@ Default map: src/marrtino_apps/mapping/maps/map.yaml (symbolic link)
 <td><span id="amcl_status" style="color: red;">OFF</span> </td>
 <td>
 <button id="amcl_start_btn" onclick="send_cmd('amcl_start')">AMCL start</button>
+<button id="amcl_start_l_btn" onclick="send_cmd('amcl_lastmap_start')">AMCL start (last map)</button>
 <button id="amcl_quit_btn" onclick="send_cmd('amcl_kill')">AMCL quit</button>
 </td>
 </tr>
@@ -327,30 +329,7 @@ Default map: src/marrtino_apps/mapping/maps/map.yaml (symbolic link)
 <td><span id="srrg_localizer_status" style="color: red;">OFF</span> </td>
 <td>
 <button id="srrg_localizer_start_btn" onclick="send_cmd('srrg_localizer_start')">SRRG Localizer start</button>
-<button id="srrg_localizer_quit_btn" onclick="send_cmd('srrg_localizer_kill')">SRRG Localizer quit</button>
-</td>
-</tr>
-
-<tr> <td colspan=4> <h3>Localizer (last saved map)</h3> 
-<p>
-Last saved map: playground/lastmap.yaml
-</p>
-</td> </tr>
-
-<tr height=40>
-<td>AMCL</td> 
-<td><span id="amcl_status" style="color: red;">OFF</span> </td>
-<td>
-<button id="amcl_start_btn" onclick="send_cmd('amcl_lastmap_start')">AMCL start</button>
-<button id="amcl_quit_btn" onclick="send_cmd('amcl_kill')">AMCL quit</button>
-</td>
-</tr>
-
-<tr height=40>
-<td>SRRG Localizer</td> 
-<td><span id="srrg_localizer_status" style="color: red;">OFF</span> </td>
-<td>
-<button id="srrg_localizer_start_btn" onclick="send_cmd('srrg_localizer_lastmap_start')">SRRG Localizer start</button>
+<button id="srrg_localizer_l_start_btn" onclick="send_cmd('srrg_localizer_lastmap_start')">SRRG Localizer start (last map)</button>
 <button id="srrg_localizer_quit_btn" onclick="send_cmd('srrg_localizer_kill')">SRRG Localizer quit</button>
 </td>
 </tr>
