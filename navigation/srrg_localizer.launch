@@ -23,6 +23,7 @@
     <param name="odom_frame_id" value="odom" />
 
     <param name="use_gui" value="false" />
+    <param name="tf_timecheck" value="false" />
 
     <!-- Set initial pose -->
     <param name="initial_pose_x" value="$(arg initial_pose_x)" />

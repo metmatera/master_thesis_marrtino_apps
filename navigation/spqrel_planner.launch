@@ -17,6 +17,7 @@
 		<param name="goal_translation_tolerance" value="0.4" />
 		<param name="goal_rotation_tolerance" value="0.5" />
 		<param name="use_gui" value="false" />
+		<param name="tf_timecheck" value="false" />
 	</node>
 
 
