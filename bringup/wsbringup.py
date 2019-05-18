@@ -79,6 +79,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         for [m,t] in rr:
             self.write_message('RESULT %s %s ' %(m,t))
         self.setStatus('Idle')
+        time.sleep(1)
+        self.setStatus('Idle')
 
 
     def setStatus(self, st):

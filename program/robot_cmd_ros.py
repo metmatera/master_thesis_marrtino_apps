@@ -97,6 +97,12 @@ def setRobotNamePrefix(prefix):
     TOPIC_sonar_3 = prefix+'/sonar_3'
 
 
+def setAudioConnection(ip, port=9001):
+    global AUDIO_SERVER_IP, AUDIO_SERVER_PORT
+    AUDIO_SERVER_IP = ip
+    AUDIO_SERVER_PORT = port
+
+
 def enableObstacleAvoidance():
     global use_obstacle_avoidance
     use_obstacle_avoidance = True
