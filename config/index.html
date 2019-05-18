@@ -43,6 +43,13 @@
 
 <hr>
 
+<p>
+<button id="shutdown_btn" onclick="send_cmd('shutdown')">Shutdown</button>
+<button id="reboot_btn" onclick="send_cmd('reboot')">Reboot</button>
+</p>
+
+<hr>
+
 <h1>System update</h1>
 
 <ol>
@@ -70,30 +77,23 @@ Confirm and enter password (<tt style="font-size:120%;">marrtino</tt>) when aske
 
 <!-- button id="btn_upsys" onclick="send_cmd('updatesystem')">System Update</button -->
 
-<h1>MARRtino Apps Update</h1>
+<hr>
 
-<p>
-Connect to the robot and press button below
-</p>
+<h1>Apps Update</h1>
 
 <p>
 <button id="btn_upapp" onclick="send_cmd('updatemarrtinoapps')">marrtino_apps Update</button>
-</p>
-
-</p>
-
-
-<h1>MODIM Update</h1>
-
-<p>
-Connect to the robot and press button below
 </p>
 
 <p>
 <button id="btn_upmodim" onclick="send_cmd('updatemodim')">MODIM Update</button>
 </p>
 
+<p>
+<button id="btn_upmodim" onclick="send_cmd('updaterchome')">RCHOME Update</button>
 </p>
+
+<br>
 
 
 <hr>
@@ -133,11 +133,48 @@ Wireless status:
 Ethernet status:
 <div id="eth_status" style="color: blue;" ></div>
 
-
 <p>
-<button id="btn_wirelessAP" onclick="send_cmd('wirelessAP')">Wireless AP server</button>
+<table>
+<tr> <td width=200 align='center'> <b>Wireless AP</b> </td>  
+     <td width=40> </td>
+     <td width=200 align='center'> <b>Wireless Home client</b> </td> 
+</tr>
+
+<tr>
+
+<td>
+
+<p align='center'> 
+<button id="btn_wirelessAP" onclick="send_cmd('wirelessAP')">Wireless AP server</button> </p>
+
+<listing>
+Mode: AP
+ESSID: MARRtinoXXX
+Password: hellorobot!
+IP: 10.3.1.1
+</listing>
+
+</td>
+
+<td> </td>
+
+<td>
+
+<p align='center'>
 <button id="btn_wirelessHome" onclick="send_cmd('wirelessHome')">Wireless Home client</button>
 </p>
+
+<listing>
+Mode: client
+ESSID: MARRtinoHome
+Password: myrobot!
+IP: (DHCP)
+</listing>
+
+</tr>
+</table>
+
+<hr>
 
 <h1> Firmware upload (advanced user only!!!)</h1>
 
@@ -148,12 +185,7 @@ Ethernet status:
 
 <hr>
 
-<p>
-<button id="shutdown_btn" onclick="send_cmd('shutdown')">Shutdown</button>
-<button id="reboot_btn" onclick="send_cmd('reboot')">Reboot</button>
-</p>
 
-<hr>
 
 <br><br><br>
 

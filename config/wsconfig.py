@@ -144,6 +144,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.checkStatus()
 
+        elif (message=='updaterchome'):
+            print('RCHOME-learn update')
+            self.setStatus('Updating...')
+            self.tmux.cmd(3,'cd %s/src/rc-home-edu-learn-ros' %self.home)
+            self.tmux.cmd(3,'git pull', blocking=True)
+            time.sleep(3)
+            self.checkStatus()
+
         elif (message=='shutdown'):
             self.setStatus('Shutdown!!!')
             self.tmux.quitall()
@@ -176,6 +184,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='quitweb'):
             print('quit orazio web server')
             self.tmux.cmd(1,'quit')
+
+        elif (message=='wirelessAP'):
+            print('quit orazio web server')
+            self.tmux.cmd(3,'sudo nmcli c up MARRtinoAP')
+
+        elif (message=='wirelessHome'):
+            print('quit orazio web server')
+            self.tmux.cmd(3,'sudo nmcli c up MARRtinoHome')
 
         else:
             print('Code received:\n%s' %message)

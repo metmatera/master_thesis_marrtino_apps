@@ -161,6 +161,7 @@ def obstacle_distance(direction=0):
     elif (abs(direction)==180): # back
         return laser_back_dist
 
+
 def distance(p1,p2):
     dx = p1[0]-p2[0]
     dy = p1[1]-p2[1]
@@ -634,7 +635,7 @@ def turn(deg):
 
 def wait(r=1):
     global stop_request
-    print 'wait',r
+    #print 'wait',r
     if (r==0):
         time.sleep(0.1)
     else:
