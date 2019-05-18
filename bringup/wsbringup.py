@@ -331,7 +331,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # amcl
         elif (message=='amcl_start'):
-            self.tmux.roslaunch(self.wmaploc,'navigation','amcl') #, 'mapsdir:=$HOME/playground map_name:=lastmap')
+            self.tmux.roslaunch(self.wmaploc,'navigation','amcl')
+            time.sleep(5)
+            self.checkStatus()
+        elif (message=='amcl_lastmap_start'):
+            self.tmux.roslaunch(self.wmaploc,'navigation','amcl', 'mapsdir:=$HOME/playground map_name:=lastmap')
             time.sleep(5)
             self.checkStatus()
         elif (message=='amcl_kill'):
@@ -341,7 +345,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # srrg_localizer
         elif (message=='srrg_localizer_start'):
-            self.tmux.roslaunch(self.wmaploc,'navigation','srrg_localizer') #, 'mapsdir:=$HOME/playground map_name:=lastmap')
+            self.tmux.roslaunch(self.wmaploc,'navigation','srrg_localizer')
+            time.sleep(5)
+            self.checkStatus()
+        elif (message=='srrg_localizer_lastmap_start'):
+            self.tmux.roslaunch(self.wmaploc,'navigation','srrg_localizer', 'mapsdir:=$HOME/playground map_name:=lastmap')
             time.sleep(5)
             self.checkStatus()
         elif (message=='srrg_localizer_kill'):
@@ -349,13 +357,22 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(5)
             self.checkStatus()
 
-
         # move_base
         elif (message=='move_base_node_start'):
             self.tmux.roslaunch(self.wnav,'navigation','move_base')
             time.sleep(5)
             self.checkStatus()
         elif (message=='move_base_node_kill'):
+            self.tmux.killall(self.wnav)
+            time.sleep(5)
+            self.checkStatus()
+
+        # spqrel_planner
+        elif (message=='spqrel_planner_start'):
+            self.tmux.roslaunch(self.wnav,'navigation','spqrel_planner')
+            time.sleep(5)
+            self.checkStatus()
+        elif (message=='spqrel_planner_kill'):
             self.tmux.killall(self.wnav)
             time.sleep(5)
             self.checkStatus()
