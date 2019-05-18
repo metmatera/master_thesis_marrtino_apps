@@ -3,3 +3,5 @@
 *.pyc
 *.bag
 cache*
+mapping/maps/map.yaml
+
