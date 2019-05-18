@@ -331,7 +331,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # amcl
         elif (message=='amcl_start'):
-            self.tmux.roslaunch(self.wmaploc,'navigation','amcl')
+            self.tmux.roslaunch(self.wmaploc,'navigation','amcl') #, 'mapsdir:=$HOME/playground map_name:=lastmap')
             time.sleep(5)
             self.checkStatus()
         elif (message=='amcl_kill'):
@@ -341,7 +341,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # srrg_localizer
         elif (message=='srrg_localizer_start'):
-            self.tmux.roslaunch(self.wmaploc,'navigation','srrg_localizer')
+            self.tmux.roslaunch(self.wmaploc,'navigation','srrg_localizer') #, 'mapsdir:=$HOME/playground map_name:=lastmap')
             time.sleep(5)
             self.checkStatus()
         elif (message=='srrg_localizer_kill'):
