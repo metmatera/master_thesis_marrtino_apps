@@ -134,9 +134,10 @@ def test(tmux):
     tmux.cmd(wid,'echo done')
 
 
-def setDeviceNames(devicename):
-    global devicenamep1, devicenamep2, devicenamep3
+def setDeviceNames(devname):
+    global devicename, devicenamep1, devicenamep2, devicenamep3
 
+    devicename = devname
     if (devicename[0:7]=='/dev/mm'):
         devicenamep1 = devicename + 'p1'
         devicenamep2 = devicename + 'p2'
@@ -151,10 +152,9 @@ def setDeviceNames(devicename):
 
 
 # Read image from SD card
-def readSDCard(devicename, imagefile):
-    global devicenamep1, devicenamep2, devicenamep3
+def readSDCard(devname, imagefile):
 
-    setDeviceNames(devicename)
+    setDeviceNames(devname)
 
     print('Read SD card %s to image file %s' %(devicename,args.imagefile))
 
@@ -172,10 +172,9 @@ def readSDCard(devicename, imagefile):
 
 
 # Write image to SD card
-def writeSDCard(devicename, imagefile):
-    global devicenamep1, devicenamep2, devicenamep3
+def writeSDCard(devname, imagefile):
 
-    setDeviceNames(devicename)
+    setDeviceNames(devname)
 
     print('Format SD card %s with image file %s' %(devicename,imagefile))
 
@@ -200,7 +199,6 @@ def writeSDCard(devicename, imagefile):
 # Main program
 
 if __name__ == "__main__":
-
 
     parser = argparse.ArgumentParser(description='MARRtino SD config')
     parser.add_argument('imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_v2.0)')
