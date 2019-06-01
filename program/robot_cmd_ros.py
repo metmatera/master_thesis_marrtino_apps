@@ -458,9 +458,10 @@ def stopCameraGrabber():
         sub_image.unregister()
 
 
-def getImage():
+def getImage(tmsleep=3):
     global cvimage
     startCameraGrabber() # wait 1 sec for an image
+    time.sleep(tmsleep)
     stopCameraGrabber()
     return cvimage
 
