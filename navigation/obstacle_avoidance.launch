@@ -1,12 +1,15 @@
 <launch>
-	<arg name="lasertopic" default="/scan" />
+<arg name="lasertopic" default="/scan" />
 			
 	<!-- gradient_based_navigation -->	
 	<node pkg="gradient_based_navigation" type="gradient_based_navigation" args="40" name="gradientBasedNavigation" output="screen">
-		<param name="GUI" value="false" />
-		<param name="obstaclesDistanceInfluence_m" value="0.6" />
+	    <param name="GUI" value="false" />
+		<param name="obstaclesDistanceInfluence_m" value="0.3" />
+		<param name="max_vel_x" value="0.2" />
+		<param name="max_vel_theta" value="0.5" />
 		<param name="force_scale" value="0.3" />
 		<param name="momentum_scale" value="0.1" />
+		<param name="rate" value="10" />
 		<remap from="base_scan" to="$(arg lasertopic)" />
 	</node>
 

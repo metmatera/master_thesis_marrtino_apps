@@ -111,7 +111,8 @@ def start_movebase(tpose):
 
 def join_movebase():
     global thr_movebase
-    thr_movebase.join()
+    #print 'Waiting for thread to finish'
+    #thr_movebase.join()
 
 
 

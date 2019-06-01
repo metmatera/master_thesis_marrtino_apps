@@ -3,6 +3,7 @@
     <arg name="laser_topic" default="scan" />
     <arg name="laser_frame" default="laser_frame" />
     <arg name="gui" default="false" />
+    <arg name="cmdvel" default="cmd_vel" />  <!-- desired_cmd_vel -->
 	
 	<node pkg="spqrel_navigation" type="spqrel_planner_node" name="spqrel_planner" output="screen">
 		<param name="base_frame_id" value="$(arg base_frame)" />
@@ -14,11 +15,15 @@
 		<param name="min_angular_vel" value="0.1" />
 		<param name="max_linear_acc" value="0.2" />
 		<param name="max_angular_acc" value="0.5" />
-		<param name="robot_radius" value="0.2" />
+		<param name="robot_radius" value="0.3" />
 		<param name="goal_translation_tolerance" value="0.4" />
 		<param name="goal_rotation_tolerance" value="0.5" />
 		<param name="use_gui" value="$(arg gui)" />
 		<param name="tf_timecheck" value="false" />
+
+        <remap from="cmd_vel" to="$(arg cmdvel)" />
+
+
 	</node>
 
 
