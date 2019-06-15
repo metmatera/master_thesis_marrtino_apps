@@ -31,6 +31,16 @@
       width: 80%;
     }
 
+    listing {
+      font-size: 140%;
+      color: #1111ff;
+    }
+
+    code {
+      font-size: 140%;
+      color: #1111ff;
+    }
+
   </style>
 
 </head>
@@ -71,18 +81,23 @@ ROS topics:
 
 <table border=1>
     <tr height=40>
-      <td width=80><div id="ros" style="color: grey;" >ROS</div></td>
-      <td width=80><div id="robot" style="color: grey;" >robot</div></td>
-      <td width=80><div id="simrobot" style="color: grey;" >simrobot</div></td>
+      <td width=150><div id="ros" style="color: grey;" >ROS</div></td>
+      <td width=150><div id="robot" style="color: grey;" >robot</div></td>
+      <td width=150><div id="simrobot" style="color: grey;" >simrobot</div></td>
     </tr>
     <tr height=40>
-      <td><div id="odom" style="color: grey;">odom</div></td>
-      <td><div id="sonar" style="color: grey;">sonar</div></td>
-      <td><div id="laser" style="color: grey;">laser</div></td>
+      <td><span id="odom" style="color: grey;">odom</span>     
+          <span id="odom_status" style="color: grey;">OFF</span>   </td>
+      <td><span id="laser" style="color: grey;">laser</span>   
+          <span id="laser_status" style="color: grey;">OFF</span> </td>
+      <td><span id="sonar" style="color: grey;">sonar</span>
+          <span id="sonar_status" style="color: grey;">OFF</span>   </td>
     </tr>
     <tr height=40>
-      <td><div id="rgb" style="color: grey;">RGB camera</div></td>
-      <td><div id="depth" style="color: grey;">Depth camera</div></td>
+      <td><span id="rgb" style="color: grey;">RGB</span>
+          <span id="rgb_status" style="color: grey;">OFF</span>        </td>
+      <td><span id="depth" style="color: grey;">Depth</span>
+          <span id="depth_status" style="color: grey;">OFF</span>      </td>
     </tr>
 </table>
 
@@ -116,14 +131,14 @@ ROS topics:
 <table>
 
 <tr height=40>
-<td width=60>Robot</td> 
+<td width=80>Robot</td> 
 <td width=80 align='center'><span id="robot_status" style="color: red;">OFF</span></td>
 <td><button id="robot_start_btn" onclick="send_cmd('robot_start')">Robot start</button></td>
 <td><button id="robot_quit_btn" onclick="send_cmd('robot_kill')">Robot quit</button></td>
 </tr>
 
 <tr height=40>
-<td width=60>Simrobot</td> 
+<td>Simrobot</td> 
 <td width=80 align='center'><span id="simrobot_status" style="color: red;">OFF</span></td>
 <td><button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')">Simrobot start</button></td>
 <td><button id="simrobot_quit_btn" onclick="send_cmd('simrobot_kill')">Simrobot quit</button></td>
@@ -139,7 +154,7 @@ ROS topics:
 <table>
 
 <tr height=40>
-<td width=60>USB</td> 
+<td width=80>USB</td> 
 <td width=80 align='center'><span id="usbcam_status" style="color: red;">OFF</span></td>
 <td><button id="usbcam_start_btn" onclick="send_cmd('usbcam_start')">USB camera start</button></td>
 <td><button id="usbcam_quit_btn" onclick="send_cmd('usbcam_kill')">USB camera quit</button></td>
@@ -169,7 +184,7 @@ ROS topics:
 <table>
 
 <tr height=40>
-<td width=60>Hokuyo</td> 
+<td width=80>Hokuyo</td> 
 <td width=80 align='center'><span id="hokuyo_status" style="color: red;">OFF</span></td>
 <td><button id="hokuyo_start_btn" onclick="send_cmd('hokuyo_start')">Hokuyo laser start</button></td>
 <td><button id="hokuyo_quit_btn" onclick="send_cmd('hokuyo_kill')">Hokuyo laser quit</button></td>
@@ -217,7 +232,7 @@ ROS topics:
 <table>
 
 <tr height=40>
-<td width=60>Joystick</td> 
+<td width=80>Joystick</td> 
 <td width=80 align='center'><span id="joystick_status" style="color: red;">OFF</span></td>
 <td><button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button></td>
 <td><button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button></td>
@@ -359,8 +374,91 @@ Start after mapper or localizer</p>
 <button id="spqrel_planner_quit_btn" onclick="send_cmd('spqrel_planner_kill')">SPQReL Planner quit</button>
 </td>
 </tr>
+</table>
+
+<hr>
+
+<table>
+<tr> <td colspan=4> <h3>Navigator with gradientBasedNavigation</h3>
+
+<p>Requires a mapper or a localizer module.<br>
+Start after mapper or localizer</p>
+</td> </tr>
+
+<tr> <td colspan=4>
+
+<listing>
+cd marrtino_apps/src/navigation
+roslaunch spqrel_planner_gbn.launch
+</listing>
+
+</tr>
+
+<tr> <td colspan=4>
+
+Enable/disable gradient based navigation
+
+Terminal
+
+<listing>
+rosparam set /gradientBasedNavigation/gbnEnabled true / false
+</listing>
+
+robot_cmd_ros
+
+<listing>
+enableObstacleAvoidance(True / False):
+</listing>
+
+</tr>
+
+<tr> <td colspan=4>
+
+Example: enter door when in front of it
+
+<listing>
+begin(use_desired_cmd_vel=True)
+enableObstacleAvoidance(True)
+forward(2)
+enableObstacleAvoidance(False)
+end()
+</listing>
+
+
+</tr>
+
+
 
 </table>
+
+<hr>
+
+
+<h2>Person follow</h2>
+
+<p>Requires <b>SRRG Localizer</b>
+
+<ol>
+<li> Start the server
+
+<listing>
+rosrun rococo_navigation follow_person_node -server none
+</listing>
+
+<li> Start the follow person action
+
+<listing>
+rosrun rococo_navigation follow_person_node -client 0.25
+</listing>
+
+
+<li> Stop the follow person action
+
+<listing style="size=140%;">
+rosrun rococo_navigation follow_person_node -client stop
+</listing>
+</ol>
+
 
 <hr>
 
@@ -423,8 +521,8 @@ Start after mapper or localizer</p>
       else if (v[0]=='RESULT') {
           cv = v[2];
           console.log("log: "+ v[1] + " " + v[2])
-          if (v[2]=='True') {
-            cv = "<font color='green'>"+v[2]+"</font>"
+          if (v[2]=='True' || parseFloat(v[2])>0) {
+            //cv = "<font color='green'>"+v[2]+"</font>"
             d = document.getElementById(v[1])
             if (d!=null)
                 d.style.color = 'green';
@@ -436,13 +534,18 @@ Start after mapper or localizer</p>
             vst = v[1]+"_status"; // status label
             d = document.getElementById(vst);
             if (d!=null) {
-                d.innerHTML = 'OK';
+                if (v[2]=='True')
+                    d.innerHTML = 'OK';
+                else
+                    d.innerHTML = v[2];
                 d.style.color = 'green';
             }
 
+
+
           }
-          else if (v[2]=='False') {
-            cv = "<font color='red'>"+v[2]+"</font>"
+          else if (v[2]=='False' || parseFloat(v[2])==0.0) {
+            //cv = "<font color='red'>"+v[2]+"</font>"
             d = document.getElementById(v[1]);
             if (d!=null)
                 d.style.color = 'red'
@@ -455,8 +558,9 @@ Start after mapper or localizer</p>
                 d.innerHTML = 'OFF';
                 d.style.color = 'red';
             }
-
           }
+
+
       }
       else if (v[0]=='VALUE') {
           vs = '';
