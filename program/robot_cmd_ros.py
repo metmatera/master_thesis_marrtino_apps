@@ -781,17 +781,17 @@ def exec_turn_ABS(th_deg):
     global rv_good, rv_min, loc_robot_pose
     current_th = loc_robot_pose[2]
     
-    print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), th_deg))
-    print("TURN -- to-normalize RAD: %.1f" %(DEG2RAD(th_deg)))
+    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), th_deg))
+    #print("TURN -- to-normalize RAD: %.1f" %(DEG2RAD(th_deg)))
 
     target_th = norm_target_angle(DEG2RAD(th_deg))
 
-    print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(target_th)))
+    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(target_th)))
 
     ndth = NORM_PI(target_th-current_th)
     dth = abs(ndth)
 
-    print("TURN -- dTh %.2f norm_PI: %.2f" %(ndth,dth))
+    #print("TURN -- dTh %.2f norm_PI: %.2f" %(ndth,dth))
 
     rv_nom = rv_good 
     if (ndth < 0):
