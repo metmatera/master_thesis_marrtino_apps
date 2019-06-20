@@ -32,6 +32,21 @@ def check_ROS_q():
         r = False
     return r
 
+def get_ROS_nodes():
+    global nodenames
+    try:
+        nodenames = rosnode.get_node_names()
+    except Exception as e:
+        #print e
+        pass
+
+def get_ROS_topics():
+    global topicnames
+    try:
+        topicnames = rospy.get_published_topics()
+    except Exception as e:
+        #print e
+        pass
 
 def check_ROS():
     global nodenames, topicnames
@@ -52,28 +67,40 @@ def check_ROS():
         printFail()
     return r
 
-def check_robot():
-    global nodenames
-    r = True
-    print '----------------------------------------'
-    print 'Check orazio robot ...'
-    if '/orazio' in nodenames:
+
+def print_result(r):
+    if r:
         printOK()
     else:
         printFail()
-        r = False
+
+
+def check_it(what):
+    fname = 'check_%s()' %what
+    print('Running %s ...' %fname)
+    return eval(fname)
+
+
+def check_robot():
+    global nodenames
+    get_ROS_nodes()
+
+    print '----------------------------------------'
+    print 'Check orazio robot ...'
+
+    r = '/orazio' in nodenames 
+    print_result(r)
     return r
 
 def check_simrobot():
     global nodenames
-    r = True
+    get_ROS_nodes()
+
     print '----------------------------------------'
     print 'Check Stage simulator ...'
-    if '/stageros' in nodenames:
-        printOK()
-    else:
-        printFail()
-        r = False
+
+    r = '/stageros' in nodenames
+    print_result(r)
     return r
 
 
@@ -96,21 +123,26 @@ def odom_cb(data):
 
 def check_odom():
     global topicnames, odomcount, odomframe
-    r = True
+    odomrate = 0
+
     print '----------------------------------------'
     print 'Check odometry ...'
-    if ['/odom', 'nav_msgs/Odometry'] in topicnames:
+
+    get_ROS_topics()
+    r = ['/odom', 'nav_msgs/Odometry'] in topicnames
+
+    if r:
+        odomcount = 0
         odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
-        dt = 1.0
+        dt = 2.0
         time.sleep(dt)
         odom_sub.unregister()
-        print('  -- Odometry rate = %.2f Hz' %(odomcount/dt))
+        odomrate = odomcount/dt
+        print('  -- Odometry rate = %.2f Hz' %(odomrate))
         print('  -- Odometry frame = %s' %(odomframe))
-        printOK()
-    else:
-        printFail()
-        r = False
-    return r
+
+    print_result(r)
+    return odomrate
 
 
 sonarcount = 0
@@ -144,11 +176,8 @@ def check_sonar():
             print('  -- Sonar %d range = %.2f' %(i,sonarvalues[i]))
         else:
             r = False
-    if r:
-        printOK()
-    else:
-        printFail()
 
+    print_result(r)
     return r
 
 
@@ -177,24 +206,29 @@ def laser_cb(data):
     lasercount += 1
     laserframe = data.header.frame_id
 
+
 def check_laser():
     global topicnames, lasercount, laserframe
-    r = True
+
     print '----------------------------------------'
     print 'Check laser scan ...'
-    if ['/scan', 'sensor_msgs/LaserScan'] in topicnames:
+
+    laserrate = 0
+    get_ROS_topics()
+    r = ['/scan', 'sensor_msgs/LaserScan'] in topicnames
+    
+    if r:
         lasercount = 0
         laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
-        dt = 1.0
+        dt = 2.0
         time.sleep(dt)
         laser_sub.unregister()
-        print('  -- Laser scan rate = %.2f Hz' %(lasercount/dt))
+        laserrate = lasercount/dt
+        print('  -- Laser scan rate = %.2f Hz' %(laserrate))
         print('  -- Laser frame = %s' %(laserframe))
-        printOK()
-    else:
-        printFail()
-        r = False
-    return r
+
+    print_result(r)
+    return laserrate
 
 
 cameracount = 0
@@ -204,46 +238,73 @@ def image_cb(data):
     global cameracount, cameraframe
     cameracount += 1
     cameraframe = data.header.frame_id
+    #print('image')
+
+
+def findImageTopic():
+    global topicnames
+
+    get_ROS_topics()
+
+    if ['/rgb/image_raw', 'sensor_msgs/Image'] in topicnames:
+        return '/rgb/image_raw'
+
+    elif ['/usbcam/image_raw', 'sensor_msgs/Image'] in topicnames:
+        return '/usbcam/image_raw'
+
+    else:
+        return None
+
 
 
 def check_rgb_camera():
     global topicnames, cameracount, cameraframe
-    r = True
+
     print '----------------------------------------'
     print 'Check RGB camera ...'
-    if ['/rgb/image_raw', 'sensor_msgs/Image'] in topicnames:
+
+    get_ROS_topics()
+    camerarate = 0
+
+    topicim = findImageTopic()
+    r = topicim is not None
+
+    if r:
         cameracount = 0
-        camera_sub = rospy.Subscriber('/rgb/image_raw', Image, image_cb)
-        dt = 1.0
+        camera_sub = rospy.Subscriber(topicim, Image, image_cb)
+        dt = 2.0
         time.sleep(dt)
         camera_sub.unregister()
-        print('  -- RGB camera rate = %.2f Hz' %(cameracount/dt))
+        camerarate = cameracount/dt
+        print('  -- RGB camera rate = %.2f Hz' %(camerarate))
         print('  -- RGB camera frame = %s' %(cameraframe))
-        printOK()
-    else:
-        printFail()
-        r = False
-    return r
+
+    print_result(r)
+    return camerarate
 
 
 def check_depth_camera():
     global topicnames, cameracount, cameraframe
-    r = True
+
     print '----------------------------------------'
     print 'Check depth camera ...'
-    if ['/depth/image_raw', 'sensor_msgs/Image'] in topicnames:
+
+    get_ROS_topics()
+    camerarate = 0
+
+    r = ['/depth/image_raw', 'sensor_msgs/Image'] in topicnames
+    if r:
         cameracount = 0
         camera_sub = rospy.Subscriber('/depth/image_raw', Image, image_cb)
-        dt = 1.0
+        dt = 2.0
         time.sleep(dt)
         camera_sub.unregister()
-        print('  -- Depth camera rate = %.2f Hz' %(cameracount/dt))
+        camerarate = cameracount/dt
+        print('  -- Depth camera rate = %.2f Hz' %(camerarate))
         print('  -- Depth camera frame = %s' %(cameraframe))
-        printOK()
-    else:
-        printFail()
-        r = False
-    return r
+
+    print_result(r)
+    return camerarate
 
 
 tf_listener = None

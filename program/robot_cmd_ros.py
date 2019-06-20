@@ -32,7 +32,6 @@ assock = None
 
 use_robot = True
 use_audio = True
-use_obstacle_avoidance = False
 
 robot_initialized = False
 stop_request = False
@@ -102,10 +101,10 @@ def setAudioConnection(ip, port=9001):
     AUDIO_SERVER_IP = ip
     AUDIO_SERVER_PORT = port
 
+PARAM_gbnEnabled = '/gradientBasedNavigation/gbnEnabled'
 
-def enableObstacleAvoidance():
-    global use_obstacle_avoidance
-    use_obstacle_avoidance = True
+def enableObstacleAvoidance(value=True):
+    rospy.set_param(PARAM_gbnEnabled, value)
 
 
 def robot_stop_request(): # stop until next begin()
@@ -354,7 +353,7 @@ def audio_connect_thread():
 
 # Begin/end
 
-def begin(nodename='robot_cmd'):
+def begin(nodename='robot_cmd', use_desired_cmd_vel=False):
     global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
     global odom_robot_pose, robot_initialized, stop_request
     global use_robot, use_audio, audio_connected
@@ -388,7 +387,7 @@ def begin(nodename='robot_cmd'):
     if (use_robot):
         print("Robot enabled")
         cmd_vel_topic = TOPIC_cmd_vel
-        if (use_obstacle_avoidance):
+        if (use_desired_cmd_vel):
             cmd_vel_topic = TOPIC_desired_cmd_vel
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
@@ -633,9 +632,12 @@ def goto_target(gx, gy):
 
 # Turn
 
-def turn(deg):
-    print 'turn',deg
-    exec_turn_REL(deg)
+def turn(deg, ref='REL'):
+    print('turn %s %.2f' %(ref,deg))
+    if ref=='REL':
+        exec_turn_REL(deg)
+    else:
+        exec_turn_ABS(deg)
 
 
 # Wait
@@ -775,6 +777,47 @@ def norm_target_angle(a):
 
 
 
+def exec_turn_ABS(th_deg):
+    global rv_good, rv_min, loc_robot_pose
+    current_th = loc_robot_pose[2]
+    
+    print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), th_deg))
+    print("TURN -- to-normalize RAD: %.1f" %(DEG2RAD(th_deg)))
+
+    target_th = norm_target_angle(DEG2RAD(th_deg))
+
+    print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(target_th)))
+
+    ndth = NORM_PI(target_th-current_th)
+    dth = abs(ndth)
+
+    print("TURN -- dTh %.2f norm_PI: %.2f" %(ndth,dth))
+
+    rv_nom = rv_good 
+    if (ndth < 0):
+        rv_nom *= -1
+
+    last_dth = dth
+    #print("TURN -- last_dth %.2f" %(last_dth))
+
+    while (dth>rv_min/8.0 and last_dth>=dth):
+        rv = rv_nom
+        if (dth<0.8):
+            rv = rv_nom*dth/0.8
+        if (abs(rv)<rv_min):
+            rv = rv_min*rv/abs(rv)
+        tv = 0.0
+        setSpeed(tv, rv, 0.1, False)
+        current_th = loc_robot_pose[2]
+        dth = abs(NORM_PI(target_th-current_th))
+        if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
+            last_dth = dth
+        #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
+    #print("TURN -- dth %.2f - last_dth %.2f" %(dth,last_dth))
+    setSpeed(0.0,0.0,0.1)
+    #print 'TURN -- end'
+
+
 def exec_turn_REL(th_deg):
     global rv_good, rv_min, odom_robot_pose
     current_th = odom_robot_pose[2]
@@ -787,7 +830,7 @@ def exec_turn_REL(th_deg):
     if (th_deg < 0):
         rv_nom *= -1
 
-    dth = abs(NORM_PI(current_th-target_th))
+    dth = abs(NORM_PI(target_th-current_th))
 
     #print("TURN -- dTh %.2f norm_PI: %.2f" %(current_th-target_th,dth))
 
@@ -802,7 +845,7 @@ def exec_turn_REL(th_deg):
         tv = 0.0
         setSpeed(tv, rv, 0.1, False)
         current_th = odom_robot_pose[2]
-        dth = abs(NORM_PI(current_th-target_th))
+        dth = abs(NORM_PI(target_th-current_th))
         if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
             last_dth = dth
         #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
