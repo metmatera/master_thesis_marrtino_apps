@@ -5,7 +5,7 @@ begin(use_desired_cmd_vel=True)
 
 enableObstacleAvoidance(True)
 
-forward(2)
+forward(1)
 
 enableObstacleAvoidance(False)
 
