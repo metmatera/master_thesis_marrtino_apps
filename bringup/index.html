@@ -379,51 +379,78 @@ Start after mapper or localizer</p>
 <hr>
 
 <table>
-<tr> <td colspan=4> <h3>Navigator with gradientBasedNavigation</h3>
+<tr> <td colspan=4> <h3>Navigation with gradientBasedNavigation</h3>
 
-<p>Requires a mapper or a localizer module.<br>
-Start after mapper or localizer</p>
+<p>
+Start with srrg_localizer</p>
 </td> </tr>
 
 <tr> <td colspan=4>
 
 <listing>
 cd marrtino_apps/src/navigation
-roslaunch spqrel_planner_gbn.launch
+roslaunch spqrel_nav.launch
 </listing>
+
+Note: gradient based navigation (gbn) is disabled by default as 
+it can conflict with the planner (deadlocks).<br><br>
 
 </tr>
 
 <tr> <td colspan=4>
 
-Enable/disable gradient based navigation
+<p><b>Enable/disable gradient based navigation</b></p>
 
 Terminal
 
 <listing>
-rosparam set /gradientBasedNavigation/gbnEnabled true / false
+rosparam set /gradientBasedNavigation/gbnEnabled true  
+rosparam set /gradientBasedNavigation/gbnEnabled false
 </listing>
 
-robot_cmd_ros
+MARRtino Python code
 
 <listing>
-enableObstacleAvoidance(True / False):
+enableObstacleAvoidance(True)
+enableObstacleAvoidance(False)
+</listing>
+
+<p>Note: to enable gbn in MARRtino Python programs, you need to
+add the following parameter to the <code>begin</code> function
+
+<listing>
+begin(use_desired_cmd_vel=True)
+</listing>
+
+
+</tr>
+
+<tr> <td colspan=4>
+
+<p><b>Example</b>: enter door when in front of it (i.e., go straigth avoiding obstacles)</p>
+
+<listing>
+begin(use_desired_cmd_vel=True)
+enableObstacleAvoidance(True)
+forward(1)
+enableObstacleAvoidance(False)
+end()
 </listing>
 
 </tr>
 
 <tr> <td colspan=4>
 
-Example: enter door when in front of it
+<p><b>Recovery behavior</b></p>
+
+Useful to try to overcome difficult situations
 
 <listing>
-begin(use_desired_cmd_vel=True)
-enableObstacleAvoidance(True)
-forward(2)
-enableObstacleAvoidance(False)
-end()
+cd marrtino_apps/src/navigation
+python recovery.py
 </listing>
 
+Edit <code>recovery.py</code> to customize recovery behaviors.
 
 </tr>
 
@@ -434,30 +461,56 @@ end()
 <hr>
 
 
-<h2>Person follow</h2>
+<h2>Person following</h2>
 
-<p>Requires <b>SRRG Localizer</b>
+<p>Behavior to follow a person. Requires <b>SRRG Localizer</b>
+
+<p><b>Terminal</b></p>
 
 <ol>
-<li> Start the server
+<li> Start the <code>follow_person</code> server
 
 <listing>
 rosrun rococo_navigation follow_person_node -server none
 </listing>
 
-<li> Start the follow person action
+<li> Start the <code>follow_person</code> action (robot will start following the person)
 
 <listing>
 rosrun rococo_navigation follow_person_node -client 0.25
 </listing>
 
 
-<li> Stop the follow person action
+<li> Stop the <code>follow_person</code> action (robot will stop following the person)
 
-<listing style="size=140%;">
+<listing>
 rosrun rococo_navigation follow_person_node -client stop
 </listing>
 </ol>
+
+
+<p><b>MARRtino Python code</b></p>
+
+<p>Start the <code>follow_person</code> server</p>
+
+<listing>
+rosrun rococo_navigation follow_person_node -server none
+</listing>
+
+<p>Write the Python program</p>
+
+<listing>
+begin()
+
+start_follow_person()  # non-blocking
+
+...
+
+stop_follow_person()
+
+end()
+</listing>
+
 
 
 <hr>
