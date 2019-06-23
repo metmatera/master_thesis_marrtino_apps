@@ -463,41 +463,22 @@ Edit <code>recovery.py</code> to customize recovery behaviors.
 
 <h2>Person following</h2>
 
-<p>Behavior to follow a person. Requires <b>SRRG Localizer</b>
+<p>Behavior to follow a person. Requires <b>SRRG Localizer</b> and <b>laserobstacle</b>.
 
-<p><b>Terminal</b></p>
+<p><b>Start server nodes</b></p>
 
-<ol>
-<li> Start the <code>follow_person</code> server
 
 <listing>
 rosrun rococo_navigation follow_person_node -server none
+
+rosrun laser_analysis laserobstacle
 </listing>
 
-<li> Start the <code>follow_person</code> action (robot will start following the person)
+<p><b>Start the client</b></p>
 
-<listing>
-rosrun rococo_navigation follow_person_node -client 0.25
-</listing>
+Two alternatives:
 
-
-<li> Stop the <code>follow_person</code> action (robot will stop following the person)
-
-<listing>
-rosrun rococo_navigation follow_person_node -client stop
-</listing>
-</ol>
-
-
-<p><b>MARRtino Python code</b></p>
-
-<p>Start the <code>follow_person</code> server</p>
-
-<listing>
-rosrun rococo_navigation follow_person_node -server none
-</listing>
-
-<p>Write the Python program</p>
+<p>1. MARRtino Python code</p>
 
 <listing>
 begin()
@@ -510,6 +491,24 @@ stop_follow_person()
 
 end()
 </listing>
+
+
+<p>2. Terminal</p>
+
+<li> Start the <code>follow_person</code> action (robot will start following the person)
+
+<listing>
+rosrun rococo_navigation follow_person_node -client 0.25
+</listing>
+
+<li> Stop the <code>follow_person</code> action (robot will stop following the person)
+
+<listing>
+rosrun rococo_navigation follow_person_node -client stop
+</listing>
+</ol>
+
+
 
 
 

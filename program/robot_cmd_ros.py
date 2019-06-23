@@ -17,6 +17,7 @@ from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan, Range, Image
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from rococo_navigation.msg import FollowPersonAction, FollowPersonGoal
 from cv_bridge import CvBridge, CvBridgeError
 
 try:
@@ -623,12 +624,22 @@ def right(r=1):
     exec_turn_REL(-90*r)
     #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
+# map frame goto (requires localization)
 def goto(gx, gy, gth_deg):
     exec_movebase(gx, gy, gth_deg)
 
 # odom frame direct control (no path planning)
 def goto_target(gx, gy):
     exec_goto_target(gx, gy)
+
+# person follow
+
+
+def start_follow_person(max_vel = 0.25): # non-blocking
+    exec_follow_person_start(max_vel)
+
+def stop_follow_person():
+    exec_follow_person_stop()
 
 # Turn
 
@@ -942,4 +953,42 @@ def exec_movebase_stop():
     ac_movebase.wait_for_server()
     ac_movebase.cancel_all_goals()
     move_base_running = False
+
+
+ac_follow_person = None  # action client
+follow_person_running = False  # running flag
+PERSON_FOLLOW_ACTION = 'follow_person'
+
+def exec_follow_person_start(max_vel):
+    global ac_follow_person, follow_person_running
+    if (ac_follow_person == None):
+        ac_follow_person = actionlib.SimpleActionClient(PERSON_FOLLOW_ACTION,FollowPersonAction)
+
+    print('Waiting for action server %s ...' %PERSON_FOLLOW_ACTION)
+    ac_follow_person.wait_for_server()
+    print('Done')
+
+    goal = FollowPersonGoal()
+    goal.person_id = 0;      # unused so far
+    goal.max_vel = max_vel;  # m/s
+    ac_follow_person.send_goal(goal)
+
+    print("Follow person START")
+    follow_person_running = True
+
+
+def exec_follow_person_stop():
+    global ac_follow_person, follow_person_running
+    if (ac_follow_person == None):
+        ac_follow_person = actionlib.SimpleActionClient(PERSON_FOLLOW_ACTION,FollowPersonAction)
+    print('Waiting for action server %s ...' %PERSON_FOLLOW_ACTION)
+    ac_follow_person.wait_for_server()
+    print('Done')
+    ac_follow_person.cancel_all_goals()
+
+    print("Follow person STOP")
+
+    follow_person_running = False
+
+
 
