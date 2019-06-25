@@ -463,16 +463,17 @@ Edit <code>recovery.py</code> to customize recovery behaviors.
 
 <h2>Person following</h2>
 
-<p>Behavior to follow a person. Requires <b>SRRG Localizer</b> and <b>laserobstacle</b>.
+<p>Behavior to follow a person. Requires <b>SRRG Localizer</b>.
 
 <p><b>Start server nodes</b></p>
 
+Terminal 1:
 
 <listing>
-rosrun rococo_navigation follow_person_node -server none
-
-rosrun laser_analysis laserobstacle
+cd marrtino_apps/src/navigation
+roslaunch follow_person.launch
 </listing>
+
 
 <p><b>Start the client</b></p>
 
@@ -498,13 +499,13 @@ end()
 <li> Start the <code>follow_person</code> action (robot will start following the person)
 
 <listing>
-rosrun rococo_navigation follow_person_node -client 0.25
+rosrun rococo_navigation follow_person_node -client none 0.25
 </listing>
 
 <li> Stop the <code>follow_person</code> action (robot will stop following the person)
 
 <listing>
-rosrun rococo_navigation follow_person_node -client stop
+rosrun rococo_navigation follow_person_node -client none stop
 </listing>
 </ol>
 
