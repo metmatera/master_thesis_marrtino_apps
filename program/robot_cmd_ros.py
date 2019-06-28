@@ -149,12 +149,18 @@ def laser_center_distance():
     global laser_center_dist
     return laser_center_dist
 
+def getRobotPose():
+    return get_robot_pose()
+
 def get_robot_pose(): # returns [x,y,theta]
     global odom_robot_pose, loc_robot_pose
     if (loc_robot_pose != None):
         return list(loc_robot_pose)
     else:
         return list(odom_robot_pose)
+
+def obstacleDistance(direction=0):
+    return obstacle_distance(direction=0)
 
 def obstacle_distance(direction=0):
     global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
@@ -533,6 +539,9 @@ def rchomelearnros_import():
 
 monet = None
 
+def mobilenetObjrec(img):
+    return mobilenet_objrec(img):
+
 def mobilenet_objrec(img):
     global monet
     if monet is None:
@@ -553,6 +562,9 @@ def ready():
 
 
 # check if program can run now
+def marrtinoOK():
+    return marrtino_ok()
+
 def marrtino_ok():
     global robot_initialized, stop_request
     return robot_initialized and not stop_request and not rospy.is_shutdown()
@@ -626,6 +638,12 @@ def right(r=1):
 
 def goto(gx, gy, gth_deg):
     exec_movebase(gx, gy, gth_deg)
+
+
+# odom frame direct control (no path planning)
+def gotoTarget(gx, gy):
+    goto_target(gx, gy)
+
 
 # odom frame direct control (no path planning)
 def goto_target(gx, gy):
@@ -724,6 +742,10 @@ except:
 
 # example: show_image('red.jpg', 'default')
 
+
+def showImage(value, which='default'):
+    show_image(value, which)
+
 def show_image(value, which='default'):
     global mws
     if mws!=None:
@@ -732,6 +754,9 @@ def show_image(value, which='default'):
         r = mws.csend(cstr)
         print(r)
 
+
+def showText(value, which='default')
+    show_text(value, which):
 
 def show_text(value, which='default'):
     global mws
