@@ -540,7 +540,7 @@ def rchomelearnros_import():
 monet = None
 
 def mobilenetObjrec(img):
-    return mobilenet_objrec(img):
+    return mobilenet_objrec(img)
 
 def mobilenet_objrec(img):
     global monet
@@ -768,8 +768,8 @@ def show_image(value, which='default'):
         print(r)
 
 
-def showText(value, which='default')
-    show_text(value, which):
+def showText(value, which='default'):
+    show_text(value, which)
 
 def show_text(value, which='default'):
     global mws
