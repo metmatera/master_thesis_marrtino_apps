@@ -962,6 +962,7 @@ def exec_movebase(gx, gy, gth_deg):
 
     ac_movebase.send_goal(goal)
     move_base_running = True
+    rospy.sleep(0.2)
     wait = ac_movebase.wait_for_result()
     if not wait:
         rospy.logerr("Action server not available!")

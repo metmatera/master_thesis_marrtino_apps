@@ -15,7 +15,7 @@
     }
     textarea {
       font-weight: normal;
-      font-size: 120%;
+      font-size: 125%;
     }
   </style>
 </head>
@@ -75,8 +75,62 @@ end()
   </tr>
   </table>
 
-  <hr>
+<hr> <br>
 
+<h3>Commands</h3>
+
+<listing style="font-size:125%;">
+# motion
+
+forward(m)
+backward(m)
+left(n)
+right(n)
+turn(deg)
+setSpeed(lx,az,time,stopend=False)
+stop()
+goto(gx,gy,gth)
+gotoTarget(gx,gy)
+p = getRobotPose()
+
+
+# range distance
+
+d = obstacleDistance(deg=0)
+
+
+# audio
+
+sound(name)
+say(text, language='en')
+s = asr()
+
+
+# modim
+
+showImage(value, which='default')
+showText(value, which='default')
+
+
+# vision
+
+img = getImage()
+img = getWebImage(objcat=None)
+n = faceDetection(img)
+label,conf = mobilenetObjrec(img)
+
+
+# utils
+
+wait(sec)
+b = marrtinoOK()
+d = distance(p1,p2)
+</listing>
+
+
+<br>
+
+<hr> <br><br>
 
 
 
