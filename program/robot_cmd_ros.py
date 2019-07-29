@@ -465,6 +465,9 @@ def stopCameraGrabber():
 
 
 def getImage(tmsleep=3):
+    get_image(tmsleep)
+
+def get_image(tmsleep=3):
     global cvimage
     startCameraGrabber() # wait 1 sec for an image
     time.sleep(tmsleep)
@@ -473,6 +476,9 @@ def getImage(tmsleep=3):
 
 
 def getWebImage(objcat=None):
+    get_web_image(objcat)
+
+def get_web_image(objcat=None):
     rchomelearnros_import()
     return webimages.take_image(objcat)
 
@@ -488,6 +494,9 @@ def findCascadeModel():
 faceCascade = None
 
 def faceDetection(img):
+    face_detection(img)
+
+def face_detection(img):
     global faceCascade
     if faceCascade is None:
         faceCascade = findCascadeModel()
@@ -573,6 +582,9 @@ def marrtino_ok():
 # Robot motion
 
 def setSpeed(lx,az,tm,stopend=False):
+    set_speed(lx,az,tm,stopend)
+
+def set_speed(lx,az,tm,stopend=False):
     global cmd_pub, stop_request
 
     if (stop_request):

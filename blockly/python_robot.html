@@ -87,16 +87,16 @@ backward(m)
 left(n)
 right(n)
 turn(deg)
-setSpeed(lx,az,time,stopend=False)
+set_speed(lx,az,time,stopend=False)
 stop()
-goto(gx,gy,gth)
-gotoTarget(gx,gy)
-p = getRobotPose()
+goto(gx,gy,gth)     # map pose
+goto_target(gx,gy)  # odom pose
+p = get_robot_pose()
 
 
 # range distance
 
-d = obstacleDistance(deg=0)
+d = obstacle_distance(deg=0)
 
 
 # audio
@@ -108,22 +108,22 @@ s = asr()
 
 # modim
 
-showImage(value, which='default')
-showText(value, which='default')
+show_image(value, which='default')
+show_text(value, which='default')
 
 
 # vision
 
-img = getImage()
-img = getWebImage(objcat=None)
-n = faceDetection(img)
-label,conf = mobilenetObjrec(img)
+img = get_image()
+img = get_web_image(objcat=None)
+n = face_detection(img)
+label,conf = mobilenet_objrec(img)
 
 
 # utils
 
 wait(sec)
-b = marrtinoOK()
+b = marrtino_ok()
 d = distance(p1,p2)
 </listing>
 
