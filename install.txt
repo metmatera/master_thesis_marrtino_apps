@@ -2,12 +2,18 @@
 
     sudo apt install tmux 
 
-    [sudo -H] pip install tornado
-    [sudo -H] pip install sox
-    [sudo -H] pip install pyalsaaudio
+    [sudo] pip install tornado
+    [sudo] pip install sox
+    [sudo] pip install pyalsaaudio
 
 
-# Orazio
+# .bashrc
+
+    export MARRTINO_VERSION=2.0
+
+    export MARRTINO_APPS_HOME=...
+
+# SRRG basic
 
     cd src
 
@@ -27,19 +33,23 @@
 
     git clone https://gitlab.com/srrg-software/srrg_core_ros.git # commit 9ccfdad65d1e453b905a1fe9b4467ed3c4e89251
 
+    # Link
+    cd $HOME/ros/catkin_ws/src
+    ln -s $HOME/src/srrg/srrg_cmake_modules .
+    ln -s $HOME/src/srrg/srrg_core .
+    ln -s $HOME/src/srrg/srrg_core_ros .
+
+
+# Orazio
+
     git clone https://gitlab.com/srrg-software/srrg2_orazio_core.git  # commit e3202f0bc11a5de79102c2c54ba0adc113204f9e
     
     git clone https://gitlab.com/srrg-software/srrg2_orazio_ros.git # commit 20917b328b441d43f780e5e1077b5ff07fc9cc46 
 
 
 
-      # Link
-      cd $HOME/ros/catkin_ws/src
-      ln -s $HOME/src/srrg/srrg_cmake_modules .
-      ln -s $HOME/src/srrg/srrg_core .
-      ln -s $HOME/src/srrg/srrg_core_ros .
-      ln -s $HOME/src/srrg/srrg2_orazio_core .
-      ln -s $HOME/src/srrg/srrg2_orazio_ros .
+    ln -s $HOME/src/srrg/srrg2_orazio_core .
+    ln -s $HOME/src/srrg/srrg2_orazio_ros .
       
 
 
@@ -52,11 +62,11 @@
     if [ ! -d $HOME/lib/g2o ]; then
 
       sudo apt update
-      yes | sudo apt install libsuitesparse-dev
+      yes | sudo apt install libsuitesparse-dev   # IMPORTANT INSTALL BEFORE COMPILING g2o
 
       mkdir -p $HOME/lib
       cd $HOME/lib
-      wget http://www.diag.uniroma1.it/iocchi/marrtino/lib/g2o-raspi-src.tgz 
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/lib/g2o-marrtino-src.tgz 
       tar xzvf g2o-raspi-src.tgz
       rm g2o-raspi-src.tgz
       cd g2o
@@ -122,7 +132,33 @@
 
     # gradient_based_navigation
 
-    git clone https://github.com/Imperoli/gradient_based_navigation.git
+    if [ ! -d $HOME/src/spqrel_navigation ]; then
+
+      cd $HOME/src
+      git clone https://github.com/Imperoli/gradient_based_navigation.git
+
+      cd $HOME/ros/catkin_ws/src
+      ln -s $HOME/src/gradient_based_navigation .
+
+    fi
+
+
+    # stage_environments
+
+
+
+
+    # [optional] rococo_navigation & dependencies
+
+    https://bitbucket.org/iocchi/rococo_navigation.git
+
+    https://bitbucket.org/iocchi/laser_analysis.git
+
+    https://github.com/spencer-project/spencer_people_tracking.git
+
+    https://bitbucket.org/ggrisetti/thin_drivers.git
+
+    
 
 
 
@@ -142,9 +178,6 @@ For Raspberry
     sudo rm -f $HOME/swapfile
 
 
-MARRtino apps
-
-    git clone https://bitbucket.org/iocchi/marrtino_apps.git
 
 
 
