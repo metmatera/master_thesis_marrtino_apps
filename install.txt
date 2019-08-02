@@ -106,6 +106,8 @@
       cd src
       rm srrg_mapper2d_node.cpp
       wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/srrg_mapper2d_node.cpp
+      rm message_handler.cpp
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/message_handler.cpp
 
 
       cd srrg_scan_matcher
