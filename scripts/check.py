@@ -331,6 +331,9 @@ def check_depth_camera():
         camerarate = cameracount/dt
         print('  -- Depth camera rate = %.2f Hz' %(camerarate))
         print('  -- Depth camera frame = %s' %(cameraframe))
+    
+    print_result(r)
+    return camerarate
 
 
 tf_listener = None
@@ -348,6 +351,7 @@ def check_tf(source, target):
         (posn, rotn) = tf_listener.lookupTransform(source, target, rospy.Time())
         # how much time ago we get a transform (secs)
         t = rospy.Time.now().secs - tf_listener.getLatestCommonTime(source, target).secs
+        print t
         if (t<3):
             printOK()
         else:
@@ -357,6 +361,7 @@ def check_tf(source, target):
         #print e
         printFail()
         r = False
+
     return r
 
 

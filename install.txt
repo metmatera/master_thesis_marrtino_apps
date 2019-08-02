@@ -154,7 +154,13 @@
     # stage_environments
 
 
+    https://bitbucket.org/ggrisetti/thin_drivers.git
 
+     ln -s thin_msgs   
+     ln -s thin_state_publisher
+
+
+ 
 
     # [optional] rococo_navigation & dependencies
 
@@ -164,9 +170,7 @@
 
     https://github.com/spencer-project/spencer_people_tracking.git
 
-    https://bitbucket.org/ggrisetti/thin_drivers.git
-
-    
+   
 
 
 
@@ -192,6 +196,11 @@ For Raspberry
 Joystick
 
     sudo apt install ros-kinetic-joystick-drivers ros-kinetic-joy
+
+
+Laser 
+
+    sudo apt install ros-kinetic-urg-node
 
 
 
