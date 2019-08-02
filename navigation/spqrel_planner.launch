@@ -22,8 +22,7 @@
 		<param name="tf_timecheck" value="false" />
 		<param name="verbose" value="false" />
 
-        <remap from="cmd_vel" to="$(arg cmdvel)" />
-
+        <remap from="cmd_vel" to="cmd_vel_mux/input/navi" if="$(eval env('ROBOT_TYPE') == 'turtlebot')"  />  <!-- Turtlebot -->
 	</node>
 
 
