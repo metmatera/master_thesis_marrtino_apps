@@ -17,8 +17,14 @@ from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan, Range, Image
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-from rococo_navigation.msg import FollowPersonAction, FollowPersonGoal
 from cv_bridge import CvBridge, CvBridgeError
+
+try:
+    from rococo_navigation.msg import FollowPersonAction, FollowPersonGoal
+    rococo_navigation_Found = True
+except:
+    print("rococo_navigation not found")
+    rococo_navigation_Found = False
 
 try:
     from apriltags_ros.msg import AprilTagDetectionArray
@@ -999,6 +1005,11 @@ PERSON_FOLLOW_ACTION = 'follow_person'
 
 def exec_follow_person_start(max_vel):
     global ac_follow_person, follow_person_running
+
+    if not rococo_navigation_Found:
+        print("Action %s not available"  %PERSON_FOLLOW_ACTION)
+        return
+
     if (ac_follow_person == None):
         ac_follow_person = actionlib.SimpleActionClient(PERSON_FOLLOW_ACTION,FollowPersonAction)
 
@@ -1017,6 +1028,11 @@ def exec_follow_person_start(max_vel):
 
 def exec_follow_person_stop():
     global ac_follow_person, follow_person_running
+
+    if not rococo_navigation_Found:
+        print("Action %s not available"  %PERSON_FOLLOW_ACTION)
+        return
+
     if (ac_follow_person == None):
         ac_follow_person = actionlib.SimpleActionClient(PERSON_FOLLOW_ACTION,FollowPersonAction)
     print('Waiting for action server %s ...' %PERSON_FOLLOW_ACTION)
