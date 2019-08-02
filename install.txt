@@ -6,6 +6,8 @@
     [sudo] pip install sox
     [sudo] pip install pyalsaaudio
 
+    sudo apt install pico2wave sox
+
 
 # .bashrc
 
