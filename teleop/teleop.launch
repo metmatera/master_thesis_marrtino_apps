@@ -1,6 +1,7 @@
 <launch>
 	<arg name="use_joystick" default="true" />
-	<arg name="cmdvel" default="cmd_vel" />  <!-- use joystick_cmd_vel if gbn active -->
+	<arg name="cmdvel" default="cmd_vel" if="$(eval env('ROBOT_TYPE') != 'turtlebot')" />  <!-- use joystick_cmd_vel if gbn active -->
+	<arg name="cmdvel" default="cmd_vel_mux/input/teleop" if="$(eval env('ROBOT_TYPE') == 'turtlebot')" />  <!-- turtlebot -->
 
     <!-- keyboard -->
 	<group unless="$(arg use_joystick)">
@@ -24,3 +25,4 @@
 	</group>
 		
 </launch>
+

@@ -23,10 +23,10 @@
         <param name="goal_rotation_tolerance" value="0.5" />
         <param name="use_gui" value="$(arg gui)" />
         <param name="tf_timecheck" value="false" />
-        <remap from="cmd_vel" to="desired_cmd_vel" />  <!-- to connect to ggradient_based_navigation -->
+        <remap from="cmd_vel" to="desired_cmd_vel" />  <!-- to connect to gradient_based_navigation -->
     </node>
 
-            
+
     <!-- gradient_based_navigation -->    
 
     <node pkg="gradient_based_navigation" type="gradient_based_navigation" args="40" name="gradientBasedNavigation" output="screen">
@@ -39,6 +39,9 @@
         <param name="momentum_scale" value="0.1" />
         <param name="rate" value="10" />
         <param name="gbnEnabled" value="false" />  <!-- disabled, use param set to enable -->
+
+        <remap from="cmd_vel" to="cmd_vel_mux/input/navi" if="$(eval env('ROBOT_TYPE') == 'turtlebot')"  />  <!-- Turtlebot -->
+
     </node>
 
         

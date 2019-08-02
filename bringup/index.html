@@ -82,8 +82,9 @@ ROS topics:
 <table border=1>
     <tr height=40>
       <td width=150><div id="ros" style="color: grey;" >ROS</div></td>
-      <td width=150><div id="robot" style="color: grey;" >robot</div></td>
-      <td width=150><div id="simrobot" style="color: grey;" >simrobot</div></td>
+      <td width=150><div id="robot" style="color: grey;" >MARRtino</div></td>
+      <td width=150><div id="turtle" style="color: grey;" >Turtlebot</div></td>
+      <td width=150><div id="simrobot" style="color: grey;" >Simrobot</div></td>
     </tr>
     <tr height=40>
       <td><span id="odom" style="color: grey;">odom</span>     
@@ -131,10 +132,17 @@ ROS topics:
 <table>
 
 <tr height=40>
-<td width=80>Robot</td> 
+<td width=80>MARRtino</td> 
 <td width=80 align='center'><span id="robot_status" style="color: red;">OFF</span></td>
 <td><button id="robot_start_btn" onclick="send_cmd('robot_start')">Robot start</button></td>
 <td><button id="robot_quit_btn" onclick="send_cmd('robot_kill')">Robot quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=80>Turtlebot</td> 
+<td width=80 align='center'><span id="turtle_status" style="color: red;">OFF</span></td>
+<td><button id="turtle_start_btn" onclick="send_cmd('turtle_start')">Robot start</button></td>
+<td><button id="turtle_quit_btn" onclick="send_cmd('turtle_kill')">Robot quit</button></td>
 </tr>
 
 <tr height=40>
@@ -166,7 +174,6 @@ ROS topics:
 <td><button id="astra_start_btn" onclick="send_cmd('astra_start')">Astra camera start</button></td>
 <td><button id="astra_quit_btn" onclick="send_cmd('astra_kill')">Astra camera quit</button></td>
 </tr>
-
 
 <tr height=40>
 <td>Xtion</td> 
@@ -205,6 +212,12 @@ ROS topics:
 <td><button id="astralaser_quit_btn" onclick="send_cmd('astralaser_kill')">Astra laser quit</button></td>
 </tr>
 
+<tr height=40>
+<td>Kinect</td> 
+<td width=80 align='center'><span id="kinect_status" style="color: red;">OFF</span></td>
+<td><button id="kinect_start_btn" onclick="send_cmd('kinect_start')">Kinect laser start</button></td>
+<td><button id="kinect_quit_btn" onclick="send_cmd('kinect_kill')">Kinect laser quit</button></td>
+</tr>
 
 <tr height=40>
 <td width=60>Xtion</td> 

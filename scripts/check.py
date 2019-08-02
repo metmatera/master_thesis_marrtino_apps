@@ -88,9 +88,24 @@ def check_robot():
     print '----------------------------------------'
     print 'Check orazio robot ...'
 
-    r = '/orazio' in nodenames 
+    r = '/orazio' in nodenames
     print_result(r)
     return r
+
+
+def check_turtle():
+    global nodenames
+    get_ROS_nodes()
+
+    print '----------------------------------------'
+    print 'Check Turtlebot robot ...'
+
+    r = '/mobile_base' in nodenames
+    print_result(r)
+    return r
+
+
+
 
 def check_simrobot():
     global nodenames
@@ -245,13 +260,12 @@ def findImageTopic():
     global topicnames
 
     get_ROS_topics()
-
-    if ['/rgb/image_raw', 'sensor_msgs/Image'] in topicnames:
+    if ['/kinect/rgb/image_raw', 'sensor_msgs/Image'] in topicnames:
+        return '/kinect/rgb/image_raw'
+    elif ['/rgb/image_raw', 'sensor_msgs/Image'] in topicnames:
         return '/rgb/image_raw'
-
     elif ['/usbcam/image_raw', 'sensor_msgs/Image'] in topicnames:
         return '/usbcam/image_raw'
-
     else:
         return None
 
@@ -282,6 +296,19 @@ def check_rgb_camera():
     print_result(r)
     return camerarate
 
+def findDepthTopic():
+    global topicnames
+
+    get_ROS_topics()
+
+    if ['/depth/image_raw', 'sensor_msgs/Image'] in topicnames:
+        return '/depth/image_raw'
+
+    elif ['/kinect/depth/image_raw', 'sensor_msgs/Image'] in topicnames:
+        return '/kinect/depth/image_raw'
+
+    else:
+        return None
 
 def check_depth_camera():
     global topicnames, cameracount, cameraframe
@@ -292,19 +319,18 @@ def check_depth_camera():
     get_ROS_topics()
     camerarate = 0
 
-    r = ['/depth/image_raw', 'sensor_msgs/Image'] in topicnames
+    topicim = findDepthTopic()
+    r = topicim is not None
+
     if r:
         cameracount = 0
-        camera_sub = rospy.Subscriber('/depth/image_raw', Image, image_cb)
+        camera_sub = rospy.Subscriber(topicim, Image, image_cb)
         dt = 2.0
         time.sleep(dt)
         camera_sub.unregister()
         camerarate = cameracount/dt
         print('  -- Depth camera rate = %.2f Hz' %(camerarate))
         print('  -- Depth camera frame = %s' %(cameraframe))
-
-    print_result(r)
-    return camerarate
 
 
 tf_listener = None
@@ -343,6 +369,23 @@ def check_tfs():
     check_tf('base_frame', 'rgb_camera_frame')
     check_tf('base_frame', 'depth_camera_frame')
 
+
+def check_kinect():
+    print '----------------------------------------'
+    print('Check kinect ...')
+    global nodenames
+    get_ROS_nodes()
+    r=[]
+    r=[node for node in nodenames if 'kinect' in node]
+    if len(r)!=0:
+        printOK()
+        r= True
+    else:
+        printFail()
+        r= False
+    return r
+
+
 def check_node(m, r):
     print '  --',m,
     if '/'+m in nodenames:
@@ -356,7 +399,7 @@ def check_node(m, r):
 
 def check_nodes():
     r = []
-    print('Check navigation modules ...')
+    print('Check modules ...')
     check_node('gmapping',r)
     check_node('srrg_mapper2d',r)
     check_node('amcl',r)
@@ -375,19 +418,20 @@ def check_nodes():
 
     return r
 
-
 def main():
     r = check_ROS()
     if (r):
         rospy.init_node('marrtino_check')
         check_simrobot()
         check_robot()
+        check_turtle()
         check_odom()
         check_sonar()
         check_laser()
         check_rgb_camera()
         check_depth_camera()
         check_tfs()
+        check_kinect()
         check_nodes()
 
 

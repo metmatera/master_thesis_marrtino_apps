@@ -53,6 +53,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         if (what=='robot' or what=='ALL'):
             r = check_robot()
             self.write_message('RESULT robot '+str(r))
+            r = check_turtle()
+            self.write_message('RESULT turtle '+str(r))
             r = check_simrobot()
             self.write_message('RESULT simrobot '+str(r))
             r = check_odom()
@@ -65,6 +67,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         if (what=='laser' or what=='cameralaser' or what=='ALL'):
             r = check_laser()
             self.write_message('RESULT laser '+str(r))
+            r = check_kinect()
+            self.write_message('RESULT kinect '+str(r))
 
         if (what=='camera' or what=='cameralaser' or what=='ALL'):
             r = check_rgb_camera()
@@ -176,6 +180,26 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.write_message('RESULT robot False')
             #self.checkStatus('robot')
 
+
+        # robot start/stop
+        elif (message=='turtle_start'):
+            self.tmux.roslaunch(self.wrobot,'robot','turtle')
+            self.waitfor('turtle',5)
+            self.waitfor('odom',1)
+        elif (message=='turtle_kill'):
+            self.tmux.roskill('mobile_base')
+            self.tmux.roskill('mobile_base_nodelet_manager')
+            time.sleep(1)
+            self.tmux.killall(self.wrobot)
+            time.sleep(1)
+            if check_robot():
+                self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
+                time.sleep(1)
+            while check_robot():
+                time.sleep(1)
+            self.write_message('RESULT robot False')
+            #self.checkStatus('robot')
+
         # simrobot start/stop
         elif (message=='simrobot_start'):
             self.tmux.roslaunch(self.wrobot,'stage','simrobot')
@@ -240,6 +264,21 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.roskill('state_pub_astra')
             time.sleep(2)
             self.tmux.killall(self.wcamera)
+            time.sleep(2)
+            self.checkStatus('camera')
+
+        # kinect
+        elif (message=='kinect_start'):
+            self.tmux.roslaunch(self.wlaser,'laser','kinect')
+            #self.waitfor('rgb_camera',5)
+            #self.waitfor('depth_camera',1)
+            #time.sleep(5)
+            self.checkStatus('laser')
+        elif (message=='kinect_kill'):
+            self.tmux.roskill('kinect')
+            #self.tmux.roskill('state_pub_kinect')
+            time.sleep(2)
+            self.tmux.killall(self.wlaser)
             time.sleep(2)
             self.checkStatus('camera')
 
