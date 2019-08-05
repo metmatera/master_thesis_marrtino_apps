@@ -1,0 +1,268 @@
+<html>
+<head>
+  <title>MARRtino config</title>
+  <script src="../blockly/websocket_robot.js"></script>
+</head>
+<body>
+<h1 align="center">MARRtino config</h1>
+
+<hr>
+
+<h1> Robot status </h1>
+
+<table border=0>
+    <tr height=40>
+      <td>Robot IP</td>
+<script>
+      document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
+            window.location.hostname + "\" width=240></td>")
+</script>
+      <td width=100><button onclick="connect()">Connect</button></td>
+      <td width=120><button onclick="disconnect()">Disconnect</button></td>
+      <td><div id="connection"><font color='red'>Not Connected</font></div></td>
+    </tr>
+    <tr height=40>
+      <td>Status</td>
+      <td><div id="status" style="color: blue;" >Idle</div></td>
+    </tr>
+</table>
+
+<p>
+
+<table>
+<tr>
+<td>MARRtino System version </td>
+<td> <div id="marrtino_version" style="color: blue;" ></div> </td>
+</tr>
+
+<tr>
+<td>MARRtino Apps version </td>
+<td> <div id="marrtino_apps_version" style="color: blue;" ></div> </td>
+</tr>
+</table>
+
+<hr>
+
+<p>
+<button id="shutdown_btn" onclick="send_cmd('shutdown')">Shutdown</button>
+<button id="reboot_btn" onclick="send_cmd('reboot')">Reboot</button>
+</p>
+
+<hr>
+
+<h1>System update</h1>
+
+<ol>
+<li> Access through
+<script>
+document.write("<a target=\"_blank\" href=\"https://" + window.location.hostname + ":9200\"/>")
+document.write("ssh " + window.location.hostname+ " (click here)")
+document.write("</a>")
+</script>
+
+<li> Login
+<pre style="font-size:140%;">
+Username: ubuntu
+Password: marrtino
+</pre>
+
+<li> Update
+<pre style="font-size:140%;">
+cd install
+python marrtino_update.py
+</pre>
+
+Confirm and enter password (<tt style="font-size:120%;">marrtino</tt>) when asked for.
+</ol>
+
+<!-- button id="btn_upsys" onclick="send_cmd('updatesystem')">System Update</button -->
+
+<hr>
+
+<h1>Apps Update</h1>
+
+<p>
+<button id="btn_upapp" onclick="send_cmd('updatemarrtinoapps')">marrtino_apps Update</button>
+</p>
+
+<p>
+<button id="btn_upmodim" onclick="send_cmd('updatemodim')">MODIM Update</button>
+</p>
+
+<p>
+<button id="btn_upmodim" onclick="send_cmd('updaterchome')">RCHOME Update</button>
+</p>
+
+<br>
+
+
+<hr>
+
+<h1> Web config </h1>
+
+<p>
+<button id="btn_webstart" onclick="send_cmd('startweb')">Start web config</button>
+<button id="btn_webquit" onclick="send_cmd('quitweb')">Quit web config</button>
+
+<script>
+      document.write("<a target=_blank href=\"http://" + window.location.hostname + ":9000\">Orazio web interface</a>")
+</script>
+
+<hr>
+
+<h1> SSH </h1>
+<p>
+<script>
+document.write("<a target=\"_blank\" href=\"https://" + window.location.hostname + ":9200\"/>")
+document.write("ssh " + window.location.hostname)
+document.write("</a>")
+</script>
+</p>
+<br>
+Note: confirm security exception from your browser if needed.
+
+</a>
+
+<hr>
+
+<h1> Network configuration (under development)</h1>
+
+Wireless status:
+<div id="wireless_status" style="color: blue;" ></div>
+
+Ethernet status:
+<div id="eth_status" style="color: blue;" ></div>
+
+<p>
+<table>
+<tr> <td width=200 align='center'> <b>Wireless AP</b> </td>  
+     <td width=40> </td>
+     <td width=200 align='center'> <b>Wireless Home client</b> </td> 
+</tr>
+
+<tr>
+
+<td>
+
+<p align='center'> 
+<button id="btn_wirelessAP" onclick="send_cmd('wirelessAP')">Wireless AP server</button> </p>
+
+<listing>
+Mode: AP
+ESSID: MARRtinoXXX
+Password: hellorobot!
+IP: 10.3.1.1
+</listing>
+
+</td>
+
+<td> </td>
+
+<td>
+
+<p align='center'>
+<button id="btn_wirelessHome" onclick="send_cmd('wirelessHome')">Wireless Home client</button>
+</p>
+
+<listing>
+Mode: client
+ESSID: MARRtinoHome
+Password: myrobot!
+IP: (DHCP)
+</listing>
+
+</tr>
+</table>
+
+<hr>
+
+<h1> Firmware upload (advanced user only!!!)</h1>
+
+<p>
+<button id="Firmware_flash_btn" onclick="send_cmd('flash')">Firmware Flash</button>
+<button id="Firmware_update_params_btn" onclick="send_cmd('firmwareparam')">Firmware Update Params</button>
+</p>
+
+<hr>
+
+
+
+<br><br><br>
+
+</body>
+
+
+<!-- ****** SCRIPTS ****** -->
+
+<script>
+
+    //document.getElementById("simrobot_start_btn").disabled = false;
+
+    // messages received from wsserver
+    eventproc = function(event){
+      v = event.data.split(' ');
+
+      if (v[0]=='STATUS') {
+          document.getElementById("status").innerHTML = v[1];
+      }
+      else if (v[0]=='RESULT') {
+          cv = v[2];
+          if (v[2]=='True') {
+            cv = "<font color='green'>"+v[2]+"</font>"
+            document.getElementById(v[1]).style.color = 'green';
+            //document.getElementById(v[1]+"_btn").style.color = 'green';
+
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+          }
+          else if (v[2]=='False') {
+            cv = "<font color='red'>"+v[2]+"</font>"
+            document.getElementById(v[1]).style.color = 'red';
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+          }
+      }
+      else if (v[0]=='VALUE') {
+          vs = '';
+          for (i=2; i<v.length ; i++)
+             vs += v[i]+' '
+          document.getElementById(v[1]).innerHTML = vs;
+      }
+    }
+
+    function connect() {
+        wsrobot_init(9510);  // init websocket robot
+        setTimeout(check_connection, 2000);
+        websocket.onmessage = eventproc;
+    }
+
+    function disconnect() {
+        wsrobot_quit();  // quit websocket robot
+        setTimeout(check_connection, 2000);
+    }
+
+    function check_connection() {
+        console.log("check connection")
+        if (wsrobot_connected()) {
+            console.log("wsrobot_connected true")
+            document.getElementById("connection").innerHTML = "<font color='green'>Connected</font>";
+            //document.getElementById("run_btn").disabled = false;
+            //document.getElementById("stop_btn").disabled = false;
+        }
+        else {
+            console.log("wsrobot_connected false")
+            document.getElementById("connection").innerHTML = "<font color='red'>Not Connected</font>";
+            //document.getElementById("run_btn").disabled = true;
+            //document.getElementById("stop_btn").disabled = true;
+        }
+    }
+
+    function send_cmd(action) {
+        wsrobot_send(action);
+    }
+
+
+</script>
+
+</html>
+
