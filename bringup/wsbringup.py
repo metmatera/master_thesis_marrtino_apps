@@ -127,7 +127,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.tmux.roscore(self.wroscore)
         time.sleep(1)
         self.tmux.cmd(self.wmodim,'cd $MODIM_HOME/src/GUI')
-        self.tmux.cmd(self.wmodim,'python ws_server.py')
+        self.tmux.cmd(self.wmodim,'python ws_server.py -robot marrtino')
         time.sleep(1)
         self.wsrobot()
         #time.sleep(3)
