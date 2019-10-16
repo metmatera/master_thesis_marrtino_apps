@@ -9,11 +9,11 @@
 		<param name="laser_topic" value="/$(arg laser_topic)" />
 		<param name="map_topic" value="/map" />
 		<param name="static_map_service" value="/map" />
-		<param name="max_linear_vel" value="0.2" />
-		<param name="max_angular_vel" value="0.75" />
-		<param name="min_angular_vel" value="0.1" />
-		<param name="max_linear_acc" value="0.2" />
-		<param name="max_angular_acc" value="0.5" />
+		<param name="max_linear_vel" value="0.3" />
+		<param name="max_angular_vel" value="0.8" />
+		<param name="min_angular_vel" value="0.2" />
+		<param name="max_linear_acc" value="1.0" />
+		<param name="max_angular_acc" value="1.0" />
 		<param name="robot_radius" value="0.2" />
 		<param name="goal_translation_tolerance" value="0.4" />
 		<param name="goal_rotation_tolerance" value="0.5" />
