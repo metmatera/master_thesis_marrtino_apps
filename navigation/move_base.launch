@@ -26,6 +26,9 @@
   <param name="local_costmap/laser_scan_sensor/sensor_frame" value="/$(arg laser_frame)" />
   <param name="local_costmap/laser_scan_sensor/topic" value="/$(arg laser_topic)" />
   <param name="local_costmap/robot_base_frame" value="/$(arg base_frame)" /> 
+
+  <remap from="cmd_vel" to="cmd_vel_mux/input/navi" if="$(eval env('ROBOT_TYPE') == 'turtlebot')"  />  <!-- Turtlebot -->
 </node>
 
 </launch>
+

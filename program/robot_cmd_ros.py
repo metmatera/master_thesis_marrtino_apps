@@ -20,6 +20,13 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from cv_bridge import CvBridge, CvBridgeError
 
 try:
+    from rococo_navigation.msg import FollowPersonAction, FollowPersonGoal
+    rococo_navigation_Found = True
+except:
+    print("rococo_navigation not found")
+    rococo_navigation_Found = False
+
+try:
     from apriltags_ros.msg import AprilTagDetectionArray
     AprilTagFound = True
 except:
@@ -32,7 +39,6 @@ assock = None
 
 use_robot = True
 use_audio = True
-use_obstacle_avoidance = False
 
 robot_initialized = False
 stop_request = False
@@ -102,10 +108,10 @@ def setAudioConnection(ip, port=9001):
     AUDIO_SERVER_IP = ip
     AUDIO_SERVER_PORT = port
 
+PARAM_gbnEnabled = '/gradientBasedNavigation/gbnEnabled'
 
-def enableObstacleAvoidance():
-    global use_obstacle_avoidance
-    use_obstacle_avoidance = True
+def enableObstacleAvoidance(value=True):
+    rospy.set_param(PARAM_gbnEnabled, value)
 
 
 def robot_stop_request(): # stop until next begin()
@@ -149,12 +155,18 @@ def laser_center_distance():
     global laser_center_dist
     return laser_center_dist
 
+def getRobotPose():
+    return get_robot_pose()
+
 def get_robot_pose(): # returns [x,y,theta]
     global odom_robot_pose, loc_robot_pose
     if (loc_robot_pose != None):
         return list(loc_robot_pose)
     else:
         return list(odom_robot_pose)
+
+def obstacleDistance(direction=0):
+    return obstacle_distance(direction=0)
 
 def obstacle_distance(direction=0):
     global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
@@ -354,7 +366,7 @@ def audio_connect_thread():
 
 # Begin/end
 
-def begin(nodename='robot_cmd'):
+def begin(nodename='robot_cmd', use_desired_cmd_vel=False):
     global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
     global odom_robot_pose, robot_initialized, stop_request
     global use_robot, use_audio, audio_connected
@@ -388,7 +400,7 @@ def begin(nodename='robot_cmd'):
     if (use_robot):
         print("Robot enabled")
         cmd_vel_topic = TOPIC_cmd_vel
-        if (use_obstacle_avoidance):
+        if (use_desired_cmd_vel):
             cmd_vel_topic = TOPIC_desired_cmd_vel
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
@@ -458,14 +470,21 @@ def stopCameraGrabber():
         sub_image.unregister()
 
 
-def getImage():
+def getImage(tmsleep=3):
+    get_image(tmsleep)
+
+def get_image(tmsleep=3):
     global cvimage
     startCameraGrabber() # wait 1 sec for an image
+    time.sleep(tmsleep)
     stopCameraGrabber()
     return cvimage
 
 
 def getWebImage(objcat=None):
+    get_web_image(objcat)
+
+def get_web_image(objcat=None):
     rchomelearnros_import()
     return webimages.take_image(objcat)
 
@@ -481,6 +500,9 @@ def findCascadeModel():
 faceCascade = None
 
 def faceDetection(img):
+    face_detection(img)
+
+def face_detection(img):
     global faceCascade
     if faceCascade is None:
         faceCascade = findCascadeModel()
@@ -532,6 +554,9 @@ def rchomelearnros_import():
 
 monet = None
 
+def mobilenetObjrec(img):
+    return mobilenet_objrec(img)
+
 def mobilenet_objrec(img):
     global monet
     if monet is None:
@@ -552,6 +577,9 @@ def ready():
 
 
 # check if program can run now
+def marrtinoOK():
+    return marrtino_ok()
+
 def marrtino_ok():
     global robot_initialized, stop_request
     return robot_initialized and not stop_request and not rospy.is_shutdown()
@@ -560,6 +588,9 @@ def marrtino_ok():
 # Robot motion
 
 def setSpeed(lx,az,tm,stopend=False):
+    set_speed(lx,az,tm,stopend)
+
+def set_speed(lx,az,tm,stopend=False):
     global cmd_pub, stop_request
 
     if (stop_request):
@@ -623,18 +654,37 @@ def right(r=1):
     exec_turn_REL(-90*r)
     #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
+# map frame goto (requires localization)
 def goto(gx, gy, gth_deg):
     exec_movebase(gx, gy, gth_deg)
+
+
+# odom frame direct control (no path planning)
+def gotoTarget(gx, gy):
+    goto_target(gx, gy)
+
 
 # odom frame direct control (no path planning)
 def goto_target(gx, gy):
     exec_goto_target(gx, gy)
 
+# person follow
+
+
+def start_follow_person(max_vel = 0.25): # non-blocking
+    exec_follow_person_start(max_vel)
+
+def stop_follow_person():
+    exec_follow_person_stop()
+
 # Turn
 
-def turn(deg):
-    print 'turn',deg
-    exec_turn_REL(deg)
+def turn(deg, ref='REL'):
+    print('turn %s %.2f' %(ref,deg))
+    if ref=='REL':
+        exec_turn_REL(deg)
+    else:
+        exec_turn_ABS(deg)
 
 
 # Wait
@@ -723,6 +773,10 @@ except:
 
 # example: show_image('red.jpg', 'default')
 
+
+def showImage(value, which='default'):
+    show_image(value, which)
+
 def show_image(value, which='default'):
     global mws
     if mws!=None:
@@ -731,6 +785,9 @@ def show_image(value, which='default'):
         r = mws.csend(cstr)
         print(r)
 
+
+def showText(value, which='default'):
+    show_text(value, which)
 
 def show_text(value, which='default'):
     global mws
@@ -774,6 +831,47 @@ def norm_target_angle(a):
 
 
 
+def exec_turn_ABS(th_deg):
+    global rv_good, rv_min, loc_robot_pose
+    current_th = loc_robot_pose[2]
+    
+    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), th_deg))
+    #print("TURN -- to-normalize RAD: %.1f" %(DEG2RAD(th_deg)))
+
+    target_th = norm_target_angle(DEG2RAD(th_deg))
+
+    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(target_th)))
+
+    ndth = NORM_PI(target_th-current_th)
+    dth = abs(ndth)
+
+    #print("TURN -- dTh %.2f norm_PI: %.2f" %(ndth,dth))
+
+    rv_nom = rv_good 
+    if (ndth < 0):
+        rv_nom *= -1
+
+    last_dth = dth
+    #print("TURN -- last_dth %.2f" %(last_dth))
+
+    while (dth>rv_min/8.0 and last_dth>=dth):
+        rv = rv_nom
+        if (dth<0.8):
+            rv = rv_nom*dth/0.8
+        if (abs(rv)<rv_min):
+            rv = rv_min*rv/abs(rv)
+        tv = 0.0
+        setSpeed(tv, rv, 0.1, False)
+        current_th = loc_robot_pose[2]
+        dth = abs(NORM_PI(target_th-current_th))
+        if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
+            last_dth = dth
+        #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
+    #print("TURN -- dth %.2f - last_dth %.2f" %(dth,last_dth))
+    setSpeed(0.0,0.0,0.1)
+    #print 'TURN -- end'
+
+
 def exec_turn_REL(th_deg):
     global rv_good, rv_min, odom_robot_pose
     current_th = odom_robot_pose[2]
@@ -786,7 +884,7 @@ def exec_turn_REL(th_deg):
     if (th_deg < 0):
         rv_nom *= -1
 
-    dth = abs(NORM_PI(current_th-target_th))
+    dth = abs(NORM_PI(target_th-current_th))
 
     #print("TURN -- dTh %.2f norm_PI: %.2f" %(current_th-target_th,dth))
 
@@ -801,7 +899,7 @@ def exec_turn_REL(th_deg):
         tv = 0.0
         setSpeed(tv, rv, 0.1, False)
         current_th = odom_robot_pose[2]
-        dth = abs(NORM_PI(current_th-target_th))
+        dth = abs(NORM_PI(target_th-current_th))
         if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
             last_dth = dth
         #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
@@ -882,6 +980,7 @@ def exec_movebase(gx, gy, gth_deg):
 
     ac_movebase.send_goal(goal)
     move_base_running = True
+    rospy.sleep(0.2)
     wait = ac_movebase.wait_for_result()
     if not wait:
         rospy.logerr("Action server not available!")
@@ -898,4 +997,52 @@ def exec_movebase_stop():
     ac_movebase.wait_for_server()
     ac_movebase.cancel_all_goals()
     move_base_running = False
+
+
+ac_follow_person = None  # action client
+follow_person_running = False  # running flag
+PERSON_FOLLOW_ACTION = 'follow_person'
+
+def exec_follow_person_start(max_vel):
+    global ac_follow_person, follow_person_running
+
+    if not rococo_navigation_Found:
+        print("Action %s not available"  %PERSON_FOLLOW_ACTION)
+        return
+
+    if (ac_follow_person == None):
+        ac_follow_person = actionlib.SimpleActionClient(PERSON_FOLLOW_ACTION,FollowPersonAction)
+
+    print('Waiting for action server %s ...' %PERSON_FOLLOW_ACTION)
+    ac_follow_person.wait_for_server()
+    print('Done')
+
+    goal = FollowPersonGoal()
+    goal.person_id = 0;      # unused so far
+    goal.max_vel = max_vel;  # m/s
+    ac_follow_person.send_goal(goal)
+
+    print("Follow person START")
+    follow_person_running = True
+
+
+def exec_follow_person_stop():
+    global ac_follow_person, follow_person_running
+
+    if not rococo_navigation_Found:
+        print("Action %s not available"  %PERSON_FOLLOW_ACTION)
+        return
+
+    if (ac_follow_person == None):
+        ac_follow_person = actionlib.SimpleActionClient(PERSON_FOLLOW_ACTION,FollowPersonAction)
+    print('Waiting for action server %s ...' %PERSON_FOLLOW_ACTION)
+    ac_follow_person.wait_for_server()
+    print('Done')
+    ac_follow_person.cancel_all_goals()
+
+    print("Follow person STOP")
+
+    follow_person_running = False
+
+
 

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # full device #/dev/mmcblk0, /dev/sdb 
-SDDEVICE=/dev/sdc
+SDDEVICE=/dev/sdb
 # partition 1 (boot) #/dev/mmcblk0p1, /dev/sdb1
-SDDEVICEp1=/dev/sdc1
+SDDEVICEp1=/dev/sdb1
 # partition 2 (root) #/dev/mmcblk0p2, /dev/sdb2
-SDDEVICEp2=/dev/sdc2
+SDDEVICEp2=/dev/sdb2
 
 
 if [ -z "$1" ]; then

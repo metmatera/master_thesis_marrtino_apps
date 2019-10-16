@@ -1,0 +1,676 @@
+<html>
+<head>
+  <title>MARRtino bringup</title>
+  <script src="../program/websocket_robot.js"></script>
+
+
+  <style>
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 10%;
+      top: 20%;
+      width: 80%; /* Full width */
+      height: 50%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 3px solid #888;
+      left: 10%;
+      width: 80%;
+    }
+
+    listing {
+      font-size: 140%;
+      color: #1111ff;
+    }
+
+    code {
+      font-size: 140%;
+      color: #1111ff;
+    }
+
+  </style>
+
+</head>
+<body>
+<h1 align="center">MARRtino bringup</h1>
+
+<hr>
+
+<h1> Robot status </h1>
+
+<table border=0>
+    <tr height=40>
+      <td>Robot IP</td>
+<script>
+      document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
+            window.location.hostname + "\" width=240></td>")
+</script>
+      <td width=100><button onclick="connect()">Connect</button></td>
+      <td width=120><button onclick="disconnect()">Disconnect</button></td>
+      <td><div id="connection"><font color='red'>Not Connected</font></div></td>
+    </tr>
+    <tr height=40>
+      <td>Status</td>
+      <td><div id="status" style="color: blue;" >Idle</div></td>
+    </tr>
+</table>
+
+<p>
+ROS nodes:
+<div id="rosnodes" style="color: blue;" ></div>
+</p>
+
+<p>
+ROS topics:
+<div id="rostopics" style="color: blue;" ></div>
+</p>
+
+
+<table border=1>
+    <tr height=40>
+      <td width=150><div id="ros" style="color: grey;" >ROS</div></td>
+      <td width=150><div id="robot" style="color: grey;" >MARRtino</div></td>
+      <td width=150><div id="turtle" style="color: grey;" >Turtlebot</div></td>
+      <td width=150><div id="simrobot" style="color: grey;" >Simrobot</div></td>
+    </tr>
+    <tr height=40>
+      <td><span id="odom" style="color: grey;">odom</span>     
+          <span id="odom_status" style="color: grey;">OFF</span>   </td>
+      <td><span id="laser" style="color: grey;">laser</span>   
+          <span id="laser_status" style="color: grey;">OFF</span> </td>
+      <td><span id="sonar" style="color: grey;">sonar</span>
+          <span id="sonar_status" style="color: grey;">OFF</span>   </td>
+    </tr>
+    <tr height=40>
+      <td><span id="rgb" style="color: grey;">RGB</span>
+          <span id="rgb_status" style="color: grey;">OFF</span>        </td>
+      <td><span id="depth" style="color: grey;">Depth</span>
+          <span id="depth_status" style="color: grey;">OFF</span>      </td>
+    </tr>
+</table>
+
+<table>
+  <tr><td>TF</td></tr>
+  <tr><td><div id="tf_map_odom" style="color: grey;">map -&gt; odom</div></td></tr>
+  <tr><td><div id="tf_odom_base" style="color: grey;">odom -&gt; base_frame</div></td></tr>
+
+  <tr><td><div id="tf_base_laser" style="color: grey;">base_frame -&gt; laser_frame</div></td></tr>
+  <tr><td><div id="tf_base_rgb" style="color: grey;">base_frame -&gt; rgb_camera_frame</div></td></tr>
+  <tr><td><div id="tf_base_depth" style="color: grey;">base_frame -&gt; depth_camera_frame</div></td></tr>
+</table>
+
+<hr>
+
+<p>
+<button onclick="send_cmd('check')">Check status</button>
+<button onclick="send_cmd('ros_quit')">Quit all</button>
+<button id="shutdown_btn" onclick="send_cmd('shutdown')">Shutdown</button>
+</p>
+<br>
+
+<hr>
+
+<h1> Robot/Simulator start-up </h1>
+
+<hr>
+
+<h2>Robot</h2>
+
+<table>
+
+<tr height=40>
+<td width=80>MARRtino</td> 
+<td width=80 align='center'><span id="robot_status" style="color: red;">OFF</span></td>
+<td><button id="robot_start_btn" onclick="send_cmd('robot_start')">Robot start</button></td>
+<td><button id="robot_quit_btn" onclick="send_cmd('robot_kill')">Robot quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=80>Turtlebot</td> 
+<td width=80 align='center'><span id="turtle_status" style="color: red;">OFF</span></td>
+<td><button id="turtle_start_btn" onclick="send_cmd('turtle_start')">Robot start</button></td>
+<td><button id="turtle_quit_btn" onclick="send_cmd('turtle_kill')">Robot quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Simrobot</td> 
+<td width=80 align='center'><span id="simrobot_status" style="color: red;">OFF</span></td>
+<td><button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')">Simrobot start</button></td>
+<td><button id="simrobot_quit_btn" onclick="send_cmd('simrobot_kill')">Simrobot quit</button></td>
+</tr>
+
+</table>
+
+
+<hr>
+
+<h2>Camera</h2>
+
+<table>
+
+<tr height=40>
+<td width=80>USB</td> 
+<td width=80 align='center'><span id="usbcam_status" style="color: red;">OFF</span></td>
+<td><button id="usbcam_start_btn" onclick="send_cmd('usbcam_start')">USB camera start</button></td>
+<td><button id="usbcam_quit_btn" onclick="send_cmd('usbcam_kill')">USB camera quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Astra</td> 
+<td width=80 align='center'><span id="astra_status" style="color: red;">OFF</span></td>
+<td><button id="astra_start_btn" onclick="send_cmd('astra_start')">Astra camera start</button></td>
+<td><button id="astra_quit_btn" onclick="send_cmd('astra_kill')">Astra camera quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Xtion</td> 
+<td width=80 align='center'><span id="xtion2_status" style="color: red;">OFF</span></td>
+<td><button id="xtion_start_btn" onclick="send_cmd('xtion_start')">Xtion camera start</button></td>
+<td><button id="xtion_quit_btn" onclick="send_cmd('xtion_kill')">Xtion camera quit</button></td>
+</tr>
+
+</table>
+
+<hr>
+
+<h2>Laser</h2>
+
+<table>
+
+<tr height=40>
+<td width=80>Hokuyo</td> 
+<td width=80 align='center'><span id="hokuyo_status" style="color: red;">OFF</span></td>
+<td><button id="hokuyo_start_btn" onclick="send_cmd('hokuyo_start')">Hokuyo laser start</button></td>
+<td><button id="hokuyo_quit_btn" onclick="send_cmd('hokuyo_kill')">Hokuyo laser quit</button></td>
+</tr>
+
+
+<tr height=40>
+<td width=60>RPlidar</td> 
+<td width=80 align='center'><span id="rplidar_status" style="color: red;">OFF</span></td>
+<td><button id="rplidar_start_btn" onclick="send_cmd('rplidar_start')">RPlidar laser start</button></td>
+<td><button id="rplidar_quit_btn" onclick="send_cmd('rplidar_kill')">RPlidar laser quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=60>Astra</td> 
+<td width=80 align='center'><span id="astralaser_status" style="color: red;">OFF</span></td>
+<td><button id="astralaser_start_btn" onclick="send_cmd('astralaser_start')">Astra laser start</button></td>
+<td><button id="astralaser_quit_btn" onclick="send_cmd('astralaser_kill')">Astra laser quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Kinect</td> 
+<td width=80 align='center'><span id="kinect_status" style="color: red;">OFF</span></td>
+<td><button id="kinect_start_btn" onclick="send_cmd('kinect_start')">Kinect laser start</button></td>
+<td><button id="kinect_quit_btn" onclick="send_cmd('kinect_kill')">Kinect laser quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=60>Xtion</td> 
+<td width=80 align='center'><span id="xtion2laser_status" style="color: red;">OFF</span></td>
+<td><button id="xtionlaser_start_btn" onclick="send_cmd('xtionlaser_start')">Xtion laser start</button></td>
+<td><button id="xtionlaser_quit_btn" onclick="send_cmd('xtionlaser_kill')">Xtion laser quit</button></td>
+</tr>
+
+</table>
+
+<hr>
+
+<h2>Audio</h2>
+<p>
+<button id="audio_start_btn" onclick="send_cmd('audio_start')">Audio start</button>
+<button id="audio_quit_btn" onclick="send_cmd('audio_kill')">Audio quit</button>
+<!-- button id="wsrobot_start_btn" onclick="send_cmd('wsrobot_start')">WS robot start</button>
+<button id="wsrobot_quit_btn" onclick="send_cmd('wsrobot_kill')">WS robot quit</button -->
+</p>
+
+<hr>
+
+<h2> Joystick </h2>
+
+<table>
+
+<tr height=40>
+<td width=80>Joystick</td> 
+<td width=80 align='center'><span id="joystick_status" style="color: red;">OFF</span></td>
+<td><button id="joystick_start_btn" onclick="send_cmd('joystick_start')">Joystick start</button></td>
+<td><button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')">Joystick quit</button></td>
+</tr>
+
+</table>
+
+<hr>
+
+<h2>Sonar</h2>
+<p>
+
+<table>
+<tr>
+<td width=150><button id="get_sonar_btn" onclick="send_cmd('read_sonars')">Read sonars</button></td>
+<td width=50>F <div id="sonar0" style="color: blue;" >0</div></td>
+<td width=50>R <div id="sonar1" style="color: blue;" >0</div></td>
+<td width=50>B <div id="sonar2" style="color: blue;" >0</div></td>
+<td width=50>L <div id="sonar3" style="color: blue;" >0</div></td>
+</tr>
+</table>
+</p>
+
+<hr>
+
+<h1> Functionalities </h1>
+
+
+<hr>
+
+<h2>Mapping & Navigation</h2>
+
+<table>
+
+<tr> <td colspan=4> 
+Run <b>rviz</b> to see the map under construction and set target goals.<br>
+<p>
+Mapping and navigation with the robot:
+<listing style="color: blue; font-size: 140%;">
+export ROS_IP=`hostname -I`
+export ROS_MASTER_URI=http://10.3.1.1:11311 
+cd src/marrtino_apps/mapping
+rosrun rviz rviz -d mapping.rviz
+</listing>
+</p>
+<p>
+Mapping and navigation with the simulator:
+<listing style="color: blue; font-size: 140%;">
+cd src/marrtino_apps/mapping
+rosrun rviz rviz -d mapping.rviz
+</listing>
+</p>
+</td> 
+</tr>
+
+<tr> <td colspan=4> <hr> </td> </tr>
+
+<tr> <td colspan=4> <b style="color: red;">Start only one mapper OR one localizer</b><br><br> </td> </tr>
+
+
+<tr> <td colspan=4> <h3>Mapper</h3> </td> </tr>
+
+<tr height=40>
+<td width=160>GMapping</td> 
+<td width=80><span id="gmapping_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="gmapping_start_btn" onclick="send_cmd('gmapping_start')">GMapping start</button>
+<button id="gmapping_quit_btn" onclick="send_cmd('gmapping_kill')">GMapping quit</button>
+</td>
+</tr>
+
+<tr height=40>
+<td>SRRG mapper</td>
+<td><span id="srrg_mapper2d_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="srrg_mapper2d_start_btn" onclick="send_cmd('srrg_mapper2d_start')">SRRG mapper start</button>
+<button id="srrg_mapper2d_quit_btn" onclick="send_cmd('srrg_mapper2d_kill')">SRRG mapper quit</button>
+</td>
+</tr>
+
+
+<tr> <td colspan=2>Save the current map<br>playground/lastmap.yaml</td> <td> <button id="save_map_btn" onclick="send_cmd('save_map')">Save Map</button> </td> 
+
+</tr>
+
+
+<tr> <td colspan=4> &nbsp; </td> </tr>
+
+<tr> <td colspan=4> <h3>Localizer</h3> 
+<p>
+Default map: src/marrtino_apps/mapping/maps/map.yaml (symbolic link)<br>
+Last saved map: playground/lastmap.yaml<br>
+</p>
+
+</td> </tr>
+
+<tr height=40>
+<td>AMCL</td> 
+<td><span id="amcl_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="amcl_start_btn" onclick="send_cmd('amcl_start')">AMCL start</button>
+<button id="amcl_start_l_btn" onclick="send_cmd('amcl_lastmap_start')">AMCL start (last map)</button>
+<button id="amcl_quit_btn" onclick="send_cmd('amcl_kill')">AMCL quit</button>
+</td>
+</tr>
+
+<tr height=40>
+<td>SRRG Localizer</td> 
+<td><span id="srrg_localizer_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="srrg_localizer_start_btn" onclick="send_cmd('srrg_localizer_start')">SRRG Localizer start</button>
+<button id="srrg_localizer_l_start_btn" onclick="send_cmd('srrg_localizer_lastmap_start')">SRRG Localizer start (last map)</button>
+<button id="srrg_localizer_quit_btn" onclick="send_cmd('srrg_localizer_kill')">SRRG Localizer quit</button>
+</td>
+</tr>
+
+
+<tr> <td colspan=4> <hr> </td> </tr>
+
+<tr> <td colspan=4> <h3>Navigator</h3>
+<p>Requires a mapper or a localizer module.<br>
+Start after mapper or localizer</p>
+</td> </tr>
+
+<tr height=40>
+<td>MoveBase</td> 
+<td><span id="move_base_node_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="move_base_node_start_btn" onclick="send_cmd('move_base_node_start')">MoveBase start</button>
+<button id="move_base_node_quit_btn" onclick="send_cmd('move_base_node_kill')">MoveBase quit</button>
+</td>
+</tr>
+
+<tr height=40>
+<td>SPQReL Planner</td> 
+<td><span id="spqrel_planner_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="spqrel_planner_start_btn" onclick="send_cmd('spqrel_planner_start')">SPQReL Planner start</button>
+<button id="spqrel_planner_quit_btn" onclick="send_cmd('spqrel_planner_kill')">SPQReL Planner quit</button>
+</td>
+</tr>
+</table>
+
+<hr>
+
+<table>
+<tr> <td colspan=4> <h3>Navigation with gradientBasedNavigation</h3>
+
+<p>
+Start with srrg_localizer</p>
+</td> </tr>
+
+<tr> <td colspan=4>
+
+<listing>
+cd marrtino_apps/src/navigation
+roslaunch spqrel_nav.launch
+</listing>
+
+Note: gradient based navigation (gbn) is disabled by default as 
+it can conflict with the planner (deadlocks).<br><br>
+
+</tr>
+
+<tr> <td colspan=4>
+
+<p><b>Enable/disable gradient based navigation</b></p>
+
+Terminal
+
+<listing>
+rosparam set /gradientBasedNavigation/gbnEnabled true  
+rosparam set /gradientBasedNavigation/gbnEnabled false
+</listing>
+
+MARRtino Python code
+
+<listing>
+enableObstacleAvoidance(True)
+enableObstacleAvoidance(False)
+</listing>
+
+<p>Note: to enable gbn in MARRtino Python programs, you need to
+add the following parameter to the <code>begin</code> function
+
+<listing>
+begin(use_desired_cmd_vel=True)
+</listing>
+
+
+</tr>
+
+<tr> <td colspan=4>
+
+<p><b>Example</b>: enter door when in front of it (i.e., go straigth avoiding obstacles)</p>
+
+<listing>
+begin(use_desired_cmd_vel=True)
+enableObstacleAvoidance(True)
+forward(1)
+enableObstacleAvoidance(False)
+end()
+</listing>
+
+</tr>
+
+<tr> <td colspan=4>
+
+<p><b>Recovery behavior</b></p>
+
+Useful to try to overcome difficult situations
+
+<listing>
+cd marrtino_apps/src/navigation
+python recovery.py
+</listing>
+
+Edit <code>recovery.py</code> to customize recovery behaviors.
+
+</tr>
+
+
+
+</table>
+
+<hr>
+
+
+<h2>Person following</h2>
+
+<p>Behavior to follow a person. Requires <b>SRRG Localizer</b>.
+
+<p><b>Start server nodes</b></p>
+
+Terminal:
+
+<listing>
+cd marrtino_apps/src/navigation
+roslaunch follow_person.launch
+</listing>
+
+
+<p><b>Start the client</b></p>
+
+Two alternatives:
+
+<p>1. MARRtino Python code</p>
+
+<listing>
+begin()
+
+start_follow_person()  # non-blocking
+
+...
+
+stop_follow_person()
+
+end()
+</listing>
+
+
+<p>2. Terminal</p>
+
+<li> Start the <code>follow_person</code> action (robot will start following the person)
+
+<listing>
+rosrun rococo_navigation follow_person_node -client none 0.25
+</listing>
+
+<li> Stop the <code>follow_person</code> action (robot will stop following the person)
+
+<listing>
+rosrun rococo_navigation follow_person_node -client none stop
+</listing>
+</ol>
+
+
+
+
+
+<hr>
+
+<br><br><br>
+
+
+<!-- The Modal -->
+<div id="waitModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <h2 align='center'>Please wait..</h2>
+  </div>
+
+</div>
+
+</body>
+
+
+<!-- ****** SCRIPTS ****** -->
+
+<script>
+
+
+    function waitwindow_on() {
+        var modal = document.getElementById('waitModal');
+        modal.style.display = "block";
+        console.log("waitwindow_on")
+    }
+
+    function waitwindow_off() {
+        var modal = document.getElementById('waitModal');
+        modal.style.display = "none";
+        console.log("waitwindow_off")
+    }
+
+    // setTimeout(waitwindow_on(), 4000);
+    
+
+    //document.getElementById("simrobot_start_btn").disabled = false;
+
+
+    // messages received from wsserver
+    eventproc = function(event){
+      v = event.data.split(' ');
+
+      if (v[0]=='STATUS') {
+          vs = '';
+          for (i=1; i<v.length ; i++)
+             vs += v[i]+' '
+          vs = vs.trim();
+          document.getElementById("status").innerHTML = vs;
+          var d = new Date();
+          console.log(d+" - status ["+vs+"]");
+          if (vs=="Idle")
+            waitwindow_off();
+          else
+            waitwindow_on();
+      }
+      else if (v[0]=='RESULT') {
+          cv = v[2];
+          console.log("log: "+ v[1] + " " + v[2])
+          if (v[2]=='True' || parseFloat(v[2])>0) {
+            //cv = "<font color='green'>"+v[2]+"</font>"
+            d = document.getElementById(v[1])
+            if (d!=null)
+                d.style.color = 'green';
+            //document.getElementById(v[1]+"_btn").style.color = 'green';
+
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+
+            vst = v[1]+"_status"; // status label
+            d = document.getElementById(vst);
+            if (d!=null) {
+                if (v[2]=='True')
+                    d.innerHTML = 'OK';
+                else
+                    d.innerHTML = v[2];
+                d.style.color = 'green';
+            }
+
+
+
+          }
+          else if (v[2]=='False' || parseFloat(v[2])==0.0) {
+            //cv = "<font color='red'>"+v[2]+"</font>"
+            d = document.getElementById(v[1]);
+            if (d!=null)
+                d.style.color = 'red'
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+
+            vst = v[1]+"_status"; // status label
+            d = document.getElementById(vst);
+            if (d!=null) {
+                d.innerHTML = 'OFF';
+                d.style.color = 'red';
+            }
+          }
+
+
+      }
+      else if (v[0]=='VALUE') {
+          vs = '';
+          for (i=2; i<v.length ; i++)
+             vs += v[i]+' '
+          document.getElementById(v[1]).innerHTML = vs;
+      }
+    }
+
+    function connect() {
+        wsrobot_init(9500);  // init websocket robot
+        setTimeout(check_connection, 1000);
+        websocket.onmessage = eventproc;
+    }
+
+    function disconnect() {
+        wsrobot_quit();  // init websocket robot
+        setTimeout(check_connection, 1000);
+    }
+
+    function check_connection() {
+        console.log("check connection")
+        if (wsrobot_connected()) {
+            console.log("wsrobot_connected true")
+            document.getElementById("connection").innerHTML = "<font color='green'>Connected</font>";
+            //document.getElementById("run_btn").disabled = false;
+            //document.getElementById("stop_btn").disabled = false;
+        }
+        else {
+            console.log("wsrobot_connected false")
+            document.getElementById("connection").innerHTML = "<font color='red'>Not Connected</font>";
+            //document.getElementById("run_btn").disabled = true;
+            //document.getElementById("stop_btn").disabled = true;
+        }
+    }
+
+    function send_cmd(action) {
+        wsrobot_send(action);
+    }
+
+ 
+
+
+</script>
+
+</html>
+

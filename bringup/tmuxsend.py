@@ -60,14 +60,16 @@ class TmuxSend:
         os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         os.system('tmux send-keys C-\\')
 
-    def quitall(self): # kill all processes in windows 1..n-1 (excluding 0 and n)
-        self.roskill('-a')
-        time.sleep(3)
-        for i in range(0,self.nwindows-1):
-            self.Cc(i+1)  # C-c on all the windows
+    def quitall(self,wrange=None): # kill all processes in windows (default: 0..n-1)
+        #self.roskill('-a')
+        #time.sleep(3)
+        if wrange is None:
+            wrange = range(0,self.nwindows)
+        for i in wrange:
+            self.Cc(i)  # C-c on all the windows
             time.sleep(1)
-        for i in range(0,self.nwindows-1):
-            self.Ck(i+1)  # C-\ on all the windows
+        for i in wrange:
+            self.Ck(i)  # C-\ on all the windows
             time.sleep(1)
 
 

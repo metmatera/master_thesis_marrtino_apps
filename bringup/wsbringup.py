@@ -39,7 +39,7 @@ status = "Idle"             # robot status sent to websocket
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
-    def checkStatus(self):
+    def checkStatus(self, what='ALL'):
 
         self.setStatus('Checking...')
 
@@ -50,20 +50,31 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.write_message('VALUE rosnodes %r' %check.nodenames)
             self.write_message('VALUE rostopics %r' %check.topicnames)
 
-        r = check_robot()
-        self.write_message('RESULT robot '+str(r))
-        r = check_simrobot()
-        self.write_message('RESULT simrobot '+str(r))
-        r = check_odom()
-        self.write_message('RESULT odom '+str(r))
-        r = check_sonar()
-        self.write_message('RESULT sonar '+str(r))
-        r = check_laser()
-        self.write_message('RESULT laser '+str(r))
-        r = check_rgb_camera()
-        self.write_message('RESULT rgb '+str(r))
-        r = check_depth_camera()
-        self.write_message('RESULT depth '+str(r))
+        if (what=='robot' or what=='ALL'):
+            r = check_robot()
+            self.write_message('RESULT robot '+str(r))
+            r = check_turtle()
+            self.write_message('RESULT turtle '+str(r))
+            r = check_simrobot()
+            self.write_message('RESULT simrobot '+str(r))
+            r = check_odom()
+            self.write_message('RESULT odom '+str(r))
+
+        if (what=='sonar' or what=='ALL'):
+            r = check_sonar()
+            self.write_message('RESULT sonar '+str(r))
+
+        if (what=='laser' or what=='cameralaser' or what=='ALL'):
+            r = check_laser()
+            self.write_message('RESULT laser '+str(r))
+            r = check_kinect()
+            self.write_message('RESULT kinect '+str(r))
+
+        if (what=='camera' or what=='cameralaser' or what=='ALL'):
+            r = check_rgb_camera()
+            self.write_message('RESULT rgb '+str(r))
+            r = check_depth_camera()
+            self.write_message('RESULT depth '+str(r))
 
         r = check_tf('map', 'odom')
         self.write_message('RESULT tf_map_odom '+str(r))
@@ -78,6 +89,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         rr = check_nodes()
         for [m,t] in rr:
             self.write_message('RESULT %s %s ' %(m,t))
+
         self.setStatus('Idle')
         time.sleep(1)
         self.setStatus('Idle')
@@ -94,9 +106,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         websocket_server = self
         print('New connection')
         self.setStatus('Executing...')
-        self.winlist = ['cmd','robot','laser','camera','joystick','audio','wsrobot','quit','roscore', 
-            'modim','map_loc','navigation','playground']
+        self.winlist = ['cmd','roscore','quit','wsrobot','modim',
+                        'robot','laser','camera','joystick','audio',
+                        'map_loc','navigation','playground']
 
+        self.wroscore = self.winlist.index('roscore')
         self.wrobot = self.winlist.index('robot')
         self.wlaser = self.winlist.index('laser')
         self.wcamera = self.winlist.index('camera')
@@ -104,7 +118,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.waudio = self.winlist.index('audio')
         self.wwsrobot = self.winlist.index('wsrobot')
         self.wquit = self.winlist.index('quit')
-        self.wroscore = self.winlist.index('roscore')
         self.wmodim = self.winlist.index('modim')
         self.wmaploc = self.winlist.index('map_loc')
         self.wnav = self.winlist.index('navigation')
@@ -112,15 +125,23 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         self.tmux = TmuxSend('bringup',self.winlist)
         self.tmux.roscore(self.wroscore)
-        time.sleep(5)
+        time.sleep(1)
         self.tmux.cmd(self.wmodim,'cd $MODIM_HOME/src/GUI')
-        self.tmux.cmd(self.wmodim,'python ws_server.py')
-        time.sleep(5)
+        self.tmux.cmd(self.wmodim,'python ws_server.py -robot marrtino')
+        time.sleep(1)
         self.wsrobot()
-        time.sleep(3)
-
+        #time.sleep(3)
 
         self.checkStatus()
+
+    def waitfor(self, what, timeout):
+        time.sleep(2)
+        while not check_it(what) and timeout>0:
+            time.sleep(1)
+            timeout -= 1
+        r = check_it(what)
+        self.write_message('RESULT %s %s' %(what,str(r)))
+
 
     def on_message(self, message):
         global code, status
@@ -136,37 +157,67 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.checkStatus()
 
         elif (message=='ros_quit'):
-            self.tmux.quitall()
+            self.tmux.quitall(range(5,len(self.winlist)))
             self.checkStatus()
 
         # robot start/stop
         elif (message=='robot_start'):
             self.tmux.roslaunch(self.wrobot,'robot','robot')
-            time.sleep(5)
-            self.checkStatus()
+            self.waitfor('robot',5)
+            self.waitfor('odom',1)
+            self.waitfor('sonar',1)
         elif (message=='robot_kill'):
             self.tmux.roskill('orazio')
             self.tmux.roskill('state_pub_robot')
-            time.sleep(3)
+            time.sleep(1)
             self.tmux.killall(self.wrobot)
-            time.sleep(3)
-            self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
-            time.sleep(3)
-            self.checkStatus()
+            time.sleep(1)
+            if check_robot():
+                self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
+                time.sleep(1)
+            while check_robot():
+                time.sleep(1)
+            self.write_message('RESULT robot False')
+            #self.checkStatus('robot')
+
+
+        # robot start/stop
+        elif (message=='turtle_start'):
+            self.tmux.roslaunch(self.wrobot,'robot','turtle')
+            self.waitfor('turtle',5)
+            self.waitfor('odom',1)
+        elif (message=='turtle_kill'):
+            self.tmux.roskill('mobile_base')
+            self.tmux.roskill('mobile_base_nodelet_manager')
+            time.sleep(1)
+            self.tmux.killall(self.wrobot)
+            time.sleep(1)
+            if check_robot():
+                self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
+                time.sleep(1)
+            while check_robot():
+                time.sleep(1)
+            self.write_message('RESULT robot False')
+            #self.checkStatus('robot')
 
         # simrobot start/stop
         elif (message=='simrobot_start'):
             self.tmux.roslaunch(self.wrobot,'stage','simrobot')
-            time.sleep(7)
-            self.checkStatus()
+            self.waitfor('simrobot',5)
+            self.waitfor('odom',1)
+            self.waitfor('laser',1)
         elif (message=='simrobot_kill'):
             self.tmux.roskill('stageros')
-            time.sleep(3)
+            time.sleep(1)
             self.tmux.killall(self.wrobot)
-            time.sleep(3)
-            self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
-            time.sleep(3)
-            self.checkStatus()
+            time.sleep(1)
+            if check_simrobot():
+                self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
+                time.sleep(1)
+            while check_simrobot():
+                time.sleep(1)
+            self.write_message('RESULT simrobot False')
+            #self.checkStatus('robot')
 
         # wsrobot
         elif (message=='wsrobot_start'):
@@ -185,77 +236,101 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
                 self.write_message('VALUE sonar%d %.2f' %(i,v))
                 print('  -- Sonar %d range = %.2f' %(i,v))
             self.setStatus('Idle')
+            self.checkStatus('sonar')
 
         # usbcam
         elif (message=='usbcam_start'):
             self.tmux.roslaunch(self.wcamera,'camera','usbcam')
-            time.sleep(5)
-            self.checkStatus()
+            self.waitfor('rgb_camera',5)
+            #time.sleep(5)
+            #self.checkStatus('camera')
         elif (message=='usbcam_kill'):
             self.tmux.roskill('usb_cam')
             self.tmux.roskill('state_pub_usbcam')
-            time.sleep(3)
+            time.sleep(2)
             self.tmux.killall(self.wcamera)
-            time.sleep(3)
-            self.checkStatus()
+            time.sleep(2)
+            self.checkStatus('camera')
 
         # astra
         elif (message=='astra_start'):
             self.tmux.roslaunch(self.wcamera,'camera','astra')
-            time.sleep(5)
-            self.checkStatus()
+            self.waitfor('rgb_camera',5)
+            self.waitfor('depth_camera',1)
+            #time.sleep(5)
+            #self.checkStatus('camera')
         elif (message=='astra_kill'):
             self.tmux.roskill('astra')
             self.tmux.roskill('state_pub_astra')
-            time.sleep(3)
+            time.sleep(2)
             self.tmux.killall(self.wcamera)
-            time.sleep(3)
-            self.checkStatus()
+            time.sleep(2)
+            self.checkStatus('camera')
+
+        # kinect
+        elif (message=='kinect_start'):
+            self.tmux.roslaunch(self.wlaser,'laser','kinect')
+            #self.waitfor('rgb_camera',5)
+            #self.waitfor('depth_camera',1)
+            #time.sleep(5)
+            self.checkStatus('laser')
+        elif (message=='kinect_kill'):
+            self.tmux.roskill('kinect')
+            #self.tmux.roskill('state_pub_kinect')
+            time.sleep(2)
+            self.tmux.killall(self.wlaser)
+            time.sleep(2)
+            self.checkStatus('camera')
 
         # xtion
         elif (message=='xtion_start'):
             self.tmux.roslaunch(self.wcamera,'camera','xtion2')
-            time.sleep(5)
-            self.checkStatus()
+            self.waitfor('rgb_camera',5)
+            self.waitfor('depth_camera',1)
+            #time.sleep(5)
+            #self.checkStatus('camera')
         elif (message=='xtion_kill'):
             self.tmux.roskill('xtion2')
             self.tmux.roskill('state_pub_xtion')
-            time.sleep(3)
+            time.sleep(2)
             self.tmux.killall(self.wcamera)
-            time.sleep(3)
-            self.checkStatus()
+            time.sleep(2)
+            self.checkStatus('camera')
+
 
         # hokuyo
         elif (message=='hokuyo_start'):
             self.tmux.roslaunch(self.wlaser,'laser','hokuyo')
-            time.sleep(5)
-            self.checkStatus()
+            self.waitfor('laser',5)
+            #time.sleep(5)
+            #self.checkStatus('laser')
         elif (message=='hokuyo_kill'):
             self.tmux.roskill('hokuyo')
             self.tmux.roskill('state_pub_laser')
             time.sleep(3)
             self.tmux.killall(self.wlaser)
             time.sleep(3)
-            self.checkStatus()
+            self.checkStatus('laser')
 
         # rplidar
         elif (message=='rplidar_start'):
             self.tmux.roslaunch(self.wlaser,'laser','rplidar')
-            time.sleep(5)
-            self.checkStatus()
+            self.waitfor('laser',5)
+            #time.sleep(5)
+            #self.checkStatus('laser')
         elif (message=='rplidar_kill'):
             self.tmux.roskill('rplidar')
             self.tmux.roskill('state_pub_laser')
             time.sleep(3)
             self.tmux.killall(self.wlaser)
             time.sleep(3)
-            self.checkStatus()
+            self.checkStatus('laser')
 
         # astralaser
         elif (message=='astralaser_start'):
             self.tmux.roslaunch(self.wlaser,'laser','astra_laser')
             time.sleep(5)
-            self.checkStatus()
+            self.checkStatus('cameralaser')
         elif (message=='astralaser_kill'):
             self.tmux.roskill('astralaser')
             self.tmux.roskill('depth2laser')
@@ -263,13 +338,13 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.tmux.killall(self.wlaser)
             time.sleep(3)
-            self.checkStatus()
+            self.checkStatus('cameralaser')
 
         # xtionlaser
         elif (message=='xtionlaser_start'):
             self.tmux.roslaunch(self.wlaser,'laser','xtion2_laser')
             time.sleep(5)
-            self.checkStatus()
+            self.checkStatus('cameralaser')
         elif (message=='xtionlaser_kill'):
             self.tmux.roskill('xtion2laser')
             self.tmux.roskill('depth2laser')
@@ -277,20 +352,20 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(3)
             self.tmux.killall(self.wlaser)
             time.sleep(3)
-            self.checkStatus()
+            self.checkStatus('cameralaser')
 
         # joystick
         elif (message=='joystick_start'):
             self.tmux.roslaunch(self.wjoystick,'teleop','teleop')
             time.sleep(3)
-            self.checkStatus()
+            self.checkStatus('joystick')
         elif (message=='joystick_kill'):
             self.tmux.roskill('joystick')
             self.tmux.roskill('joy')
             time.sleep(3)
             self.tmux.killall(self.wjoystick)
             time.sleep(3)
-            self.checkStatus()
+            self.checkStatus('joystick')
 
         # audio
         elif (message=='audio_start'):
@@ -392,6 +467,9 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
                 t.start()
             else:
                 print('Program running. This code is discarded.')
+
+
+        self.setStatus('Idle')
 
 
     def on_close(self):

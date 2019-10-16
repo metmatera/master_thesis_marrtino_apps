@@ -77,11 +77,9 @@ def write(tmux, imagefile):
     #umount(tmux)
     wid=2
 
-    #tmux.cmd(wid,'./writeimg.bash %s' %imagefile, blocking=True)
-
     cmd = 'dd if=%s_boot.img bs=512 of=%s' %(imagefile,devicenamep1)
     tmux.cmd(wid, cmd, blocking=True)
-    cmd = 'dd if=%s_root.img | pv -s 11G | dd bs=512 of=%s' %(imagefile,devicenamep2)
+    cmd = 'dd if=%s_root.img | pv -s 10G | dd bs=512 of=%s' %(imagefile,devicenamep2)
     tmux.cmd(wid, cmd, blocking=True)
     tmux.cmd(wid, 'sudo sync', blocking=True)
 
@@ -91,6 +89,9 @@ def write(tmux, imagefile):
 def check(tmux):
     print('Checking ...')
     wid=3
+    umount(tmux)
+    tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep2, blocking=True)
+    tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep3, blocking=True)
     mount(tmux)
     mdir = '/media/$SUDO_USER/PI_ROOT/'
     tmux.cmd(wid,'cd %s/etc/NetworkManager/system-connections/' %mdir)
@@ -103,6 +104,19 @@ def check(tmux):
     time.sleep(1)
     tmux.cmd(wid,'cd $HOME')
     umount(tmux)
+
+
+
+def read(tmux, imagefile):
+    print('Reading ...')
+    #umount(tmux)
+    wid=1
+
+    cmd = 'dd if=%s bs=512 of=%s_boot.img' %(devicenamep1,imagefile)
+    tmux.cmd(wid, cmd, blocking=True)
+    cmd = 'dd if=%s bs=512 | pv -s 10G | dd of=%s_root.img' %(devicenamep2,imagefile)
+    tmux.cmd(wid, cmd, blocking=True)
+    tmux.cmd(wid, 'sudo sync', blocking=True)
 
 
 def test(tmux):
@@ -120,18 +134,10 @@ def test(tmux):
     tmux.cmd(wid,'echo done')
 
 
+def setDeviceNames(devname):
+    global devicename, devicenamep1, devicenamep2, devicenamep3
 
-# Main program
-
-if __name__ == "__main__":
-
-
-    parser = argparse.ArgumentParser(description='MARRtino SD config')
-    parser.add_argument('imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_v2.0)')
-    parser.add_argument('-device', type=str, help='device name (default: %s)' %devicename, default=devicename)
-    args = parser.parse_args()
-    devicename = args.device
-
+    devicename = devname
     if (devicename[0:7]=='/dev/mm'):
         devicenamep1 = devicename + 'p1'
         devicenamep2 = devicename + 'p2'
@@ -143,9 +149,34 @@ if __name__ == "__main__":
         devicenamep3 = devicename + '3'
   
     print('Device: %s (%s, %s, %s)' %(devicename,devicenamep1,devicenamep2,devicenamep3))
-        
 
-    print('Format SD card %s with image file %s' %(devicename,args.imagefile))
+
+# Read image from SD card
+def readSDCard(devname, imagefile):
+
+    setDeviceNames(devname)
+
+    print('Read SD card %s to image file %s' %(devicename,args.imagefile))
+
+    if os.geteuid() != 0:
+        exit("You need to have root privileges to run this script.")
+    
+    val = raw_input('Please confirm [yes/no] ')
+    if val=='yes':
+        tmux = TmuxSend('sdconfig',['bash','read'])
+
+        print("Running  'sudo tmux a -t sdconfig'  in a new terminal to check progresses.")
+        os.system('xterm -e "sudo tmux a -t sdconfig" &')
+        read(tmux,imagefile)
+        print('Done')
+
+
+# Write image to SD card
+def writeSDCard(devname, imagefile):
+
+    setDeviceNames(devname)
+
+    print('Format SD card %s with image file %s' %(devicename,imagefile))
 
     if os.geteuid() != 0:
         exit("You need to have root privileges to run this script.")
@@ -159,7 +190,26 @@ if __name__ == "__main__":
         print("Running  'sudo tmux a -t sdconfig'  in a new terminal to check progresses.")
         os.system('xterm -e "sudo tmux a -t sdconfig" &')
         format(tmux)
-        write(tmux,args.imagefile)
+        write(tmux,imagefile)
         check(tmux)
         print('Done')
+
+
+
+# Main program
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description='MARRtino SD config')
+    parser.add_argument('imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_v2.0)')
+    parser.add_argument('-device', type=str, help='device name (default: %s)' %devicename, default=devicename)
+    parser.add_argument('--read', help='read from SD card', action='store_true')
+    args = parser.parse_args()
+
+    if args.read:
+        readSDCard(args.device, args.imagefile)
+    else:
+        writeSDCard(args.device, args.imagefile)
+
+
 
