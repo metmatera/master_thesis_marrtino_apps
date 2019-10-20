@@ -143,11 +143,20 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.write_message('RESULT %s %s' %(what,str(r)))
 
 
-    def on_message(self, message):
-        global code, status
-        print('Received: %s' %message)
 
+    def on_message(self, message):    
+        print('Received: %s' %message)
         self.setStatus(message)
+
+        try:
+            process_message(message)
+        except:
+            print("Error in message %s" %message)
+
+        self.setStatus('Idle')
+
+    def process_message(self, message):
+         global code, status
 
         if (message=='stop'):
             print('!!! EMERGENCY STOP !!!')
@@ -452,7 +461,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(5)
             self.checkStatus()
 
-
         # shutdown
         elif (message=='shutdown'):
             self.tmux.quitall()
@@ -469,7 +477,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
                 print('Program running. This code is discarded.')
 
 
-        self.setStatus('Idle')
 
 
     def on_close(self):
