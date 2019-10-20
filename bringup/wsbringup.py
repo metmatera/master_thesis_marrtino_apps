@@ -149,7 +149,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.setStatus(message)
 
         try:
-            process_message(message)
+            self.process_message(message)
         except:
             print("Error in message %s" %message)
 
