@@ -156,7 +156,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.setStatus('Idle')
 
     def process_message(self, message):
-         global code, status
+        global code, status
 
         if (message=='stop'):
             print('!!! EMERGENCY STOP !!!')
