@@ -166,7 +166,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         elif(message=='flash'):
             print('firmware upload')
-            self.tmux.cmd(3,'cd %s/src/srrg/srrg2_orazio_core/firmware_build/atmega2560/' %self.home)
+            self.tmux.cmd(3,'cd %s/src/srrg/srrg2_orazio/srrg2_orazio/firmware_build/atmega2560/' %self.home)
             self.tmux.cmd(3,'make')
             self.tmux.cmd(3,'make orazio.hex')
             self.tmux.cmd(3,'make clean')
@@ -174,7 +174,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif(message=='firmwareparam'):
             print('firmware parameters upload')
             self.tmux.cmd(3,'cd %s/config' %self.mahome)
-            self.tmux.cmd(3,'cat upload_config.script | rosrun srrg2_orazio_core orazio -serial-device /dev/orazio')
+            self.tmux.cmd(3,'cat upload_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio')
 
         elif (message=='startweb'):
             print('start orazio web server')
