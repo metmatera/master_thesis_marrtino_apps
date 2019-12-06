@@ -66,10 +66,32 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def checkStatus(self):
         self.setStatus('Checking...')
+        self.write_message('VALUE marrtino_hwinfo %s' %self.getMARRtinoHWInfo()) 
         self.write_message('VALUE marrtino_version %s' %self.getMARRtinoVersion())
         self.write_message('VALUE marrtino_apps_version %s' %self.getMARRtinoAppVersion())
         self.setStatus('Idle')
 
+
+    def getMARRtinoHWInfo(self):
+        print('Checking MARRtino HW info from $HOME/.marrtino_* files ...')
+        try:
+            f = open('%s/.marrtino_machine' %self.home, 'r')
+            v1 = f.readline().strip()
+            f.close()
+        except Exception as e:
+            v1 = ' - '
+            #print(e)
+        try:
+            f = open('%s/.marrtino_motorboard' %self.home, 'r')
+            v2 = f.readline().strip()
+            f.close()
+        except Exception as e:
+            v2 = ' - '
+            #print(e)
+
+        v = v1+" "+v2
+        print('MARRtino info %s' %(v))
+        return v
 
 
 
@@ -109,7 +131,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             lista = v.split('+')
             v=lista[0]
             f.close()
-            print('    ... read %s' %v)
+            #print('    ... read %s' %v)
         except Exception as e:
             v = 'None'
             print(e)
