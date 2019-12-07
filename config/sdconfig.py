@@ -24,18 +24,27 @@ from tmuxsend import TmuxSend
 
 
 def umount(tmux):
-    #tmux.cmd(1,'df -h')
-    tmux.cmd(1,'umount %s' %devicenamep1, blocking=True)
-    tmux.cmd(1,'umount %s' %devicenamep2, blocking=True)
-    tmux.cmd(1,'umount %s' %devicenamep3, blocking=True)
-    #tmux.cmd(1,'df -h')
+    if tmux is None:
+        os.system('umount %s' %devicenamep1)
+        os.system('umount %s' %devicenamep2)
+        os.system('umount %s' %devicenamep3)
+    else:
+        #tmux.cmd(1,'df -h')
+        tmux.cmd(1,'umount %s' %devicenamep1, blocking=True)
+        tmux.cmd(1,'umount %s' %devicenamep2, blocking=True)
+        tmux.cmd(1,'umount %s' %devicenamep3, blocking=True)
+        #tmux.cmd(1,'df -h')
     time.sleep(3)
 
 
 def mount(tmux):
-    tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT',blocking=True)
-    tmux.cmd(1,'mount %s /media/$SUDO_USER/PI_ROOT' %devicenamep2,blocking=True)
-    #tmux.cmd(1,'df -h')
+    if tmux is None:
+        os.system('mkdir -p /media/$SUDO_USER/PI_ROOT')
+        os.system('mount %s /media/$SUDO_USER/PI_ROOT' %devicenamep2)
+    else:
+        tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT',blocking=True)
+        tmux.cmd(1,'mount %s /media/$SUDO_USER/PI_ROOT' %devicenamep2,blocking=True)
+        #tmux.cmd(1,'df -h')
     time.sleep(3)
 
 
@@ -84,26 +93,66 @@ def write(tmux, imagefile):
     tmux.cmd(wid, 'sudo sync', blocking=True)
 
     umount(tmux)
-    
 
-def check(tmux):
-    print('Checking ...')
-    wid=3
-    umount(tmux)
-    tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep2, blocking=True)
-    tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep3, blocking=True)
-    mount(tmux)
-    mdir = '/media/$SUDO_USER/PI_ROOT/'
-    tmux.cmd(wid,'cd %s/etc/NetworkManager/system-connections/' %mdir)
-    tmux.cmd(wid,'ls')
-    tmux.cmd(wid,'cat MARRtinoAP')
-    tmux.cmd(wid,'cat %s/etc/hostname' %mdir)
-    tmux.cmd(wid,'cat %s/etc/hosts' %mdir)
-    time.sleep(3)
-    tmux.cmd(wid,'cat %s/home/ubuntu/.bashrc | grep ROS_IP' %mdir)
-    time.sleep(1)
-    tmux.cmd(wid,'cd $HOME')
-    umount(tmux)
+def getline(fname,n=1):
+    r = ''
+    try:
+        f = open(fname,'r')
+        r = ''
+        for i in range(n):
+            if i==n-1:
+                r = f.readline().replace('\n','')
+            else:
+                f.readline()
+        f.close()
+    except:
+        print('Cannot read from file %s' %fname)
+    return r
+
+
+def check(tmux=None, fsck=False, wid=1):
+    if fsck:
+        os.system('xterm -e "sudo tmux a -t sdconfig" &')
+        umount(tmux)
+        tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep2, blocking=True)
+        tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep3, blocking=True)
+
+    mount(None)
+
+    mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
+    fAP = '%s/etc/NetworkManager/system-connections/MARRtinoAP' %mdir
+    f = open(fAP,'r')
+    l = f.readline()
+    while l is not None and l!='':
+        if l[0:4]=='chan':
+            channel = l[8:].replace('\n','')
+        if l[0:4]=='ssid':
+            ssid = l[5:].replace('\n','')
+        if l[0:3]=='psk':
+            password = l[4:].replace('\n','')
+        l = f.readline()
+    f.close()
+
+    hostname = getline('%s/etc/hostname' %mdir)
+
+    hosts = getline('%s/etc/hosts' %mdir,2)
+
+    machine = getline('%s/home/ubuntu/.marrtino_machine' %mdir)
+
+    version = getline('%s/home/ubuntu/.marrtino_version' %mdir)
+
+    motorboard = getline('%s/home/ubuntu/.marrtino_motorboard' %mdir)
+
+    print('Machine: %s' %machine)
+    print('Version: %s' %version)
+    print('Motorboard: %s' %motorboard)
+    print('Hostname: %s' %hostname)
+    print('Hosts: %s' %hosts)
+    print('SSID: %s' %ssid)
+    print('Channel: %s' %channel)
+    print('Password: %s' %password)
+
+    os.system('umount %s' %devicenamep2)
 
 
 
@@ -191,25 +240,86 @@ def writeSDCard(devname, imagefile):
         os.system('xterm -e "sudo tmux a -t sdconfig" &')
         format(tmux)
         write(tmux,imagefile)
-        check(tmux)
+        #check(tmux, fsck=True, wid=3)
         print('Done')
 
 
+# Check SD card
+def checkSDCard(devname):
+
+    setDeviceNames(devname)
+
+    print('Check SD card %s' %(devicename))
+
+    if os.geteuid() != 0:
+        exit("You need to have root privileges to run this script.")
+
+    check()
+
+
+def replace(fname, olds, news):
+    cmd =  " awk '{gsub(\"%s\",\"%s\")}1' %s > %s.new" %(olds,news,fname,fname)
+    os.system(cmd)
+
+
+def setSDCard(devname, ssid, channel, password):
+    setDeviceNames(devname)
+
+    print('Set values in SD card %s' %(devicename))
+    print('SSID: %s\nChannel: %s\nPassword: %s' %(ssid, channel, password))
+    if os.geteuid() != 0:
+        exit("You need to have root privileges to run this script.")
+
+    mount(None)
+
+    mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
+    fAP = '%s/etc/NetworkManager/system-connections/MARRtinoAP' %mdir
+    
+    os.system('cp %s %s.bak' %(fAP,fAP))
+
+    fin = open(fAP+'.bak','r')
+    fout = open(fAP,'w')
+    l = fin.readline()
+    while l is not None and l!='':
+        if l[0:4]=='chan':
+            l = 'channel=%d\n' %channel
+        if l[0:4]=='ssid':
+            l = 'ssid=%s\n' %ssid
+        if l[0:3]=='psk':
+            l = 'psk=%s\n' %password
+        fout.write(l)
+        l = fin.readline()
+    fin.close()
+    fout.close()
+
+    os.system('umount %s' %devicenamep2)
 
 # Main program
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='MARRtino SD config')
-    parser.add_argument('imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_v2.0)')
-    parser.add_argument('-device', type=str, help='device name (default: %s)' %devicename, default=devicename)
-    parser.add_argument('--read', help='read from SD card', action='store_true')
+    parser.add_argument('op', type=str, help='[read, write, check]')
+    parser.add_argument('device', type=str, help='device name (e.g.: %s)' %devicename, default=devicename)
+    parser.add_argument('-imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_2.0)', default=None)
+    parser.add_argument('-ssid', type=str, help='Wlan SSID', default='MARRtinoXXX')
+    parser.add_argument('-channel', type=int, help='Wlan channel', default=1)
+    parser.add_argument('-password', type=str, help='Wlan password', default='hellorobot!')
+
     args = parser.parse_args()
 
-    if args.read:
+    if (args.op=='read' or args.op=='write') and args.imagefile is None:
+        print('Image file needed for read/write operations')
+        sys.exit(1)
+
+    if args.op=='read':
         readSDCard(args.device, args.imagefile)
-    else:
+    elif args.op=='write':
         writeSDCard(args.device, args.imagefile)
+    elif args.op=='check':
+        checkSDCard(args.device)
+    elif args.op=='set':
+        setSDCard(args.device,args.ssid,args.channel,args.password)
 
 
 
