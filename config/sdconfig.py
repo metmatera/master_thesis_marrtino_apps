@@ -54,6 +54,21 @@ def sudobash(tmux):
     tmux.cmd(1,'marrtino')
     time.sleep(1)
 
+
+ddbs = 1024
+
+def read(tmux, imagefile):
+    print('Reading ...')
+    #umount(tmux)
+    wid=1
+
+    cmd = 'dd if=%s bs=%d of=%s_boot.img' %(devicenamep1,ddbs,imagefile)
+    tmux.cmd(wid, cmd, blocking=True)
+    cmd = 'dd if=%s bs=%d | pv -s 10G | dd of=%s_root.img' %(devicenamep2,ddbs,imagefile)
+    tmux.cmd(wid, cmd, blocking=True)
+    tmux.cmd(wid, 'sudo sync', blocking=True)
+
+
 def format(tmux):
     print('Formatting ...')
 
@@ -81,14 +96,15 @@ def format(tmux):
 
     umount(tmux)
 
+
 def write(tmux, imagefile):
     print('Writing ...')
     #umount(tmux)
     wid=2
 
-    cmd = 'dd if=%s_boot.img bs=512 of=%s' %(imagefile,devicenamep1)
+    cmd = 'dd if=%s_boot.img bs=%d of=%s' %(imagefile,ddbs,devicenamep1)
     tmux.cmd(wid, cmd, blocking=True)
-    cmd = 'dd if=%s_root.img | pv -s 10G | dd bs=512 of=%s' %(imagefile,devicenamep2)
+    cmd = 'dd if=%s_root.img | pv -s 10G | dd bs=%d of=%s' %(imagefile,ddbs,devicenamep2)
     tmux.cmd(wid, cmd, blocking=True)
     tmux.cmd(wid, 'sudo sync', blocking=True)
 
@@ -155,17 +171,6 @@ def check(tmux=None, fsck=False, wid=1):
     os.system('umount %s' %devicenamep2)
 
 
-
-def read(tmux, imagefile):
-    print('Reading ...')
-    #umount(tmux)
-    wid=1
-
-    cmd = 'dd if=%s bs=512 of=%s_boot.img' %(devicenamep1,imagefile)
-    tmux.cmd(wid, cmd, blocking=True)
-    cmd = 'dd if=%s bs=512 | pv -s 10G | dd of=%s_root.img' %(devicenamep2,imagefile)
-    tmux.cmd(wid, cmd, blocking=True)
-    tmux.cmd(wid, 'sudo sync', blocking=True)
 
 
 def test(tmux):
