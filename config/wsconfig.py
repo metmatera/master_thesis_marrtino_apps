@@ -199,7 +199,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='startweb'):
             print('start orazio web server')
             self.tmux.cmd(1,'cd %s/config' %self.mahome)
-            self.tmux.cmd(1,'source run_orazio_web.bash')
+            mhw = self.getMARRtinoHWInfo()
+            if ('MARRtinoMB' in mhw):
+                self.tmux.cmd(1,'source run_orazio2_web.bash')
+            else:
+                self.tmux.cmd(1,'source run_orazio_web.bash')
 
         elif (message=='quitweb'):
             print('quit orazio web server')
