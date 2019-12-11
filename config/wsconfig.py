@@ -188,10 +188,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         elif(message=='flash'):
             print('firmware upload')
-            self.tmux.cmd(3,'cd %s/src/srrg/srrg2_orazio/srrg2_orazio/firmware_build/atmega2560/' %self.home)
-            self.tmux.cmd(3,'make')
-            self.tmux.cmd(3,'make orazio.hex')
-            self.tmux.cmd(3,'make clean')
+            self.tmux.cmd(3,'cd %s/config' %self.mahome)
+            self.tmux.cmd(3,'./uploadfirmware.bash')
 
         elif(message=='firmwareparam'):
             print('firmware parameters upload')
