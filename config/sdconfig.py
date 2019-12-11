@@ -54,6 +54,21 @@ def sudobash(tmux):
     tmux.cmd(1,'marrtino')
     time.sleep(1)
 
+
+ddbs = 1024
+
+def read(tmux, imagefile):
+    print('Reading ...')
+    #umount(tmux)
+    wid=1
+
+    cmd = 'dd if=%s bs=%d of=%s_boot.img' %(devicenamep1,ddbs,imagefile)
+    tmux.cmd(wid, cmd, blocking=True)
+    cmd = 'dd if=%s bs=%d | pv -s 10G | dd of=%s_root.img' %(devicenamep2,ddbs,imagefile)
+    tmux.cmd(wid, cmd, blocking=True)
+    tmux.cmd(wid, 'sudo sync', blocking=True)
+
+
 def format(tmux):
     print('Formatting ...')
 
@@ -81,14 +96,15 @@ def format(tmux):
 
     umount(tmux)
 
+
 def write(tmux, imagefile):
     print('Writing ...')
     #umount(tmux)
     wid=2
 
-    cmd = 'dd if=%s_boot.img bs=512 of=%s' %(imagefile,devicenamep1)
+    cmd = 'dd if=%s_boot.img bs=%d of=%s' %(imagefile,ddbs,devicenamep1)
     tmux.cmd(wid, cmd, blocking=True)
-    cmd = 'dd if=%s_root.img | pv -s 10G | dd bs=512 of=%s' %(imagefile,devicenamep2)
+    cmd = 'dd if=%s_root.img | pv -s 10G | dd bs=%d of=%s' %(imagefile,ddbs,devicenamep2)
     tmux.cmd(wid, cmd, blocking=True)
     tmux.cmd(wid, 'sudo sync', blocking=True)
 
@@ -155,17 +171,6 @@ def check(tmux=None, fsck=False, wid=1):
     os.system('umount %s' %devicenamep2)
 
 
-
-def read(tmux, imagefile):
-    print('Reading ...')
-    #umount(tmux)
-    wid=1
-
-    cmd = 'dd if=%s bs=512 of=%s_boot.img' %(devicenamep1,imagefile)
-    tmux.cmd(wid, cmd, blocking=True)
-    cmd = 'dd if=%s bs=512 | pv -s 10G | dd of=%s_root.img' %(devicenamep2,imagefile)
-    tmux.cmd(wid, cmd, blocking=True)
-    tmux.cmd(wid, 'sudo sync', blocking=True)
 
 
 def test(tmux):
@@ -262,11 +267,12 @@ def replace(fname, olds, news):
     os.system(cmd)
 
 
-def setSDCard(devname, ssid, channel, password):
+def setSDCard(devname, ssid, channel, password, hostname):
     setDeviceNames(devname)
 
     print('Set values in SD card %s' %(devicename))
-    print('SSID: %s\nChannel: %s\nPassword: %s' %(ssid, channel, password))
+    print('SSID: %s\nChannel: %s\nPassword: %s\nHostname: %s' 
+            %(ssid, channel, password, hostname))
     if os.geteuid() != 0:
         exit("You need to have root privileges to run this script.")
 
@@ -274,37 +280,76 @@ def setSDCard(devname, ssid, channel, password):
 
     mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
     fAP = '%s/etc/NetworkManager/system-connections/MARRtinoAP' %mdir
-    
     os.system('cp %s %s.bak' %(fAP,fAP))
-
     fin = open(fAP+'.bak','r')
     fout = open(fAP,'w')
     l = fin.readline()
     while l is not None and l!='':
-        if l[0:4]=='chan':
+        if l[0:4]=='chan' and channel is not None:
             l = 'channel=%d\n' %channel
-        if l[0:4]=='ssid':
+        if l[0:4]=='ssid' and ssid is not None:
             l = 'ssid=%s\n' %ssid
-        if l[0:3]=='psk':
+        if l[0:3]=='psk' and password is not None:
             l = 'psk=%s\n' %password
         fout.write(l)
         l = fin.readline()
     fin.close()
     fout.close()
 
+    if hostname is not None:
+        os.system('echo "%s" > %s/etc/hostname' %(hostname,mdir))
+        fAP = '%s/etc/hosts' %mdir
+        os.system('cp %s %s.bak' %(fAP,fAP))
+        fin = open(fAP+'.bak','r')
+        fout = open(fAP,'w')
+        l = fin.readline()
+        while l is not None and l!='':
+            if l[0:9]=='127.0.1.1' and hostname is not None:
+                l = '127.0.1.1    %s\n' %hostname
+            fout.write(l)
+            l = fin.readline()
+        fin.close()
+        fout.close()
+
     os.system('umount %s' %devicenamep2)
+
+
+def speedSDCard(devname):
+
+    setDeviceNames(devname)
+    print('Check read/write speed of SD card %s' %(devicename))
+    if os.geteuid() != 0:
+        exit("You need to have root privileges to run this script.")
+
+    mount(None)
+    mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
+    tf = '%s/tmp/testspeed' %mdir
+
+    print('Write test (%s)' %tf)
+    cmd = 'dd if=/dev/urandom of=/tmp/testspeed bs=512 count=200000'
+    os.system(cmd)
+    cmd = 'dd if=/tmp/testspeed of=%s bs=512 count=200000' %tf
+    os.system(cmd)
+    print('Read test')
+    cmd = 'dd if=%s of=/dev/null bs=512 count=200000' %tf
+    os.system(cmd)
+    os.system('rm /tmp/testspeed %s' %tf)
+
+    os.system('umount %s' %devicenamep2)
+
 
 # Main program
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='MARRtino SD config')
-    parser.add_argument('op', type=str, help='[read, write, check]')
+    parser.add_argument('op', type=str, help='[read, write, check, set, speed]')
     parser.add_argument('device', type=str, help='device name (e.g.: %s)' %devicename, default=devicename)
     parser.add_argument('-imagefile', type=str, help='image file prefix (e.g., raspi3b_marrtino_2.0)', default=None)
-    parser.add_argument('-ssid', type=str, help='Wlan SSID', default='MARRtinoXXX')
-    parser.add_argument('-channel', type=int, help='Wlan channel', default=1)
-    parser.add_argument('-password', type=str, help='Wlan password', default='hellorobot!')
+    parser.add_argument('-ssid', type=str, help='Wlan SSID', default=None)
+    parser.add_argument('-channel', type=int, help='Wlan channel', default=None)
+    parser.add_argument('-password', type=str, help='Wlan password', default=None)
+    parser.add_argument('-hostname', type=str, help='host name', default=None)
 
     args = parser.parse_args()
 
@@ -319,7 +364,9 @@ if __name__ == "__main__":
     elif args.op=='check':
         checkSDCard(args.device)
     elif args.op=='set':
-        setSDCard(args.device,args.ssid,args.channel,args.password)
+        setSDCard(args.device,args.ssid,args.channel,args.password,args.hostname)
+    elif args.op=='speed':
+        speedSDCard(args.device)
 
 
 
