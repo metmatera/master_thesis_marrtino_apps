@@ -164,9 +164,9 @@ def check(tmux=None, fsck=False, wid=1):
     print('Motorboard: %s' %motorboard)
     print('Hostname: %s' %hostname)
     print('Hosts: %s' %hosts)
-    print('SSID: %s' %ssid)
-    print('Channel: %s' %channel)
-    print('Password: %s' %password)
+    print('WLAN SSID: %s' %ssid)
+    print('WLAN Channel: %s' %channel)
+    print('WLAN Password: %s' %password)
 
     os.system('umount %s' %devicenamep2)
 
@@ -271,7 +271,7 @@ def setSDCard(devname, ssid, channel, password, hostname):
     setDeviceNames(devname)
 
     print('Set values in SD card %s' %(devicename))
-    print('SSID: %s\nChannel: %s\nPassword: %s\nHostname: %s' 
+    print('WLAN SSID: %s\nWLAN Channel: %s\nWLAN Password: %s\nHostname: %s' 
             %(ssid, channel, password, hostname))
     if os.geteuid() != 0:
         exit("You need to have root privileges to run this script.")
