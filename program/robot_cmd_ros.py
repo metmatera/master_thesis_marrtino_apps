@@ -282,7 +282,7 @@ def laser_cb(data):
 def sonar_cb(data):
     global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
     if(data.range < data.max_range):
-    	r = (data.range*0.75)/0.265 #scale the value of the range in meters
+        r = data.range  # ??? *0.75/0.265 #scale the value of the range in meters
         if(data.header.frame_id == "/sonar_frame_0"): # front
             laser_center_dist = r
         elif(data.header.frame_id == "/sonar_frame_1"): # right
@@ -478,15 +478,17 @@ def get_image(tmsleep=3):
     startCameraGrabber() # wait 1 sec for an image
     time.sleep(tmsleep)
     stopCameraGrabber()
+    cv2.imwrite(os.getenv('MARRTINO_APPS_HOME')+'/www/viewer/img/lastimage.jpg', cvimage)
     return cvimage
-
 
 def getWebImage(objcat=None):
     get_web_image(objcat)
 
 def get_web_image(objcat=None):
     rchomelearnros_import()
-    return webimages.take_image(objcat)
+    img = webimages.take_image(objcat)
+    cv2.imwrite(os.getenv('MARRTINO_APPS_HOME')+'/www/viewer/img/lastimage.jpg', img)
+    return img
 
 # Haar detector
 def findCascadeModel():
