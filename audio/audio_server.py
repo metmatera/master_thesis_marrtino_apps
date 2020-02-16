@@ -42,14 +42,14 @@ except:
 try:
     import sox
 except:
-    print('sox required. Install with:   sudo -H pip install sox')
+    print('sox required. Install with:   pip install --user sox')
     sys.exit(0)
 
 
 try:
     import alsaaudio
 except:
-    print('alsaaudio required. Install with:   sudo -H pip install pyalsaaudio')
+    print('alsaaudio required. Install with:   pip install --user pyalsaaudio')
     use_alsaaudio = False
     #sys.exit(0)
 
@@ -144,6 +144,7 @@ class TTSServer(threading.Thread):
             except Exception as e:
                 print(e)
                 retry -= 1
+                time.sleep(1)
 
         if self.aa_stream == None:
             retry = 3
@@ -156,6 +157,7 @@ class TTSServer(threading.Thread):
                 except Exception as e:
                     print(e)
                     retry -= 1
+                    time.sleep(1)
 
         self.audio_rate = 44100
         self.periodsize = self.audio_rate / 8
