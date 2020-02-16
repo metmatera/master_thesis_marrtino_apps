@@ -136,24 +136,33 @@ class TTSServer(threading.Thread):
         print("Audio device used: %s" %self.output_device)
 
         self.aa_stream = None
-        try:
-            self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
-        except Exception as e:
-            print(e)
-
-        if self.aa_stream == None:
+        retry = 3
+        while retry>0:
             try:
-                self.output_device='default'
-                print("Audio device used: %s" %self.output_device)
                 self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
+                retry = 0
             except Exception as e:
                 print(e)
+                retry -= 1
+
+        if self.aa_stream == None:
+            retry = 3
+            while retry>0:
+                try:
+                    self.output_device='default'
+                    print("Audio device used: %s" %self.output_device)
+                    self.aa_stream = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, self.output_device)
+                    retry = 0
+                except Exception as e:
+                    print(e)
+                    retry -= 1
+
+        self.audio_rate = 44100
+        self.periodsize = self.audio_rate / 8
 
         if self.aa_stream != None:
             self.aa_stream.setformat(alsaaudio.PCM_FORMAT_S16_LE)
             self.aa_stream.setchannels(1)
-            self.audio_rate = 44100
-            self.periodsize = self.audio_rate / 8
             self.aa_stream.setrate(self.audio_rate)
             self.aa_stream.setperiodsize(self.periodsize)
 

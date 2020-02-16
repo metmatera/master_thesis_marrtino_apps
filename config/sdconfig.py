@@ -78,11 +78,11 @@ def format(tmux):
     tmux.cmd(wid,'p\no\nw\n')
     time.sleep(1)
     tmux.cmd(wid,'fdisk %s' %devicename,2)
-    tmux.cmd(wid,'n\np\n1\n2048\n133119\nt\ne\np\n')
+    tmux.cmd(wid,'n\np\n1\n2048\n133119\ny\nt\ne\np\n')
     time.sleep(1)
-    tmux.cmd(wid,'n\np\n2\n133120\n20613119\np\n')
+    tmux.cmd(wid,'n\np\n2\n133120\n20613119\ny\np\n')
     time.sleep(1)
-    tmux.cmd(wid,'n\np\n3\n\n\np\nw\n',3)
+    tmux.cmd(wid,'n\np\n3\n\n\ny\np\nw\n',3)
 
     umount(tmux)
 
