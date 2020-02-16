@@ -144,7 +144,7 @@ class TTSServer(threading.Thread):
             except Exception as e:
                 print(e)
                 retry -= 1
-                time.sleep(1)
+                time.sleep(2)
 
         if self.aa_stream == None:
             retry = 3
@@ -157,7 +157,7 @@ class TTSServer(threading.Thread):
                 except Exception as e:
                     print(e)
                     retry -= 1
-                    time.sleep(1)
+                    time.sleep(2)
 
         self.audio_rate = 44100
         self.periodsize = self.audio_rate / 8
