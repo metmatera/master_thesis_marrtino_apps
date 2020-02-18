@@ -420,6 +420,7 @@ def check_nodes():
     check_node('hokuyo',r)
     check_node('rplidar',r)
     check_node('joystick',r)
+    check_node('apriltag_detector',r)
 
     return r
 
