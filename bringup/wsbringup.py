@@ -107,13 +107,14 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         print('New connection')
         self.setStatus('Executing...')
         self.winlist = ['cmd','roscore','quit','wsrobot','modim',
-                        'robot','laser','camera','joystick','audio',
+                        'robot','laser','camera','imgproc','joystick','audio',
                         'map_loc','navigation','playground']
 
         self.wroscore = self.winlist.index('roscore')
         self.wrobot = self.winlist.index('robot')
         self.wlaser = self.winlist.index('laser')
         self.wcamera = self.winlist.index('camera')
+        self.wimgproc = self.winlist.index('imgproc')
         self.wjoystick = self.winlist.index('joystick')
         self.waudio = self.winlist.index('audio')
         self.wwsrobot = self.winlist.index('wsrobot')
@@ -401,6 +402,19 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.killall(self.waudio)
             time.sleep(3)
             self.checkStatus()
+
+
+        # apriltags detector
+        elif (message=='apriltags_start'):
+            self.tmux.roslaunch(self.wimgproc,'marker','tags')
+            time.sleep(3)
+            self.checkStatus()
+        elif (message=='apriltags_kill'):
+            self.tmux.killall(self.wimgproc)
+            time.sleep(3)
+            self.checkStatus()
+
+
 
         # gmapping
         elif (message=='gmapping_start'):

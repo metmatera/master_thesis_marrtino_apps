@@ -1,0 +1,17 @@
+<launch>
+
+  <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen">
+    <rosparam param="tag_descriptions">[
+      {id: 0, size: 0.162, frame_id: tag0_frame},
+      {id: 1, size: 0.162, frame_id: tag1_frame},
+      {id: 2, size: 0.162, frame_id: tag2_frame},
+      {id: 3, size: 0.162, frame_id: tag3_frame},
+      {id: 4, size: 0.162, frame_id: tag4_frame},
+      {id: 5, size: 0.162, frame_id: tag5_frame}]
+    </rosparam>
+    <remap from="/camera_info" to="/rgb/camera_info"/>
+    <remap from="/image_rect" to="/rgb/image_raw"/>
+  </node>
+
+</launch>
+

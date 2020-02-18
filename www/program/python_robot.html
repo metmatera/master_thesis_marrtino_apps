@@ -118,6 +118,10 @@ img = get_image()
 img = get_web_image(objcat=None)
 n = face_detection(img)
 label,conf = mobilenet_objrec(img)
+b = tag_trigger()  # boolean
+id = tag_id()      # id
+d = tag_distance() # [m]
+a = tag_angle()    # [deg]
 
 
 # utils
