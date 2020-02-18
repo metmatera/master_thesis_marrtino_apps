@@ -42,7 +42,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         global websocket_server, run
         websocket_server = self
         print('New connection')
-        self.tmux = TmuxSend('config',['robot','network','apps'])
+        self.tmux = TmuxSend('config',['cmd','robot','network','apps','update'])
         self.home = os.getenv('HOME')
         if (self.home=='/root'): # started at boot on MARRtino cards
             self.home = '/home/ubuntu'
@@ -210,11 +210,15 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.cmd(1,'quit')
 
         elif (message=='wirelessAP'):
-            print('quit orazio web server')
+            print('connect to wlan MARRtinoAP')
+            self.tmux.cmd(3,'tmux kill-session -t bringup')
+            time.sleep(3)
             self.tmux.cmd(3,'sudo nmcli c up MARRtinoAP')
 
         elif (message=='wirelessHome'):
-            print('quit orazio web server')
+            print('connect to wlan MARRtinoHome')
+            self.tmux.cmd(3,'tmux kill-session -t bringup')
+            time.sleep(3)
             self.tmux.cmd(3,'sudo nmcli c up MARRtinoHome')
 
         else:

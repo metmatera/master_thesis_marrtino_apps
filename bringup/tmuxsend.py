@@ -7,7 +7,8 @@ class TmuxSend:
     def __init__(self, sessionname, listwindows):
         self.nwindows = len(listwindows)
         self.sessionname = sessionname
-        os.system('tmux -2 new-session -d -s %s' %self.sessionname) # tmux session
+        os.system('tmux -2 new-session -d -s %s \; setenv ROS_IP "`hostname -I`"' %self.sessionname) # tmux session
+        os.system('tmux send-keys -t %s:0 "export ROS_IP=\"`hostname -I`\"" C-m' %self.sessionname)
         os.system('tmux select-window -t %s:0' %self.sessionname)
         os.system('tmux rename-window \'%s\'' %listwindows[0])      # window 0
         for i in range(1,self.nwindows):

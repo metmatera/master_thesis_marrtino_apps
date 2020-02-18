@@ -15,7 +15,7 @@ try:
     import tornado.web
 except Exception as e:
     print(e)
-    print('Install tornado:   sudo -H pip install tornado')
+    print('Install tornado: pip install --user tornado')
     sys.exit(0)
 
 sys.path.append('../program')
@@ -375,6 +375,22 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.killall(self.wjoystick)
             time.sleep(3)
             self.checkStatus('joystick')
+
+
+        # joystick 4wd
+        elif (message=='joystick4wd_start'):
+            self.tmux.roslaunch(self.wjoystick,'teleop','teleop','use_4wd:=true &')
+            time.sleep(3)
+            self.tmux.python(self.wjoystick,'teleop','joy4w.py')
+            time.sleep(3)
+            self.checkStatus('joystick')
+        elif (message=='joystick4wd_kill'):
+            self.tmux.roskill('joy')
+            time.sleep(3)
+            self.tmux.killall(self.wjoystick)
+            time.sleep(3)
+            self.checkStatus('joystick')
+
 
         # audio
         elif (message=='audio_start'):
