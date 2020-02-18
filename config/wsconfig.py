@@ -209,6 +209,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             print('quit orazio web server')
             self.tmux.cmd(1,'quit')
 
+        elif (message=='bringup_restart'):
+            print('bringup restart')
+            self.tmux.cmd(3,'tmux kill-session -t bringup')
+            time.sleep(1)
+
+
         elif (message=='wirelessAP'):
             print('connect to wlan MARRtinoAP')
             self.tmux.cmd(3,'tmux kill-session -t bringup')
