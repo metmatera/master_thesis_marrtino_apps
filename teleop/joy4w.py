@@ -1,4 +1,6 @@
-from robot_cmd import *
+import sys
+sys.path.append('../program')
+from robot_cmd_ros import *
 
 
 begin()

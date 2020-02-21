@@ -14,7 +14,8 @@ import cv2
 
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
-from sensor_msgs.msg import LaserScan, Range, Image
+from sensor_msgs.msg import LaserScan, Range, Image, Joy
+from control_msgs.msg import JointJog
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from cv_bridge import CvBridge, CvBridgeError
@@ -51,6 +52,8 @@ TOPIC_amcl_pose = 'amcl_pose'
 TOPIC_cmd_vel = 'cmd_vel'
 TOPIC_desired_cmd_vel = 'desired_cmd_vel'
 TOPIC_odom = 'odom'
+TOPIC_joints = 'cmd_joints_jog'
+TOPIC_joy = 'joy'
 ACTION_move_base = 'move_base'
 TOPIC_sonar_0 = '/sonar_0' 
 TOPIC_sonar_1 = '/sonar_1'
@@ -88,19 +91,23 @@ def setMaxSpeed(x,r):
 
 
 def setRobotNamePrefix(prefix):
-    global TOPIC_tag_detections,TOPIC_scan,TOPIC_amcl_pose,TOPIC_cmd_vel,TOPIC_desired_cmd_vel,TOPIC_odom,ACTION_move_base
+    global TOPIC_tag_detections,TOPIC_scan,TOPIC_amcl_pose,TOPIC_cmd_vel,TOPIC_desired_cmd_vel, \
+           TOPIC_odom,TOPIC_joy,TOPIC_joints,ACTION_move_base, \
+           TOPIC_sonar_0,TOPIC_sonar_1,TOPIC_sonar_2,TOPIC_sonar_3
 
-    TOPIC_tag_detections = prefix+'/tag_detections'
-    TOPIC_scan = prefix+'/scan'
-    TOPIC_amcl_pose = prefix+'/amcl_pose'
-    TOPIC_cmd_vel = prefix+'/cmd_vel'
-    TOPIC_desired_cmd_vel = prefix+'/desired_cmd_vel'
-    TOPIC_odom = prefix+'/odom'
-    ACTION_move_base = prefix+'/move_base'
-    TOPIC_sonar_0 = prefix+'/sonar_0' 
-    TOPIC_sonar_1 = prefix+'/sonar_1'
-    TOPIC_sonar_2 = prefix+'/sonar_2'
-    TOPIC_sonar_3 = prefix+'/sonar_3'
+    TOPIC_tag_detections = prefix+'/' + TOPIC_tag_detections
+    TOPIC_scan = prefix+'/'+TOPIC_scan
+    TOPIC_amcl_pose = prefix+'/'+TOPIC_amcl_pose
+    TOPIC_cmd_vel = prefix+'/'+TOPIC_cmd_vel
+    TOPIC_desired_cmd_vel = prefix+'/'+TOPIC_desired_cmd_vel
+    TOPIC_odom = prefix+'/'+TOPIC_odom
+    TOPIC_joints = prefix + '/' + TOPIC_joints
+    TOPIC_joy = prefix + '/' + TOPIC_joy
+    ACTION_move_base = prefix+'/'+ACTION_move_base
+    TOPIC_sonar_0 = prefix+'/'+TOPIC_sonar_0
+    TOPIC_sonar_1 = prefix+'/'+TOPIC_sonar_1
+    TOPIC_sonar_2 = prefix+'/'+TOPIC_sonar_2
+    TOPIC_sonar_3 = prefix+'/'+TOPIC_sonar_3
 
 
 def setAudioConnection(ip, port=9001):
@@ -228,6 +235,8 @@ cmd_pub = None # cmd_vel publisher
 tag_sub = None # tag_detection subscriber
 laser_sub = None # laser subscriber
 odom_sub = None  # odom subscriber
+joints_pub = None # joint publisher
+joy_sub = None # Joystick subscriber
 localizer_sub = None
 sonar_sub_0 = None
 sonar_sub_1 = None
@@ -316,6 +325,16 @@ def localizer_cb(data):
     euler = tf.transformations.euler_from_quaternion(q)
     loc_robot_pose[2] = euler[2] # yaw
 
+# speed/jog from Joystick
+joy_cmd_vel = [0, 0]
+
+def joy_cb(data):
+    global joy_cmd_vel 
+    joy_cmd_vel = [data.axes[1], data.axes[2]]
+
+def getJoyVel():
+    return joy_cmd_vel
+
 
 cvbridge = None
 cvimage = None
@@ -367,9 +386,10 @@ def audio_connect_thread():
 # Begin/end
 
 def begin(nodename='robot_cmd', use_desired_cmd_vel=False):
-    global cmd_pub, tag_sub, laser_sub, sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3
-    global odom_robot_pose, robot_initialized, stop_request
-    global use_robot, use_audio, audio_connected
+    global cmd_pub, odom_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
+           sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3, \
+           odom_robot_pose, robot_initialized, stop_request, \
+           use_robot, use_audio, audio_connected
 
     print 'begin'
 
@@ -396,6 +416,7 @@ def begin(nodename='robot_cmd', use_desired_cmd_vel=False):
     sonar_sub_2 = rospy.Subscriber(TOPIC_sonar_2, Range, sonar_cb)
     sonar_sub_3 = rospy.Subscriber(TOPIC_sonar_3, Range, sonar_cb)
     localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
+    joy_sub = rospy.Subscriber(TOPIC_joy, Joy, joy_cb)
 
     if (use_robot):
         print("Robot enabled")
@@ -404,6 +425,7 @@ def begin(nodename='robot_cmd', use_desired_cmd_vel=False):
             cmd_vel_topic = TOPIC_desired_cmd_vel
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
+        joints_pub = rospy.Publisher(TOPIC_joints, JointJog, queue_size=1)
 
         print("Waiting for robot pose... (5 seconds)")
         delay = 0.25 # sec
@@ -616,6 +638,28 @@ def set_speed(lx,az,tm,stopend=False):
         rate.sleep()
 
 
+def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
+
+    cnt = 0.0
+    delay = 0.1 # sec
+    rate = rospy.Rate(1/delay) # Hz
+
+    msg = JointJog()
+    msg.joint_names = ["front_left_wheel", "front_right_wheel", "back_left_wheel", "back_right_wheel"]
+    msg.velocities = [fl,fr,bl,br]
+    msg.duration = delay
+
+    while not rospy.is_shutdown() and cnt<=tm and not stop_request:
+        joints_pub.publish(msg)
+        cnt = cnt + delay
+        rate.sleep()
+
+    if (stopend):
+        msg.velocities = [0,0,0,0]
+        joints_pub.publish(msg)
+        rate.sleep()
+
+
 def stop():
     global move_base_running
     print 'stop'
@@ -626,8 +670,19 @@ def stop():
     msg.angular.z = 0
     cmd_pub.publish(msg)
     delay = 0.1 # sec
+    rate = rospy.Rate(1/delay) # Hz
     try:
-        rospy.Rate(10).sleep() # 0.1 sec
+        rate.sleep()
+    except:
+        pass
+
+    msg = JointJog()
+    msg.joint_names = ["front_left_wheel", "front_right_wheel", "back_left_wheel", "back_right_wheel"]
+    msg.velocities = [0,0,0,0]
+    msg.duration = delay
+    joints_pub.publish(msg)
+    try:
+        rate.sleep()
     except:
         pass
 
