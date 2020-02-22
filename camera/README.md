@@ -12,7 +12,8 @@ Astra:
 
 Xtion:
 
-* https://bitbucket.org/ggrisetti/thin_drivers
+* ros-kinetic-openni2-camera  
+* ros-kinetic-openni2-launch
 
 
 
@@ -22,29 +23,23 @@ Xtion:
 
 Launch
 
-    roslaunch astra.launch
+    roslaunch astra.launch [viewimage:=true]
 
 or
 
-    roslaunch usbcam.launch
+    roslaunch usbcam.launch [viewimage:=true]
 
 or
 
-    roslaunch xtion.launch
+    roslaunch xtion2.launch
 
 
 To visualize images and depth data
-
-    rosrun rviz rviz -d config/rgbd.rviz
-
-or
 
     rosrun image_view image_view image:=/rgb/image_raw
 
 
 Note: To visualize images from another PC, export ROS_MASTER_URI. This feature may be very slow specially if using a wireless network.
 
-Note: usbcam.launch have default settings that works on Logitech C920 camera.
-If these settings do not work for other cameras, change them as appropriate.
 
 
