@@ -4,13 +4,10 @@
   <arg name="device" default="/dev/video0" />
 
   <node pkg="usb_cam" type="usb_cam_node" name="usbcam" output="log" >
+    <rosparam file="config/usbcam.yaml" command="load" />
+
     <param name="video_device" value="$(arg device)" />
-    <param name="image_width" value="640" /> <!-- OK for Logitech C920 -->
-    <param name="image_height" value="360" />
-    <param name="pixel_format" value="mjpeg" /> <!-- OK for Logitech C920 -->
-    <!-- param name="pixel_format" value="yuyv" / -->
     <param name="camera_frame_id" value="$(arg rgbcameraframe)" />
-    <param name="io_method" value="mmap"/>
 
     <remap from="/usbcam/image_raw" to="/rgb/image_raw" />
     <remap from="/usbcam/camera_info" to="/rgb/camera_info" />

@@ -1,0 +1,7 @@
+# Parameters for USB camera ROS node
+
+image_width: 640
+image_height: 480
+pixel_format: yuyv  # mjpeg, yuyv
+io_method: mmap
+

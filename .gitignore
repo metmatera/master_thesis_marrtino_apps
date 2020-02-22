@@ -5,4 +5,5 @@
 cache*
 mapping/maps/map.yaml
 www/viewer/img/lastimage.jpg
+camera/config/*
 
