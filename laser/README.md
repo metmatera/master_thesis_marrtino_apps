@@ -1,35 +1,30 @@
 # laser #
 
-Laser launchers (RPlidar, RGBD depth2laser)
+Laser launchers (Hokuyo, RPlidar, RGBD depth2laser)
 
 ## Install ##
 
 Depth2laser:
 
+* https://github.com/ros-drivers/urg_node.git
+* https://github.com/Slamtec/rplidar_ros.git
 * https://bitbucket.org/ggrisetti/depth2laser
+
+
+## Configure ##
+
+Adjust file `transforms.txt` in `config` folder for 
+camera and virtual laser transforms
 
 
 ## Run ##
 
-* Run xtion/astra and depth2laser
+Launch laser or rgbdlaser nodes
 
-Note: check file transforms.txt in depth2laser/config folder for 
-camera and virtual laser transforms
+    roslaunch <laser>.launch
 
-```
-$ roslaunch xtion_laser.launch
-$ rosrun rviz rviz -d xtion_laser.rviz
-```
+View RGBD laser
 
-```
-$ roslaunch astra_laser.launch
-$ rosrun rviz rviz -d xtion_laser.rviz
-```
-
-Use also the RGB channel in xtion_laser
-
-```
-$ roslaunch xtion_laser.launch rgb_mode:=9
-```
+    rosrun rviz rviz -d rgbd_laser.rviz
 
 
