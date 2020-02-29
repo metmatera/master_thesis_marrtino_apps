@@ -6,7 +6,6 @@
   <arg name="nodename" default="xtion2" />
 
   <arg name="camera" default="xtion2"
-
        doc="'camera' should uniquely identify the device. All topics are pushed down
             into the 'camera' namespace, and it is prepended to tf frame ids." />
   <arg name="rgb_frame_id"   default="$(arg rgbcameraframe)" />
@@ -123,6 +122,10 @@
 	   file="$(find rgbd_launch)/launch/kinect_frames.launch">
     <arg name="camera" value="$(arg camera)" />
   </include -->
+
+  <node name="web_video_server" pkg="web_video_server" type="web_video_server" respawn="false" output="screen">
+    <param name="port" value="29090" />
+  </node>
 
 </launch>
 

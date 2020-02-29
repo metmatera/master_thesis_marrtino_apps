@@ -16,6 +16,15 @@
     <td width=120 align=center> <a href="layout1.html">layout 1</a> </td>
     <td width=120 align=center> <a href="layout2.html">layout 2</a> </td>
     <td width=120 align=center> <a href="layout3.html">layout 3</a> </td>
+    <td width=120 align=center> 
+    <script>
+      w = window.location.hostname;
+      if (w=='')
+        w = 'localhost';
+      document.write("<a href=\"http://" + w +
+        ":29090/stream_viewer?topic=/rgb/image_raw\">camera</a>");
+    </script>
+    </td>
 </tr>
 
 </table>
