@@ -54,15 +54,15 @@ if (vmax!=''):
         print("Installing marrtino v%s ..." %(vmax))
         upcmd = 'marrtino_update_v%s.bash' %(vmax)
         cmd = 'wget -N '+URLbase+upcmd
-        print cmd
+        print(cmd)
         os.system(cmd)
         cmd = 'chmod a+x '+upcmd
-        print cmd
+        print(cmd)
         os.system(cmd)
         cmd = './'+upcmd
-        print cmd
-        os.system(cmd + " &> " + logfile + " &")
-        os.system('tail -f '+logfile)
+        print(cmd)
+        print('tail -f '+logfile)
+        os.system(cmd + " &> " + logfile)
 else:
     print('Marrtino is currently updated to the last version.')
 
