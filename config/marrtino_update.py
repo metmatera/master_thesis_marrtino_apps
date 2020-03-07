@@ -65,10 +65,11 @@ if (vmax!=''):
         print(cmd)
         print('See installation output on another terminal with command:')
         print('tail -f '+logfile)
-        print('\nInstallation in progress... please wait...')
+        print('\nInstallation in progress... please wait...\n')
         os.system(cmd + " >%s 2>&1 " %logfile)
         print('Installation completed.\n')
         os.system('tail '+logfile)
+        print('\n')
 else:
     print('Marrtino is currently updated to the last version.')
 
