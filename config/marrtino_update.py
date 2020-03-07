@@ -1,4 +1,4 @@
-import os
+import os, datetime
 
 URLbase = 'http://www.diag.uniroma1.it/~iocchi/marrtino/'
 updatesfile = 'updates.txt'
@@ -45,7 +45,9 @@ for l in lines:
             vmax=v
 upfile.close()
 
-logfile = os.getenv('HOME')+"/install/.log/install_`date +%Y%m%d_%H%M%S`.log"
+tm = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+logfile = os.getenv('HOME')+"/install/.log/install_%s.log" %tm
 
 if (vmax!=''):
     val = raw_input('Install version %s? [y/n] ' %(vmax))
