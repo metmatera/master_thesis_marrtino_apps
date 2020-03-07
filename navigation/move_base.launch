@@ -9,12 +9,8 @@
 <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
 
   <rosparam file="$(arg paramsdir)/move_base_params.yaml" command="load" />
-  <rosparam file="$(arg paramsdir)/costmap_common_params.yaml" command="load" ns="global_costmap" />
-  <rosparam file="$(arg paramsdir)/costmap_common_params.yaml" command="load" ns="local_costmap" />
-  <rosparam file="$(arg paramsdir)/local_costmap_params.yaml" command="load" />
   <rosparam file="$(arg paramsdir)/global_costmap_params.yaml" command="load" />
-  <rosparam file="$(arg paramsdir)/base_local_planner_params.yaml" command="load" />
-  <rosparam file="$(arg paramsdir)/base_global_planner_params.yaml" command="load" />
+  <rosparam file="$(arg paramsdir)/local_costmap_params.yaml" command="load" />
 
   <!-- Override MOVE_BASE Frame Params to include prefix -->
   <param name="global_costmap/global_frame" value="/map" />   

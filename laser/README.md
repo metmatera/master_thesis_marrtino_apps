@@ -13,7 +13,7 @@ Depth2laser:
 
 ## Configure ##
 
-Adjust file `transforms.txt` in `config` folder for 
+Adjust file `config/transforms.txt` folder for 
 camera and virtual laser transforms
 
 
