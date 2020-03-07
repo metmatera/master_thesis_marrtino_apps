@@ -61,7 +61,7 @@ if (vmax!=''):
         os.system(cmd)
         cmd = './'+upcmd
         print cmd
-        os.system(cmd + " &> " + logfile + "&")
+        os.system(cmd + " &> " + logfile + " &")
         os.system('tail -f '+logfile)
 else:
     print('Marrtino is currently updated to the last version.')
