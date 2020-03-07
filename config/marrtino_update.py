@@ -15,6 +15,7 @@ def getversion(upstr):
 
 # cd ~/install'
 os.chdir(os.getenv('HOME')+'/install')
+os.system('mkdir -p .log')
 
 cmd = 'wget -N '+URLbase+updatesfile
 os.system(cmd)
@@ -44,6 +45,8 @@ for l in lines:
             vmax=v
 upfile.close()
 
+logfile = ".log/install_`date +%Y%m%d_%H%M%S`.log"
+
 if (vmax!=''):
     val = raw_input('Install version %s? [y/n] ' %(vmax))
 
@@ -58,11 +61,10 @@ if (vmax!=''):
         os.system(cmd)
         cmd = './'+upcmd
         print cmd
-        os.system(cmd)
+        os.system(cmd + " &> " + logfile + "&")
+        os.system('tail -f '+logfile)
 else:
     print('Marrtino is currently updated to the last version.')
-
-
 
 
 

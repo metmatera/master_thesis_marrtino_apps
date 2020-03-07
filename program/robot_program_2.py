@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import sys,os
+sys.path.append(os.getenv("MARRTINO_APPS_HOME")+"/program")
+
 import robot_cmd_ros
 from robot_cmd_ros import *
 
