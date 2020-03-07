@@ -63,9 +63,9 @@ if (vmax!=''):
         os.system(cmd)
         cmd = './'+upcmd
         print(cmd)
-        print('Installation in progress... please wait...')
         print('See installation output on another terminal with command:')
         print('tail -f '+logfile)
+        print('\nInstallation in progress... please wait...')
         os.system(cmd + " >%s 2>&1 " %logfile)
         print('Installation completed succesfully.')
 
