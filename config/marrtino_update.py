@@ -67,8 +67,8 @@ if (vmax!=''):
         print('tail -f '+logfile)
         print('\nInstallation in progress... please wait...')
         os.system(cmd + " >%s 2>&1 " %logfile)
-        print('Installation completed succesfully.')
-
+        print('Installation completed.\n')
+        os.system('tail '+logfile)
 else:
     print('Marrtino is currently updated to the last version.')
 
