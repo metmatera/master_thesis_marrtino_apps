@@ -45,7 +45,7 @@ for l in lines:
             vmax=v
 upfile.close()
 
-logfile = ".log/install_`date +%Y%m%d_%H%M%S`.log"
+logfile = os.getenv('HOME')+"/install/.log/install_`date +%Y%m%d_%H%M%S`.log"
 
 if (vmax!=''):
     val = raw_input('Install version %s? [y/n] ' %(vmax))
@@ -61,8 +61,12 @@ if (vmax!=''):
         os.system(cmd)
         cmd = './'+upcmd
         print(cmd)
+        print('Installation in progres... please wait...')
+        print('See installation output on another terminal with command:')
         print('tail -f '+logfile)
         os.system(cmd + " &> " + logfile)
+        print('Installation completed succesfully.')
+
 else:
     print('Marrtino is currently updated to the last version.')
 
