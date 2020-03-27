@@ -15,19 +15,19 @@ NavfnROS:
   allow_unknown: true
 
 TrajectoryPlannerROS:
-  max_vel_x: 0.5
+  max_vel_x: 0.75
   min_vel_x: 0.0
-  max_rotational_vel: 5.0
+  max_rotational_vel: 1.0
   min_in_place_rotational_vel: 0.4
 
-  acc_lim_th: 2.0
-  acc_lim_x: 1.0 #maximum is 2.0
+  acc_lim_th: 0.5
+  acc_lim_x: 0.3 #maximum is 2.0
   acc_lim_y: 0.0 #diff drive robot
 
   holonomic_robot: false
 
   yaw_goal_tolerance: 0.3
-  xy_goal_tolerance: 0.15
+  xy_goal_tolerance: 0.2
   latch_xy_goal_tolerance: true
 
   dwa: false

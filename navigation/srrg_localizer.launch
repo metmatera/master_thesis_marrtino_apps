@@ -11,7 +11,7 @@
   <arg name="mapsdir" default="$(env MARRTINO_APPS_HOME)/mapping/maps" />
 
   <node pkg="map_server" type="map_server" name="map_server" args="$(arg mapsdir)/$(arg map_name).yaml" respawn="false" >
-        <param name="frame_id" value="/map" />
+        <param name="frame_id" value="map" />
    </node>
 
   <node pkg="spqrel_navigation" type="srrg_localizer2d_node" name="srrg_localizer" respawn="true">
