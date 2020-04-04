@@ -4,7 +4,7 @@
 <arg name="laser_topic" default="scan" />
 <arg name="laser_frame" default="laser_frame" />
 <arg name="gui" default="false" />
-<arg name="cmdvel" default="cmd_vel" />  <!--  -->
+<arg name="cmdvel" default="cmd_vel" />
 
 <arg name="paramsdir" default="$(env MARRTINO_APPS_HOME)/navigation/config/$(env ROBOT_TYPE)" />
 

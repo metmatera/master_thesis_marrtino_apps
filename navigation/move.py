@@ -1,3 +1,4 @@
+import sys,os,time
 import math
 import argparse
 
@@ -9,6 +10,15 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, Quaternion
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import tf
+
+sys.path.append(os.getenv("MARRTINO_APPS_HOME")+"/program")
+
+import robot_cmd_ros
+from robot_cmd_ros import *
+
+robot_cmd_ros.use_audio = False
+
+
 
 ACTION_move_base = '/move_base'
 TOPIC_odom = '/odom'
@@ -40,15 +50,18 @@ def odom_cb(data):
 def get_robot_pose():
     global map_robot_pose
     try:
+        listener.canTransform(FRAME_map, FRAME_base, rospy.Time(0))
         (trans,rot) = listener.lookupTransform(FRAME_map, FRAME_base, rospy.Time(0))
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
         print(e)
-        return
+        return None
 
     roll, pitch, yaw = tf.transformations.euler_from_quaternion(rot)
     map_robot_pose[0] = trans[0]
     map_robot_pose[1] = trans[1]
     map_robot_pose[2] = yaw
+
+    return map_robot_pose
 
 
 def dist_from_goal():
@@ -111,13 +124,33 @@ def start_movebase(tpose):
 
 def join_movebase():
     global thr_movebase
-    #print 'Waiting for thread to finish'
-    #thr_movebase.join()
+    print 'Waiting for thread to finish'
+    thr_movebase.join()
 
 
+
+def turntogoal(target_pose):
+    r = True
+
+    p = get_robot_pose()
+    if math.fabs(target_pose[1]-p[1]) + math.fabs(target_pose[0]-p[0]) < 0.5:
+        return True
+
+    ad = math.atan2(target_pose[1]-p[1],target_pose[0]-p[0])
+    th_deg = (ad-p[2])*180/math.pi 
+    if math.fabs(th_deg)>30:
+        r = turn(th_deg)
+
+    return r
 
 
 def do_move(target_pose):
+    r = turntogoal(target_pose)
+    if r:
+        goto(target_pose)
+
+
+def do_move_old(target_pose):
 
     start_movebase(target_pose)
 
@@ -166,13 +199,20 @@ if __name__ == "__main__":
     odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
     cmd_vel_sub = rospy.Subscriber(TOPIC_cmd_vel, Twist, cmdvel_cb)
 
+    time.sleep(0.5)
+
+    begin(init_node=False)
+
     do_move(target_pose)
+
+    end()
 
     odom_sub.unregister()
     cmd_vel_sub.unregister()
 
     print('Quit')
 
+    sys.exit(0)
 
 
 
