@@ -17,9 +17,6 @@ def getversion(upstr):
 os.chdir(os.getenv('HOME')+'/install')
 os.system('mkdir -p .log')
 
-cmd = 'wget -N '+URLbase+updatesfile
-os.system(cmd)
-
 ever = os.getenv('MARRTINO_VERSION')
 
 fmv = open(os.getenv('HOME')+'/.marrtino_version')
@@ -31,8 +28,15 @@ if (ever>fver):
 else:
     cver = fver
 
-
 print("Current version: %s" %cver)
+
+if cver[0]=='4':
+    print("MARRtino system version 4 detected.")
+    updatesfile = 'updates4.txt'
+
+
+cmd = 'wget -N '+URLbase+updatesfile
+os.system(cmd)
 
 upfile = open(updatesfile,"r")
 lines = upfile.readlines()
@@ -71,7 +75,7 @@ if (vmax!=''):
         os.system('tail '+logfile)
         print('\n')
 else:
-    print('Marrtino is currently updated to the last version.')
+    print('MARRtino system %s is currently updated to the last version.' %cver)
 
 
 
