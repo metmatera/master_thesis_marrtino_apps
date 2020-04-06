@@ -697,11 +697,15 @@ def stop():
         pass
 
 
-def forward(r=1):
+def forward(r=1, obstacleAvoidance=False):
     global tv_good
     print 'forward',r
-    return exec_move_REL(move_step*r)
-    #setSpeed(tv_good,0.0,r*move_step/tv_good)
+    if obstacleAvoidance:
+        enableObstacleAvoidance(True)
+    v = exec_move_REL(move_step*r)
+    if obstacleAvoidance:
+        enableObstacleAvoidance(False)
+    return v
     
 
 def backward(r=1):
@@ -1061,7 +1065,7 @@ def start_movebase(gx, gy, gth_deg): # non-blocking
     
     ac_movebase.send_goal(goal)
     move_base_running = True
-    print("move_base action started")
+    print("move_base action started: target %r" %(target_pose))
     rospy.sleep(0.2)
 
 

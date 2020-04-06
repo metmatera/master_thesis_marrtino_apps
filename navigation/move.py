@@ -52,14 +52,15 @@ def turntogoal(target_pose):
 def do_move_no_monitor(target_pose):
     r = turntogoal(target_pose)
     if r:
-        goto(target_pose)
+        r = goto(target_pose)
+    return r
 
 # blocking function with monitoring
 def do_move(target_pose):
 
     r = turntogoal(target_pose)
     if not r:
-        return
+        return False
 
     start_movebase_pose(target_pose)
 
@@ -70,12 +71,17 @@ def do_move(target_pose):
     # wait for reaching the goal
     while movebase_running() and not rospy.is_shutdown():
         #finish, successs = movebase_step(delay)
-        print("Distance to goal: %.2f" %dist_from_goal())
+        #print("Distance to goal: %.2f" %dist_from_goal())
+        pass
 
     if dist_from_goal()<0.5:
         print('Goal reached')
+        r = True
     else:
         print('Goal not reached')
+        r = False
+
+    return r
 
 
 # main

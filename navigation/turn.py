@@ -8,10 +8,6 @@ from robot_cmd_ros import *
 
 robot_cmd_ros.use_audio = False
 
-def do_turn(deg, mode):
-    begin()
-    turn(deg, mode)
-    end()
 
 # main
 if __name__ == "__main__":
@@ -22,6 +18,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    do_turn(args.GTH, args.mode)
+    begin()
+
+    turn(args.GTH, args.mode)
+
+    end()
 
 
