@@ -74,6 +74,8 @@ move_step = 1.0
 odom_robot_pose = None
 # robot pose from localization
 loc_robot_pose = None
+# move_base target pose
+target_pose = None
 
 move_base_running = False
 ac_movebase = None 
@@ -311,7 +313,7 @@ def odom_cb(data):
     q = (o.x, o.y, o.z, o.w)
     euler = tf.transformations.euler_from_quaternion(q)
     odom_robot_pose[2] = euler[2] # yaw
-
+    #odomframe = data.header.frame_id
 
 def localizer_cb(data):
     global loc_robot_pose
@@ -384,7 +386,7 @@ def audio_connect_thread():
 
 # Begin/end
 
-def begin(nodename='robot_cmd', use_desired_cmd_vel=False):
+def begin(nodename='robot_cmd', use_desired_cmd_vel=False, init_node=True):
     global cmd_pub, odom_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
            sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3, \
            odom_robot_pose, robot_initialized, stop_request, \
@@ -404,8 +406,9 @@ def begin(nodename='robot_cmd', use_desired_cmd_vel=False):
         return
 
     # blocking function if roscore not available !!!
-    # do not throw exception
-    rospy.init_node(nodename,  disable_signals=True)
+    # does not throw exception
+    if init_node:
+        rospy.init_node(nodename,  disable_signals=True)
 
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
@@ -611,7 +614,7 @@ def marrtino_ok():
 # Robot motion
 
 def setSpeed(lx,az,tm,stopend=False):
-    set_speed(lx,az,tm,stopend)
+    return set_speed(lx,az,tm,stopend)
 
 def set_speed(lx,az,tm,stopend=False):
     global cmd_pub, stop_request
@@ -629,13 +632,17 @@ def set_speed(lx,az,tm,stopend=False):
     while not rospy.is_shutdown() and cnt<=tm and not stop_request:
         cmd_pub.publish(msg)
         cnt = cnt + delay
-        rate.sleep()
+        try:
+            rate.sleep()
+        except KeyboardInterrupt:
+            print("User KeyboardInterrupt")
+            return False
     if (stopend):
         msg.linear.x = 0
         msg.angular.z = 0
         cmd_pub.publish(msg)
         rate.sleep()
-
+    return True
 
 def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
 
@@ -651,12 +658,16 @@ def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
     while not rospy.is_shutdown() and cnt<=tm and not stop_request:
         joints_pub.publish(msg)
         cnt = cnt + delay
-        rate.sleep()
+        try:
+            rate.sleep()
+        except KeyboardInterrupt:
+            return False
 
     if (stopend):
         msg.velocities = [0,0,0,0]
         joints_pub.publish(msg)
         rate.sleep()
+    return True
 
 
 def stop():
@@ -686,33 +697,42 @@ def stop():
         pass
 
 
-def forward(r=1):
+def forward(r=1, obstacleAvoidance=False):
     global tv_good
     print 'forward',r
-    exec_move_REL(move_step*r)
-    #setSpeed(tv_good,0.0,r*move_step/tv_good)
+    if obstacleAvoidance:
+        enableObstacleAvoidance(True)
+    v = exec_move_REL(move_step*r)
+    if obstacleAvoidance:
+        enableObstacleAvoidance(False)
+    return v
     
 
 def backward(r=1):
     print 'backward',r
-    exec_move_REL(-move_step*r)
+    return exec_move_REL(-move_step*r)
     #setSpeed(-tv_good,0.0,r*move_step/tv_good)
 
 
 def left(r=1):
     print 'left',r
-    exec_turn_REL(90*r)
+    return exec_turn_REL(90*r)
     # setSpeed(0.0,rv_good,r*(math.pi/2)/rv_good)
 
 
 def right(r=1):
     print 'right',r
-    exec_turn_REL(-90*r)
+    return exec_turn_REL(-90*r)
     #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
 # map frame goto (requires localization)
 def goto(gx, gy, gth_deg):
-    exec_movebase(gx, gy, gth_deg)
+    return exec_movebase(gx, gy, gth_deg)
+
+# map frame goto (requires localization)
+def goto(target_pose):
+    return exec_movebase(target_pose[0], target_pose[1], target_pose[2])
+
 
 
 # odom frame direct control (no path planning)
@@ -736,11 +756,13 @@ def stop_follow_person():
 # Turn
 
 def turn(deg, ref='REL'):
+    if ref=='REL':
+        deg = NORM_180(deg)
     print('turn %s %.2f' %(ref,deg))
     if ref=='REL':
-        exec_turn_REL(deg)
+        return exec_turn_REL(deg)
     else:
-        exec_turn_ABS(deg)
+        return exec_turn_ABS(deg)
 
 
 # Wait
@@ -864,6 +886,14 @@ def DEG2RAD(a):
 def RAD2DEG(a):
     return a/math.pi*180.0
 
+def NORM_180(a):
+    if (a>180):
+        return a-360
+    elif (a<-180):
+        return a+360
+    else:
+        return a
+
 
 def NORM_PI(a):
     if (a>math.pi):
@@ -888,44 +918,11 @@ def norm_target_angle(a):
 
 
 def exec_turn_ABS(th_deg):
-    global rv_good, rv_min, loc_robot_pose
-    current_th = loc_robot_pose[2]
-    
-    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), th_deg))
-    #print("TURN -- to-normalize RAD: %.1f" %(DEG2RAD(th_deg)))
-
-    target_th = norm_target_angle(DEG2RAD(th_deg))
-
-    #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(target_th)))
-
-    ndth = NORM_PI(target_th-current_th)
-    dth = abs(ndth)
-
-    #print("TURN -- dTh %.2f norm_PI: %.2f" %(ndth,dth))
-
-    rv_nom = rv_good 
-    if (ndth < 0):
-        rv_nom *= -1
-
-    last_dth = dth
-    #print("TURN -- last_dth %.2f" %(last_dth))
-
-    while (dth>rv_min/8.0 and last_dth>=dth):
-        rv = rv_nom
-        if (dth<0.8):
-            rv = rv_nom*dth/0.8
-        if (abs(rv)<rv_min):
-            rv = rv_min*rv/abs(rv)
-        tv = 0.0
-        setSpeed(tv, rv, 0.1, False)
-        current_th = loc_robot_pose[2]
-        dth = abs(NORM_PI(target_th-current_th))
-        if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
-            last_dth = dth
-        #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
-    #print("TURN -- dth %.2f - last_dth %.2f" %(dth,last_dth))
-    setSpeed(0.0,0.0,0.1)
-    #print 'TURN -- end'
+    global loc_robot_pose
+    current_th_deg = RAD2DEG(loc_robot_pose[2])   # deg
+    a_deg = NORM_180(th_deg - current_th_deg)
+    #print("Turn rel %.1f" %a_deg)
+    return exec_turn_REL(a_deg)
 
 
 def exec_turn_REL(th_deg):
@@ -935,6 +932,8 @@ def exec_turn_REL(th_deg):
     #print("TURN -- to-normalize RAD: %.1f" %(current_th + DEG2RAD(th_deg)))
     target_th = norm_target_angle(current_th + DEG2RAD(th_deg))
     #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(target_th)))
+
+    r = True
 
     rv_nom = rv_good 
     if (th_deg < 0):
@@ -953,21 +952,27 @@ def exec_turn_REL(th_deg):
         if (abs(rv)<rv_min):
             rv = rv_min*rv/abs(rv)
         tv = 0.0
-        setSpeed(tv, rv, 0.1, False)
-        current_th = odom_robot_pose[2]
-        dth = abs(NORM_PI(target_th-current_th))
-        if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
-            last_dth = dth
+        if setSpeed(tv, rv, 0.1, False):
+            current_th = odom_robot_pose[2]
+            dth = abs(NORM_PI(target_th-current_th))
+            if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
+                last_dth = dth
+        else:
+            print("turn action canceled by user")
+            r = False
+            dth=0
         #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
     #print("TURN -- dth %.2f - last_dth %.2f" %(dth,last_dth))
     setSpeed(0.0,0.0,0.1)
     #print 'TURN -- end'
+    return r
 
 
 def exec_move_REL(tx):
     global tv_good, odom_robot_pose
     start_pose = list(odom_robot_pose)
     tv_nom = tv_good 
+    r = True
     if (tx < 0):
         tv_nom *= -1
         tx *= -1
@@ -979,17 +984,22 @@ def exec_move_REL(tx):
         if (abs(tv)<tv_min):
             tv = tv_min*tv/abs(tv)
         rv = 0.0
-        setSpeed(tv, rv, 0.1, False)
-        pose = odom_robot_pose
-        dx = abs(distance(start_pose, pose) - tx)
+        if setSpeed(tv, rv, 0.1, False):
+            pose = odom_robot_pose
+            dx = abs(distance(start_pose, pose) - tx)
+        else:
+            print("move action canceled by user")
+            r = False
+            dx = 0
         #print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(pose[0], pose[1], RAD2DEG(pose[2]), tx, dx, tv, rv))
     setSpeed(0.0,0.0,0.1)
-
+    return r
 
 
 def exec_goto_target(gx,gy):
     global tv_good, rv_good, tv_min, rv_min, odom_robot_pose
     goal_pose = [gx,gy,0]
+    r = True
     dx = distance(goal_pose,odom_robot_pose)
     while (dx>0.05):
         tv = tv_good
@@ -1012,18 +1022,37 @@ def exec_goto_target(gx,gy):
         if (abs(rv)<rv_min):
             rv = rv_min*rv/abs(rv)
 
-        setSpeed(tv, rv, 0.1, False)
-        dx = distance(goal_pose, odom_robot_pose)
+        if setSpeed(tv, rv, 0.1, False):
+            dx = distance(goal_pose, odom_robot_pose)
+        else:
+            r = False
+            print("goto_target action canceled by user")
+            dx = 0
         #print("GOTO -- POS: %.1f %.1f %.1f -- target %.1f %.1f -- dx: %.1f dth: %.1f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(odom_robot_pose[2]), gx, gy, dx, dth, tv, rv))
     setSpeed(0.0,0.0,0.1)
 
+    return r
+
+def dist_from_goal():
+    global target_pose
+    if target_pose != None:
+        p = get_robot_pose()
+        return math.sqrt(math.pow(p[0]-target_pose[0],2)+math.pow(p[1]-target_pose[1],2))
+    else:
+        return -1
 
 
-def exec_movebase(gx, gy, gth_deg):
-    global ac_movebase, move_base_running
+def start_movebase_pose(target_pose): # non-blocking
+    start_movebase(target_pose[0], target_pose[1], target_pose[2])
+
+
+def start_movebase(gx, gy, gth_deg): # non-blocking
+    global ac_movebase, move_base_running, target_pose
     if (ac_movebase == None):
         ac_movebase = actionlib.SimpleActionClient(ACTION_move_base,MoveBaseAction)
     ac_movebase.wait_for_server()
+
+    target_pose = [gx, gy, gth_deg/180.0*math.pi]
 
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = "map"
@@ -1033,18 +1062,71 @@ def exec_movebase(gx, gy, gth_deg):
     yaw = gth_deg/180.0*math.pi
     q = tf.transformations.quaternion_from_euler(0, 0, yaw)
     goal.target_pose.pose.orientation = Quaternion(q[0],q[1],q[2],q[3])
-
+    
     ac_movebase.send_goal(goal)
     move_base_running = True
+    print("move_base action started: target %r" %(target_pose))
     rospy.sleep(0.2)
-    wait = ac_movebase.wait_for_result()
-    if not wait:
-        rospy.logerr("Action server not available!")
-        #rospy.signal_shutdown("Action server not available!")
-    else:
-        print ac_movebase.get_result()
-    print('Move action completed.')
+
+
+def movebase_running():
+    global ac_movebase, move_base_running
+    r = False
+    if move_base_running:
+        try:
+            r = not ac_movebase.wait_for_result(rospy.Duration(1))
+        except KeyboardInterrupt:
+            print("movebase action canceled by user")
+            r = False
+    return r
+
+
+def movebase_step(delay):  # executes one move_base step of delay seconds
+                           # return [finish, success] 
+                           # finish = True if action is terminated
+                           # success = True if goal has been reached
+    global ac_movebase, move_base_running, target_pose
+
+    finish = False
+    success = False
+
+    try:
+        res = ac_movebase.wait_for_result(rospy.Duration(delay))  # true: action finished
+        gd = rospy.get_param('/move_base_node/TrajectoryPlannerROS/xy_goal_tolerance')
+        d = dist_from_goal()
+        if not res and target_pose[2]>1000 and d<gd:
+            print('Goal reached, ignoring orientation')
+            finish = True
+            success = True
+        elif res:
+            print("move_base action finished: %s" %ac_movebase.get_result())
+            finish = True
+            success = True
+    except KeyboardInterrupt:
+        print("move_base action canceled by user")
+        finish = True
+        success = False
+
+    return (finish, success)
+
+
+def exec_movebase(gx, gy, gth_deg):  # blocking
+    global ac_movebase, move_base_running, target_pose
+
+    start_movebase(gx, gy, gth_deg)
+    success = True
+
+    delay = 0.5
+    while move_base_running:
+        finish, successs = movebase_step(delay)
+        if finish:  # action is terminated
+            exec_movebase_stop()
+    
+    print('Move action completed. Success: %r' %success)
     move_base_running = False
+    target_pose = None
+    return success
+
 
 def exec_movebase_stop():
     global ac_movebase, move_base_running
@@ -1053,6 +1135,7 @@ def exec_movebase_stop():
     ac_movebase.wait_for_server()
     ac_movebase.cancel_all_goals()
     move_base_running = False
+    target_pose = None
 
 
 ac_follow_person = None  # action client

@@ -1,13 +1,25 @@
+import sys,os
+import argparse
+
+sys.path.append(os.getenv("MARRTINO_APPS_HOME")+"/program")
+
+import robot_cmd_ros
 from robot_cmd_ros import *
 
+robot_cmd_ros.use_audio = False
+robot_cmd_ros.tv_good = 0.5
 
-begin(use_desired_cmd_vel=True)
+# main
+if __name__ == "__main__":
 
-enableObstacleAvoidance(True)
+    parser = argparse.ArgumentParser(description='forward gbn')
+    parser.add_argument('GX', type=float, help='Goal X [m]')
 
-forward(1)
+    args = parser.parse_args()
 
-enableObstacleAvoidance(False)
+    begin(use_desired_cmd_vel=True)
 
-end()
+    forward(args.GX, obstacleAvoidance=True)
+
+    end()
 

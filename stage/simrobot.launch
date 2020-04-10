@@ -9,7 +9,7 @@
   <master auto="start"/>
   <param name="/use_sim_time" value="true"/>
 
-  <node pkg="stage_environments" type="stageros_experimental" name="stageros" args="$(arg mapsdir)/$(arg world_file)" respawn="false" required="true" output="screen">
+  <node pkg="stage_environments" type="stageros_experimental" name="stageros" args="$(arg mapsdir)/$(arg world_file)" respawn="false" required="false" output="screen">
     <param name="base_watchdog_timeout" value="0.2"/>
     <param name="base_frame" value="$(arg base_frame)"/>
     <param name="laser_topic" value="$(arg laser_topic)"/>
