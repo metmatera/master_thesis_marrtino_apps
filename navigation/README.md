@@ -26,11 +26,17 @@ add to catkin workspace and compile.
 See [robot](https://bitbucket.org/iocchi/marrtino_apps/src/master/robot/) or 
 [stage](https://bitbucket.org/iocchi/marrtino_apps/src/master/stage/) sections.
 
+Example:
+
+    cd marrtino_apps/stage/
+    roslaunch simrobot.launch
+
+
 ### 2. Start navigation ###
 
 To launch navigation modules, use the script 
 
-        python runnav.py <MAP_NAME> <X> <Y> <TH_DEG>
+    python runnav.py <MAP_NAME> <X> <Y> <TH_DEG>
 
 
 (X,Y,TH) is the initial pose of the robot in map coordinates.
@@ -38,32 +44,48 @@ To launch navigation modules, use the script
 
 Example:
 
-        python runnav.py map 0 0 0
+    python runnav.py map 0 0 0
 
 
 #### Alternative manual launch
 
 To start localizer and navigation modules manually
 
-        roslaunch srrg_localizer.launch mapsdir:=<MAPS_DIR> map_name:=<MAP> initial_pose_x:=<X> initial_pose_y:=<Y> initial_pose_a:=<TH_RAD>
-        roslaunch move_base.launch
+    roslaunch srrg_localizer.launch mapsdir:=<MAPS_DIR> map_name:=<MAP> initial_pose_x:=<X> initial_pose_y:=<Y> initial_pose_a:=<TH_RAD>
+    roslaunch move_base.launch
 
 
-### 3. Send target goals
+### 3. Recovery
+
+Launch the navigation recovery procedure
+
+    python recovery.py
+
+Note: to define specific recovery procedures for your environment, copy `recovery.py`
+and add other recovery behaviors.
+
+
+
+### 4. Send target goals
 
 
 To send target goals to the robot, use the script
 
-        python move.py <GX> <GY> <GTH_DEG>
+    python move.py <GX> <GY> <GTH_DEG>
 
 (GX,GY,GTH): target pose in map coordinates
 
 
 Example:
 
-        python move.py 6 -1 270
+    python move.py 6 -1 270
 
-### 4. Navigation path
+
+
+
+
+
+### 5. Execute a navigation path
 
 Write a navigation file containing a sequence of navigation commands
 
@@ -74,21 +96,13 @@ Write a navigation file containing a sequence of navigation commands
 
 Run the navigation file with
 
-        python nav.py <navfile>
+    python nav.py <navfile>
 
 Example:
 
-        python nav.py test.nav
+    python nav.py test.nav
 
 
-### 5. Recovery
-
-Launch the navigation recovery procedure
-
-        python recovery.py
-
-Note: to define specific recovery procedures for your environment, copy `recovery.py`
-and add other recovery behaviors.
 
 
 ## Other functionalities
