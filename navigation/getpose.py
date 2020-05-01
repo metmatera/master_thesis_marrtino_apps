@@ -31,7 +31,12 @@ def odom_cb(data):
 
 
 def get_robot_pose():
-    global map_robot_pose
+    global map_robot_pose, listener
+
+    if listener is None:
+        listener = tf.TransformListener()
+        rospy.Rate(5).sleep()
+
     try:
         (trans,rot) = listener.lookupTransform(FRAME_map, FRAME_base, rospy.Time(0))
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
@@ -42,6 +47,15 @@ def get_robot_pose():
     map_robot_pose[0] = trans[0]
     map_robot_pose[1] = trans[1]
     map_robot_pose[2] = yaw
+
+    return map_robot_pose
+
+
+def DEG(a):
+    return a*180.0/math.pi
+
+def pose_str(p):
+    return "%.2f %.2f %.2f DEG" %(p[0], p[1], DEG(p[2]))
 
 
 # main
@@ -54,10 +68,9 @@ if __name__ == "__main__":
 
     time.sleep(1)
 
-    get_robot_pose()
+    p = get_robot_pose()
 
-    print("Robot pose: %.1f %.1f %.1f DEG"  
-        %(map_robot_pose[0], map_robot_pose[1], map_robot_pose[2]*180/math.pi))
+    print("Robot pose: %s"  %(pose_str(p)))
 
     odom_sub.unregister()
 

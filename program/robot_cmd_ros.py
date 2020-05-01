@@ -1128,6 +1128,10 @@ def exec_movebase(gx, gy, gth_deg):  # blocking
     return success
 
 
+def movebase_stop():
+    exec_movebase_stop()
+
+
 def exec_movebase_stop():
     global ac_movebase, move_base_running
     if (ac_movebase == None):

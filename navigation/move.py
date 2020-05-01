@@ -74,6 +74,8 @@ def do_move(target_pose):
         #print("Distance to goal: %.2f" %dist_from_goal())
         pass
 
+    movebase_stop()
+
     if dist_from_goal()<0.5:
         print('Goal reached')
         r = True
