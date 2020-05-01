@@ -10,26 +10,27 @@ ROS navigation packages
 
 
 
-ROS package: gradient_based_navigation
+ROS package: `gradient_based_navigation`
 
 
     git clone https://github.com/Imperoli/gradient_based_navigation
+
 
 add to catkin workspace and compile.
 
 
 ## Run ##
 
-### Start a robot first ###
+### 1. Start a robot ###
 
 See [robot](https://bitbucket.org/iocchi/marrtino_apps/src/master/robot/) or 
 [stage](https://bitbucket.org/iocchi/marrtino_apps/src/master/stage/) sections.
 
-### Standard navigation ###
+### 2. Start navigation ###
 
 To launch navigation modules, use the script 
 
-    python runnav.py <MAP_NAME> <X> <Y> <TH_DEG>
+        python runnav.py <MAP_NAME> <X> <Y> <TH_DEG>
 
 
 (X,Y,TH) is the initial pose of the robot in map coordinates.
@@ -37,26 +38,60 @@ To launch navigation modules, use the script
 
 Example:
 
-    python runnav.py montreal 2 11 0
+        python runnav.py map 0 0 0
 
 
-or start localizer and navigation modules manually
+#### Alternative manual launch
 
-    roslaunch srrg_localizer.launch map_name:=<MAP> initial_pose_x:=<X> initial_pose_y:=<Y> initial_pose_a:=<TH_RAD>
-    roslaunch move_base.launch
+To start localizer and navigation modules manually
+
+        roslaunch srrg_localizer.launch mapsdir:=<MAPS_DIR> map_name:=<MAP> initial_pose_x:=<X> initial_pose_y:=<Y> initial_pose_a:=<TH_RAD>
+        roslaunch move_base.launch
+
+
+### 3. Send target goals
 
 
 To send target goals to the robot, use the script
 
-    python move.py <GX> <GY> <GTH_DEG>
+        python move.py <GX> <GY> <GTH_DEG>
 
 (GX,GY,GTH): target pose in map coordinates
 
 
 Example:
 
-    python move.py 8 8 270
+        python move.py 6 -1 270
 
+### 4. Navigation path
+
+Write a navigation file containing a sequence of navigation commands
+
+        moveTo(<GX>,<GY>,<GTH_DEG>)
+        forward(<M>)
+        turn(<DEG>,"ABS"|"REL")
+
+
+Run the navigation file with
+
+        python nav.py <navfile>
+
+Example:
+
+        python nav.py test.nav
+
+
+### 5. Recovery
+
+Launch the navigation recovery procedure
+
+        python recovery.py
+
+Note: to define specific recovery procedures for your environment, copy `recovery.py`
+and add other recovery behaviors.
+
+
+## Other functionalities
 
 ### Obstacle avoidance behavior only ###
 

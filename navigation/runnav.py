@@ -6,7 +6,7 @@ sessionname = 'navigation'
 
 def send_command(cmd, name):
     print cmd
-    use_tmux = os.system('tmux -V')==0
+    use_tmux = False # os.system('tmux -V')==0
     
     if use_tmux:        
         r = os.system('tmux select-window -t %s:0' %sessionname)
@@ -17,7 +17,7 @@ def send_command(cmd, name):
             os.system('tmux new-window -n %s' %name)
         os.system('tmux send-keys "%s" C-m' %cmd)
     else:
-        os.system('xterm -hold -e "%s" &' %cmd)
+        os.system('xterm -e "%s" &' %cmd)
 
 
 def runnav(mapname,init_pose):
@@ -31,7 +31,7 @@ def runnav(mapname,init_pose):
     send_command('roslaunch srrg_localizer.launch %s' %params,'loc')
     time.sleep(3)
     send_command('cd $MARRTINO_APPS_HOME/navigation','nav')
-    send_command('roslaunch move_base.launch','nav')
+    send_command('roslaunch move_base_gbn.launch','nav')
     time.sleep(1)
 
 

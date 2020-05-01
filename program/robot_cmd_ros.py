@@ -60,6 +60,8 @@ TOPIC_sonar_1 = '/sonar_1'
 TOPIC_sonar_2 = '/sonar_2'
 TOPIC_sonar_3 = '/sonar_3'
 
+# gbn navigation present
+desired_cmd_vel_enabled=False
 
 
 # Good values
@@ -390,7 +392,9 @@ def begin(nodename='robot_cmd', use_desired_cmd_vel=False, init_node=True):
     global cmd_pub, odom_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
            sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3, \
            odom_robot_pose, robot_initialized, stop_request, \
-           use_robot, use_audio, audio_connected
+           use_robot, use_audio, audio_connected, desired_cmd_vel_enabled
+
+    desired_cmd_vel_enabled = use_desired_cmd_vel
 
     print 'begin'
 
@@ -423,7 +427,7 @@ def begin(nodename='robot_cmd', use_desired_cmd_vel=False, init_node=True):
     if (use_robot):
         print("Robot enabled")
         cmd_vel_topic = TOPIC_cmd_vel
-        if (use_desired_cmd_vel):
+        if (desired_cmd_vel_enabled):
             cmd_vel_topic = TOPIC_desired_cmd_vel
         cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
@@ -697,13 +701,13 @@ def stop():
         pass
 
 
-def forward(r=1, obstacleAvoidance=False):
-    global tv_good
+def forward(r=1, obstacleAvoidance=True):
+    global tv_good, desired_cmd_vel_enabled
     print 'forward',r
-    if obstacleAvoidance:
+    if desired_cmd_vel_enabled and obstacleAvoidance:
         enableObstacleAvoidance(True)
     v = exec_move_REL(move_step*r)
-    if obstacleAvoidance:
+    if desired_cmd_vel_enabled and obstacleAvoidance:
         enableObstacleAvoidance(False)
     return v
     

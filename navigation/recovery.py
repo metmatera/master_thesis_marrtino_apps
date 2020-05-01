@@ -106,7 +106,7 @@ def do_recovery():
 
 
 
-begin(use_desired_cmd_vel=True)
+begin(nodename='recovery', use_desired_cmd_vel=True)
 
 odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
 goal_sub = rospy.Subscriber(TOPIC_movebase_goal, MoveBaseActionGoal, movabase_goal_cb)

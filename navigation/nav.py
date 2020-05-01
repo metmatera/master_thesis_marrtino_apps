@@ -8,7 +8,8 @@ from robot_cmd_ros import *
 
 import move, forward_gbn
 
-
+def moveTo(px,py,pth):
+    return move.do_move([px,py,pth])
 
 def do_path(filename):
     with open(filename) as f:
@@ -29,12 +30,12 @@ def do_path(filename):
 # main
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='forward gbn')
+    parser = argparse.ArgumentParser(description='navigator')
     parser.add_argument('path', type=str, help='File with path to run')
 
     args = parser.parse_args()
 
-    begin(use_desired_cmd_vel=True)
+    begin(nodename='navigator', use_desired_cmd_vel=True)
 
     r = do_path(args.path)
     print("Path completed: %r" %r)
