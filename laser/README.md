@@ -15,6 +15,17 @@ Adjust file `config/transforms.txt` folder for
 camera and virtual laser transforms
 
 
+
+## Run ##
+
+Launch laser or rgbdlaser nodes
+
+    roslaunch <laser>.launch
+
+View RGBD laser
+
+    rosrun rviz rviz -d rgbd_laser.rviz
+
 ## Laser filter 
 
 To use `laser_filter` 
@@ -32,15 +43,5 @@ Example:
 
     roslaunch move_base_gbn.launch laser_topic:=scan_filtered
 
-
-## Run ##
-
-Launch laser or rgbdlaser nodes
-
-    roslaunch <laser>.launch
-
-View RGBD laser
-
-    rosrun rviz rviz -d rgbd_laser.rviz
 
 
