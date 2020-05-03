@@ -4,17 +4,33 @@ Laser launchers (Hokuyo, RPlidar, RGBD depth2laser)
 
 ## Install ##
 
-Depth2laser:
-
-* https://github.com/ros-drivers/urg_node.git
-* https://github.com/Slamtec/rplidar_ros.git
-* https://bitbucket.org/ggrisetti/depth2laser
-
+* `ros-[kinetic/melodic]-urg-node`
+* `ros-[kinetic/melodic]-laser-filters`
+* `https://github.com/Slamtec/rplidar_ros.git`
+* `https://bitbucket.org/ggrisetti/depth2laser`
 
 ## Configure ##
 
 Adjust file `config/transforms.txt` folder for 
 camera and virtual laser transforms
+
+
+## Laser filter 
+
+To use `laser_filter` 
+
+1) configure filter parameters in `config/laser_filter.yaml`
+
+2) launch `laser_filter.launch`
+
+    roslaunch laser_filter.launch
+
+3) run localization and navigation modules with option `laser_topic:=scan_filtered`
+
+
+Example:
+
+    roslaunch move_base_gbn.launch laser_topic:=scan_filtered
 
 
 ## Run ##
