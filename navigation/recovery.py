@@ -27,6 +27,11 @@ goal_active = False
 robot_moving = False
 recovery_cnt = 0
 
+def log(message):
+    tm = rospy.get_time()
+    p = get_robot_pose()
+    print("%.2f;%s;%s" %(tm,pose_str(p),message))
+
 
 def planner_state_cb(msg):
     global recovery
@@ -44,15 +49,14 @@ def movabase_goal_cb(msg):
     q = (o.x, o.y, o.z, o.w)
     euler = tf.transformations.euler_from_quaternion(q)
     target_goal[2] = euler[2] # yaw
-    print("Target pose: %s" %pose_str(target_goal))
 
 def movabase_status_cb(msg):
-    global goal_active
+    global goal_active, target_goal
     if len(msg.status_list)>0:
       for d in msg.status_list:
         gid = d.goal_id.id
         if not gid in Goals.keys() or Goals[gid].status!=d.status:
-            print("g:%s - %d - %s" %(gid, d.status, d.text))
+            log("Goal;%s;%d;%s" %(pose_str(target_goal), d.status, d.text))
         Goals[gid] = d
         if (d.status==1): # goal accepted
             goal_active = True
@@ -84,22 +88,20 @@ def recovery():
 
 
 def do_recovery1():
-    print("Recovery 1 - start")
+    log("Recovery1;start")
     enableObstacleAvoidance(True)
-    setSpeed(-0.1,0,3.0)
-    setSpeed(0.2,0,6.0)
+    setSpeed(-0.1,0,3.0) # backward
+    setSpeed(0.2,0,6.0) # forward
     enableObstacleAvoidance(False)
-    print("Recovery 1 - end")
+    log("Recovery1;end")
 
 
 def do_recovery():
     global target_goal, recovery_cnt
-    p = get_robot_pose()
-    tm = rospy.get_time()
-    print("Recovery %.1f/%d - pose: %s target: %s"  
-        %(tm,recovery_cnt,pose_str(p),pose_str(target_goal)))
-
-    if recovery_cnt>4:
+    recovery_max = 5
+    if recovery_cnt>1:
+        log("Recovery;%d/%d"  %(recovery_cnt,recovery_max))
+    if recovery_cnt>recovery_max:
         do_recovery1()
 
 

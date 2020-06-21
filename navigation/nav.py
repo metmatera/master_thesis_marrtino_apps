@@ -8,7 +8,7 @@ from robot_cmd_ros import *
 
 import move, forward_gbn
 
-def moveTo(px,py,pth):
+def moveTo(px,py,pth=1001):
     return move.do_move([px,py,pth])
 
 def do_path(filename):
