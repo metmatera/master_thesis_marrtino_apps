@@ -120,7 +120,12 @@ Note: Controllers must publish on /desired_cmd_vel instead of /cmd_vel
 
 
 ### Visualization ###
+
+From remote host (e.g., MARRtino VM)
     
+    export ROS_IP=`hostname -I` 
+    export ROS_MASTER_URI=http://10.3.1.1:11311 
+
     rosrun rviz rviz -d nav.rviz
 
 
