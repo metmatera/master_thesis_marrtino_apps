@@ -1,22 +1,31 @@
-# laser #
+# laser
 
 Laser launchers (Hokuyo, RPlidar, RGBD depth2laser)
 
-## Install ##
+## Install
 
 * `ros-[kinetic/melodic]-urg-node`
 * `ros-[kinetic/melodic]-laser-filters`
 * `https://github.com/Slamtec/rplidar_ros.git`
 * `https://bitbucket.org/ggrisetti/depth2laser`
 
-## Configure ##
+## Configure
+
+Check udev rule in `/etc/udev/rules.d`
+
+Example:
+
+    # RPLidar A1
+    SUBSYSTEM=="usb", ATTR{idProduct}=="ea60", ATTR{idVendor}=="10c4", MODE:="0666", OWNER:="root", GROUP:="root" SYMLINK+="rplidar"
+
+
 
 Adjust file `config/transforms.txt` folder for 
 camera and virtual laser transforms
 
 
 
-## Run ##
+## Run
 
 Launch laser or rgbdlaser nodes
 
