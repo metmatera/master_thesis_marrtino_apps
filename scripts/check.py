@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys, os, time
 import rospy
 import rosnode
@@ -50,19 +52,19 @@ def get_ROS_topics():
 
 def check_ROS():
     global nodenames, topicnames
-    print '----------------------------------------'
-    print 'Check ROS...'
+    print('----------------------------------------')
+    print('Check ROS...')
     nodenames = []
     topicnames = []
     r = True
     try:
         nodenames = rosnode.get_node_names()
-        print '  -- Nodes: ',nodenames
+        print('  -- Nodes: %s' %nodenames)
         topicnames = rospy.get_published_topics()
-        print '  -- Topics: ',topicnames
+        print('  -- Topics: %s' %topicnames)
         printOK()
     except Exception as e:
-        #print e
+        print(e)
         r = False
         printFail()
     return r
@@ -85,8 +87,8 @@ def check_robot():
     global nodenames
     get_ROS_nodes()
 
-    print '----------------------------------------'
-    print 'Check orazio robot ...'
+    print('----------------------------------------')
+    print('Check orazio robot ...')
 
     r = '/orazio' in nodenames
     print_result(r)
@@ -97,8 +99,8 @@ def check_turtle():
     global nodenames
     get_ROS_nodes()
 
-    print '----------------------------------------'
-    print 'Check Turtlebot robot ...'
+    print('----------------------------------------')
+    print('Check Turtlebot robot ...')
 
     r = '/mobile_base' in nodenames
     print_result(r)
@@ -111,8 +113,8 @@ def check_simrobot():
     global nodenames
     get_ROS_nodes()
 
-    print '----------------------------------------'
-    print 'Check Stage simulator ...'
+    print('----------------------------------------')
+    print('Check Stage simulator ...')
 
     r = '/stageros' in nodenames
     print_result(r)
@@ -140,8 +142,8 @@ def check_odom():
     global topicnames, odomcount, odomframe
     odomrate = 0
 
-    print '----------------------------------------'
-    print 'Check odometry ...'
+    print('----------------------------------------')
+    print('Check odometry ...')
 
     get_ROS_topics()
     r = ['/odom', 'nav_msgs/Odometry'] in topicnames
@@ -175,8 +177,8 @@ def sonar_cb(data):
 def check_sonar():
     global topicnames, sonarcount, sonarframe, sonarvalues, idsonar
     r = True
-    print '----------------------------------------'
-    print 'Check sonar ...'
+    print('----------------------------------------')
+    print('Check sonar ...')
     for i in range(0,4):
         sname = 'sonar_%d' %i
         idsonar = i
@@ -225,8 +227,8 @@ def laser_cb(data):
 def check_laser():
     global topicnames, lasercount, laserframe
 
-    print '----------------------------------------'
-    print 'Check laser scan ...'
+    print('----------------------------------------')
+    print('Check laser scan ...')
 
     laserrate = 0
     get_ROS_topics()
@@ -274,8 +276,8 @@ def findImageTopic():
 def check_rgb_camera():
     global topicnames, cameracount, cameraframe
 
-    print '----------------------------------------'
-    print 'Check RGB camera ...'
+    print('----------------------------------------')
+    print('Check RGB camera ...')
 
     get_ROS_topics()
     camerarate = 0
@@ -313,8 +315,8 @@ def findDepthTopic():
 def check_depth_camera():
     global topicnames, cameracount, cameraframe
 
-    print '----------------------------------------'
-    print 'Check depth camera ...'
+    print('----------------------------------------')
+    print('Check depth camera ...')
 
     get_ROS_topics()
     camerarate = 0
@@ -338,27 +340,39 @@ def check_depth_camera():
 
 tf_listener = None
 
+# Note
+# ROS param use_sim_time is not set when wsbringup is launched.
+# Some features do not work when launching the simulator that sets use_sim_time to true
+# but rospy gettime does not check this param if it is changed after rospy init...
+# If you need simulation time, use 'rosparam set /use_sim_time true' before launching
+# wsbringup.py
+
 def check_tf(source, target):
     global tf_listener
     r = check_ROS_q()
     if (not r):
         return r
     if (tf_listener == None):
+        print("tf_listener ...")  ### FIXME sometimes it blocks here ....
         tf_listener = tf.TransformListener()
-    print  "  -- TF %s -> %s  " %(source, target),
+    print("  -- TF %s -> %s  " %(source, target), end="")
     try:
         tf_listener.waitForTransform(source, target, rospy.Time(), rospy.Duration(1.0))
         (posn, rotn) = tf_listener.lookupTransform(source, target, rospy.Time())
         # how much time ago we get a transform (secs)
-        t = rospy.Time.now().secs - tf_listener.getLatestCommonTime(source, target).secs
-        print t
-        if (t<3):
-            printOK()
-        else:
-            printFail()
-            r = False
+        ct = tf_listener.getLatestCommonTime(source, target).secs
+        rt = rospy.Time.now().secs
+        print("(tf common time %d) " %ct, end="")
+        print("(rospy time %d) " %rt, end="")
+        t = rt - ct
+        print("time=%d " %t, end="")
+        #if (t<3):
+        printOK()
+        #else:
+        #    printFail()
+        #    r = False
     except tf.Exception as e:
-        #print e
+        print(" %s " %e, end="")
         printFail()
         r = False
 
@@ -366,8 +380,8 @@ def check_tf(source, target):
 
 
 def check_tfs():
-    print '----------------------------------------'
-    print 'Check transforms ...'
+    print('----------------------------------------')
+    print('Check transforms ...')
     check_tf('map', 'odom')
     check_tf('odom', 'base_frame')
     check_tf('base_frame', 'laser_frame')
@@ -376,7 +390,7 @@ def check_tfs():
 
 
 def check_kinect():
-    print '----------------------------------------'
+    print('----------------------------------------')
     print('Check kinect ...')
     global nodenames
     get_ROS_nodes()
@@ -392,7 +406,7 @@ def check_kinect():
 
 
 def check_node(m, r):
-    print '  --',m,
+    print('  --%s' %m, end="")
     if '/'+m in nodenames:
         printOK()
         t = True

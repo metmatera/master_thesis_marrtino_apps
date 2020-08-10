@@ -6,6 +6,7 @@ if [ ! "$1" == "-docker" ]; then
   sudo service nginx start
 fi
 
+mkdir -p $HOME/log
 #source $HOME/.bashrc
 source $HOME/ros/catkin_ws/devel/setup.bash
 export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps
@@ -13,9 +14,9 @@ export MODIM_HOME=$HOME/src/modim
 export DISPLAY=:0
 export ROBOT_TYPE=marrtino
 cd $HOME/src/marrtino_apps/bringup
-python wsbringup.py &
+python wsbringup.py &> $HOME/log/wsbringup.log &
 cd $HOME/src/marrtino_apps/config
-python wsconfig.py &
+python wsconfig.py &> $HOME/log/wsconfig.log &
 roscore &
 
 if [ ! "$1" == "-docker" ]; then

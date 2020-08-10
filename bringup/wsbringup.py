@@ -1,12 +1,15 @@
-# http://www.html.it/pag/53419/websocket-server-con-python/
-# sudo -H pip install tornado
+from __future__ import print_function
 
 import socket
 import time
 import os
+
 from threading import Thread
 
 import sys
+
+# http://www.html.it/pag/53419/websocket-server-con-python/
+# sudo -H pip install tornado
 
 try:
     import tornado.httpserver
@@ -46,7 +49,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         r = check_ROS()
         self.write_message('RESULT ros '+str(r))
         if (r):
-            rospy.init_node('wsserver_check', disable_signals=True)
+            rospy.init_node('marrtino_bringup', disable_signals=True)
             self.write_message('VALUE rosnodes %r' %check.nodenames)
             self.write_message('VALUE rostopics %r' %check.topicnames)
 
@@ -76,6 +79,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             r = check_depth_camera()
             self.write_message('RESULT depth '+str(r))
 
+        print("Checking tf ...")
         r = check_tf('map', 'odom')
         self.write_message('RESULT tf_map_odom '+str(r))
         r = check_tf('odom', 'base_frame')
@@ -104,7 +108,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
     def open(self):
         global websocket_server, run
         websocket_server = self
-        print('New connection')
+        print('>>> New connection <<<')
         self.setStatus('Executing...')
         self.winlist = ['cmd','roscore','quit','wsrobot','modim',
                         'robot','laser','camera','imgproc','joystick','audio',
@@ -135,24 +139,31 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         self.checkStatus()
 
+        print("----")
+        sys.stdout.flush()
+
     def waitfor(self, what, timeout):
         time.sleep(2)
-        while not check_it(what) and timeout>0:
+        r = check_it(what)
+        while not r and timeout>0:
             time.sleep(1)
             timeout -= 1
-        r = check_it(what)
+            r = check_it(what)
         self.write_message('RESULT %s %s' %(what,str(r)))
 
 
 
     def on_message(self, message):    
-        print('Received: %s' %message)
+        print('>>> MESSAGE RECEIVED: %s <<<' %message)
         self.setStatus(message)
 
         try:
             self.process_message(message)
         except:
             print("Error in message %s" %message)
+
+        print("----")
+        sys.stdout.flush()
 
         self.setStatus('Idle')
 
@@ -216,6 +227,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.waitfor('simrobot',5)
             self.waitfor('odom',1)
             self.waitfor('laser',1)
+            # check_tfs() !!! DOES NOT WORK BECAUSE OF use_sim_time unset at startup...
         elif (message=='simrobot_kill'):
             self.tmux.roskill('stageros')
             time.sleep(1)
@@ -227,7 +239,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             while check_simrobot():
                 time.sleep(1)
             self.write_message('RESULT simrobot False')
-            #self.checkStatus('robot')
+
 
         # wsrobot
         elif (message=='wsrobot_start'):
@@ -508,7 +520,6 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
 
-
     def on_close(self):
         print('Connection closed')
 
@@ -568,6 +579,7 @@ if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(server_port)
     print("%s Websocket server listening on port %d" %(server_name,server_port))
+    sys.stdout.flush()
     try:
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
