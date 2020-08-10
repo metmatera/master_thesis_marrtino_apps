@@ -50,7 +50,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         if self.mahome==None:
             self.mahome = self.home+'/src/marrtino_apps'
         self.checkStatus()
-
+        sys.stdout.flush()
 
     def setStatus(self, st):
         # do not use blank spaces in the status string
@@ -235,6 +235,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             else:
                 print('Program running. This code is discarded.')
 
+        sys.stdout.flush()
 
     def on_close(self):
         print('Connection closed')
@@ -290,6 +291,7 @@ if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(server_port)
     print("%s Websocket server listening on port %d" %(server_name,server_port))
+    sys.stdout.flush()
     try:
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
