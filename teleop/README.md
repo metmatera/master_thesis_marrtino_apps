@@ -21,20 +21,21 @@ For obstacle avoidance, you also need a laser device (see [laser](https://bitbuc
 
 * Joystick/keyboard control
 
-
+        cd teleop
         roslaunch teleop.launch [use_joystick:=false]
 
-
-* Joystick/keyboard + real robot control
-
-
-        roslaunch robot_teleop.launch  [use_joystick:=false]
+    Option ```use_joystick:=false``` to use keyboard instead of joystick
 
 
-* Keyboard/Joystick + real robot control with obstacle avoidance
+* Joystick/keyboard control with obstacle avoidance
+
+        cd navigation
+        roslaunch obstacle_avoidance.launch
+
+        cd teleop
+        roslaunch teleop.launch cmd_vel:=joystick_cmd_vel [use_joystick:=false]
 
 
-        roslaunch robot_teleop_nav.launch [use_joystick:=false]
 
 
 * Visualizing sensor data
@@ -45,6 +46,8 @@ For obstacle avoidance, you also need a laser device (see [laser](https://bitbuc
 
     Run the rviz visualizer
 
-        rosrun rviz rviz -d robot_nav.rviz
+        cd navigation
+        rosrun rviz rviz -d nav.rviz
 
+    If not running with a localizer or a mapper, change the main frame from ```map``` to ```odom```.
 
