@@ -392,9 +392,20 @@ Last saved map: playground/lastmap.yaml<br>
 <tr> <td colspan=4> <hr> </td> </tr>
 
 <tr> <td colspan=4> <h3>Navigator</h3>
-<p>Requires a mapper or a localizer module.<br>
-Start after mapper or localizer</p>
+<p>MoveBase and SPQReL planner require a mapper or a localizer module 
+to be started before.</p><br>
 </td> </tr>
+
+
+<tr height=40>
+<td>Reactive Obstacle Avoidance<br> (Gradient Based Navigation, <br>no path planning)</td> 
+<td><span id="gradientBasedNavigation_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="obst_avoid_start_btn" onclick="send_cmd('obst_avoid_start')">GBN start</button>
+<button id="obst_avoid_quit_btn" onclick="send_cmd('obst_avoid_kill')">GBN quit</button>
+</td>
+</tr>
+
 
 <tr height=40>
 <td>MoveBase</td> 
@@ -418,7 +429,7 @@ Start after mapper or localizer</p>
 <hr>
 
 <table>
-<tr> <td colspan=4> <h3>Navigation with gradientBasedNavigation</h3>
+<tr> <td colspan=4> <h3>Navigation with gradientBasedNavigation [EXPERIMENTAL]</h3>
 
 <p>
 Start with srrg_localizer</p>

@@ -80,19 +80,24 @@ end()
 <h3>Commands</h3>
 
 <listing style="font-size:125%;">
+# begin/end
+
+begin()
+end()
+
 # motion
 
+enableObstacleAvoidance(False|True) 
 forward(m)
 backward(m)
 left(n)
 right(n)
-turn(deg)
+turn(deg, ref='REL'|'ABS', frame='odom'|'map'):
 set_speed(lx,az,time,stopend=False)
 stop()
 goto(gx,gy,gth)     # map pose (move_base)
-goto_target(gx,gy)  # odom pose, no obstacle avoidance
+goto_target(gx,gy, frame='odom'|'map')  # no path planning
 p = get_robot_pose()
-
 
 # range distance
 
@@ -102,7 +107,7 @@ d = obstacle_distance(deg=0)
 # audio
 
 sound(name)
-say(text, language='en')
+say(text, language='en'|'it'|...)
 s = asr()
 
 

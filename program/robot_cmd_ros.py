@@ -61,21 +61,21 @@ TOPIC_sonar_2 = '/sonar_2'
 TOPIC_sonar_3 = '/sonar_3'
 
 # gbn navigation present
-desired_cmd_vel_enabled=False
+use_desired_cmd_vel=False
 
 
 # Good values
 tv_good = 0.2
 rv_good = 0.8
 tv_min = 0.1
-rv_min = 0.2
+rv_min = 0.1
 
 move_step = 1.0
 
 # robot pose from odometry
 odom_robot_pose = None
 # robot pose from localization
-loc_robot_pose = None
+map_robot_pose = None
 # move_base target pose
 target_pose = None
 
@@ -122,8 +122,9 @@ def setAudioConnection(ip, port=9001):
 PARAM_gbnEnabled = '/gradientBasedNavigation/gbnEnabled'
 
 def enableObstacleAvoidance(value=True):
+    global use_desired_cmd_vel
     rospy.set_param(PARAM_gbnEnabled, value)
-
+    use_desired_cmd_vel = value
 
 def robot_stop_request(): # stop until next begin()
     global stop_request
@@ -166,15 +167,20 @@ def laser_center_distance():
     global laser_center_dist
     return laser_center_dist
 
-def getRobotPose():
-    return get_robot_pose()
+def getRobotPose(frame=None):
+    return get_robot_pose(frame=None)
 
-def get_robot_pose(): # returns [x,y,theta]
-    global odom_robot_pose, loc_robot_pose
-    if (loc_robot_pose != None):
-        return list(loc_robot_pose)
-    else:
+def get_robot_pose(frame=None): # returns [x,y,theta]
+    global odom_robot_pose, map_robot_pose
+    if frame==None: # auto detect
+        if map_robot_pose is not None:
+            return list(map_robot_pose)
+        else:
+            return list(odom_robot_pose)
+    elif frame=='odom':
         return list(odom_robot_pose)
+    else: # frame=='map':
+        return list(map_robot_pose)
 
 def obstacleDistance(direction=0):
     return obstacle_distance(direction=0)
@@ -236,6 +242,7 @@ def event():
 
 # ROS publishers/subscribers
 cmd_pub = None # cmd_vel publisher
+des_cmd_pub = None # desired_cmd_vel publisher
 tag_sub = None # tag_detection subscriber
 laser_sub = None # laser subscriber
 odom_sub = None  # odom subscriber
@@ -318,15 +325,15 @@ def odom_cb(data):
     #odomframe = data.header.frame_id
 
 def localizer_cb(data):
-    global loc_robot_pose
-    if (loc_robot_pose is None):
-        loc_robot_pose = [0,0,0]
-    loc_robot_pose[0] = data.pose.pose.position.x
-    loc_robot_pose[1] = data.pose.pose.position.y
+    global map_robot_pose
+    if (map_robot_pose is None):
+        map_robot_pose = [0,0,0]
+    map_robot_pose[0] = data.pose.pose.position.x
+    map_robot_pose[1] = data.pose.pose.position.y
     o = data.pose.pose.orientation
     q = (o.x, o.y, o.z, o.w)
     euler = tf.transformations.euler_from_quaternion(q)
-    loc_robot_pose[2] = euler[2] # yaw
+    map_robot_pose[2] = euler[2] # yaw
 
 # speed/jog from Joystick
 joy_cmd_vel = [0, 0]
@@ -388,13 +395,11 @@ def audio_connect_thread():
 
 # Begin/end
 
-def begin(nodename='robot_cmd', use_desired_cmd_vel=False, init_node=True):
-    global cmd_pub, odom_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
+def begin(nodename='robot_cmd', init_node=True):
+    global cmd_pub, des_cmd_pub, odom_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
            sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3, \
            odom_robot_pose, robot_initialized, stop_request, \
-           use_robot, use_audio, audio_connected, desired_cmd_vel_enabled
-
-    desired_cmd_vel_enabled = use_desired_cmd_vel
+           use_robot, use_audio, audio_connected
 
     print 'begin'
 
@@ -426,10 +431,8 @@ def begin(nodename='robot_cmd', use_desired_cmd_vel=False, init_node=True):
 
     if (use_robot):
         print("Robot enabled")
-        cmd_vel_topic = TOPIC_cmd_vel
-        if (desired_cmd_vel_enabled):
-            cmd_vel_topic = TOPIC_desired_cmd_vel
-        cmd_pub = rospy.Publisher(cmd_vel_topic, Twist, queue_size=1)
+        cmd_pub = rospy.Publisher(TOPIC_cmd_vel, Twist, queue_size=1)
+        des_cmd_pub = rospy.Publisher(TOPIC_desired_cmd_vel, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
         joints_pub = rospy.Publisher(TOPIC_joints, JointJog, queue_size=1)
 
@@ -471,6 +474,7 @@ def end():
             assock.close()
             assock=None
             audio_connected = False
+
     time.sleep(0.5) # make sure stuff ends
 
 
@@ -621,7 +625,7 @@ def setSpeed(lx,az,tm,stopend=False):
     return set_speed(lx,az,tm,stopend)
 
 def set_speed(lx,az,tm,stopend=False):
-    global cmd_pub, stop_request
+    global cmd_pub, des_cmd_pub, use_desired_cmd_vel, stop_request
 
     if (stop_request):
         raise Exception("setSpeed called in stop_request mode")
@@ -634,7 +638,11 @@ def set_speed(lx,az,tm,stopend=False):
     msg.angular.z = az
     msg.linear.y = msg.linear.z = msg.angular.x = msg.angular.y =  0
     while not rospy.is_shutdown() and cnt<=tm and not stop_request:
-        cmd_pub.publish(msg)
+
+        if (use_desired_cmd_vel):
+            des_cmd_pub.publish(msg)
+        else:
+            cmd_pub.publish(msg)
         cnt = cnt + delay
         try:
             rate.sleep()
@@ -675,7 +683,7 @@ def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
 
 
 def stop():
-    global move_base_running
+    global cmd_pub, joints_pub, move_base_running
     print 'stop'
     if (move_base_running):
         exec_movebase_stop()
@@ -701,14 +709,10 @@ def stop():
         pass
 
 
-def forward(r=1, obstacleAvoidance=True):
-    global tv_good, desired_cmd_vel_enabled
+def forward(r=1):
+    global tv_good
     print 'forward',r
-    if desired_cmd_vel_enabled and obstacleAvoidance:
-        enableObstacleAvoidance(True)
     v = exec_move_REL(move_step*r)
-    if desired_cmd_vel_enabled and obstacleAvoidance:
-        enableObstacleAvoidance(False)
     return v
     
 
@@ -740,13 +744,13 @@ def goto(target_pose):
 
 
 # odom frame direct control (no path planning)
-def gotoTarget(gx, gy):
-    goto_target(gx, gy)
+def gotoTarget(gx, gy, frame='odom'):
+    goto_target(gx, gy, frame)
 
 
 # odom frame direct control (no path planning)
-def goto_target(gx, gy):
-    exec_goto_target(gx, gy)
+def goto_target(gx, gy, frame='odom'):
+    exec_goto_target(gx, gy, frame)
 
 # person follow
 
@@ -759,14 +763,14 @@ def stop_follow_person():
 
 # Turn
 
-def turn(deg, ref='REL'):
+def turn(deg, ref='REL', frame='odom'):
     if ref=='REL':
         deg = NORM_180(deg)
-    print('turn %s %.2f' %(ref,deg))
+    print('turn %s %.2f frame %s' %(ref,deg,frame))
     if ref=='REL':
-        return exec_turn_REL(deg)
+        return exec_turn_REL(deg,frame)
     else:
-        return exec_turn_ABS(deg)
+        return exec_turn_ABS(deg,frame)
 
 
 # Wait
@@ -921,17 +925,20 @@ def norm_target_angle(a):
 
 
 
-def exec_turn_ABS(th_deg):
-    global loc_robot_pose
-    current_th_deg = RAD2DEG(loc_robot_pose[2])   # deg
+def exec_turn_ABS(th_deg, frame='odom'):
+
+    robot_pose = get_robot_pose(frame)
+    current_th_deg = RAD2DEG(robot_pose[2])   # deg
     a_deg = NORM_180(th_deg - current_th_deg)
     #print("Turn rel %.1f" %a_deg)
-    return exec_turn_REL(a_deg)
+    return exec_turn_REL(a_deg, 'odom')
 
 
-def exec_turn_REL(th_deg):
-    global rv_good, rv_min, odom_robot_pose
-    current_th = odom_robot_pose[2]
+def exec_turn_REL(th_deg, frame='odom'):
+    global rv_good, rv_min
+
+    robot_pose = get_robot_pose(frame)
+    current_th = robot_pose[2]
     #print("TURN -- currentTh: %.1f -- targetTh %.1f" %(RAD2DEG(current_th), RAD2DEG(current_th) + th_deg))
     #print("TURN -- to-normalize RAD: %.1f" %(current_th + DEG2RAD(th_deg)))
     target_th = norm_target_angle(current_th + DEG2RAD(th_deg))
@@ -957,7 +964,8 @@ def exec_turn_REL(th_deg):
             rv = rv_min*rv/abs(rv)
         tv = 0.0
         if setSpeed(tv, rv, 0.1, False):
-            current_th = odom_robot_pose[2]
+            robot_pose = get_robot_pose(frame)
+            current_th = robot_pose[2]
             dth = abs(NORM_PI(target_th-current_th))
             if (dth < last_dth or dth>0.3): # to avoid oscillation close to 0
                 last_dth = dth
@@ -965,23 +973,25 @@ def exec_turn_REL(th_deg):
             print("turn action canceled by user")
             r = False
             dth=0
-        #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
+        #print("TURN -- POS: %.1f %.1f %.1f -- targetTh %.1f DTH %.2f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(current_th), RAD2DEG(target_th), RAD2DEG(dth), tv, rv))
     #print("TURN -- dth %.2f - last_dth %.2f" %(dth,last_dth))
     setSpeed(0.0,0.0,0.1)
     #print 'TURN -- end'
     return r
 
 
-def exec_move_REL(tx):
-    global tv_good, odom_robot_pose
-    start_pose = list(odom_robot_pose)
+def exec_move_REL(tx, frame='odom'):
+    global tv_good
+
+    robot_pose = get_robot_pose(frame)
+    start_pose = list(robot_pose)
     tv_nom = tv_good 
     r = True
     if (tx < 0):
         tv_nom *= -1
         tx *= -1
-    dx = abs(distance(start_pose,odom_robot_pose) - tx)
-    while (dx>0.05):
+    dx = abs(distance(start_pose,robot_pose) - tx)
+    while (dx>0.1):
         tv = tv_nom
         if (dx<0.5):
             tv = tv_nom*dx/0.5
@@ -989,50 +999,56 @@ def exec_move_REL(tx):
             tv = tv_min*tv/abs(tv)
         rv = 0.0
         if setSpeed(tv, rv, 0.1, False):
-            pose = odom_robot_pose
-            dx = abs(distance(start_pose, pose) - tx)
+            robot_pose = get_robot_pose(frame)
+            dx = abs(distance(start_pose, robot_pose) - tx)
         else:
             print("move action canceled by user")
             r = False
             dx = 0
-        #print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(pose[0], pose[1], RAD2DEG(pose[2]), tx, dx, tv, rv))
+        #print("MOVE -- POS: %.1f %.1f %.1f -- targetTX %.1f DX %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(robot_pose[2]), tx, dx, tv, rv))
     setSpeed(0.0,0.0,0.1)
     return r
 
 
-def exec_goto_target(gx,gy):
-    global tv_good, rv_good, tv_min, rv_min, odom_robot_pose
+def exec_goto_target(gx,gy, frame='odom'):
+    global tv_good, rv_good, tv_min, rv_min, odom_robot_pose, map_robot_pose
+
+    robot_pose = get_robot_pose(frame)
     goal_pose = [gx,gy,0]
     r = True
-    dx = distance(goal_pose,odom_robot_pose)
-    while (dx>0.05):
+    dx = distance(goal_pose,robot_pose)
+    while (dx>0.2):
         tv = tv_good
         if (dx<0.5):
             tv = tv*dx/0.5
         if (abs(tv)<tv_min):
             tv = tv_min*tv/abs(tv)
 
-        current_th = odom_robot_pose[2]
-        th_goal = math.atan2(gy-odom_robot_pose[1],gx-odom_robot_pose[0])
+        current_th = robot_pose[2]
+        th_goal = math.atan2(gy-robot_pose[1],gx-robot_pose[0])
 
         #print("GOTO -- th_target: %.2f" %(RAD2DEG(th_goal)))
 
         dth = NORM_PI(th_goal-current_th)
-        rv = rv_good * dth/abs(dth)
+        if abs(dth)>0.1:
+            rv = rv_good * dth/abs(dth)
+        else:
+            rv = 0
         if (abs(dth)>0.8):
             tv = tv_min
         if (abs(dth)<0.8):
             rv = rv*abs(dth)/0.8
-        if (abs(rv)<rv_min):
+        if (abs(rv)<rv_min and abs(rv)>0):
             rv = rv_min*rv/abs(rv)
 
         if setSpeed(tv, rv, 0.1, False):
-            dx = distance(goal_pose, odom_robot_pose)
+            robot_pose = get_robot_pose(frame)
+            dx = distance(goal_pose, robot_pose)
         else:
             r = False
             print("goto_target action canceled by user")
             dx = 0
-        #print("GOTO -- POS: %.1f %.1f %.1f -- target %.1f %.1f -- dx: %.1f dth: %.1f -- VEL: %.2f %.2f" %(odom_robot_pose[0], odom_robot_pose[1], RAD2DEG(odom_robot_pose[2]), gx, gy, dx, dth, tv, rv))
+        #print("GOTO -- POS: %.1f %.1f %.1f -- target %.1f %.1f -- dx: %.1f dth: %.1f -- VEL: %.2f %.2f" %(robot_pose[0], robot_pose[1], RAD2DEG(robot_pose[2]), gx, gy, dx, dth, tv, rv))
     setSpeed(0.0,0.0,0.1)
 
     return r

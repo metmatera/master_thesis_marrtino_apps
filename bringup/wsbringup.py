@@ -483,6 +483,17 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(5)
             self.checkStatus()
 
+        # gradient_based_navigation
+        elif (message=='obst_avoid_start'):
+            self.tmux.roslaunch(self.wnav,'navigation','obstacle_avoidance')
+            time.sleep(3)
+            self.checkStatus()
+        elif (message=='obst_avoid_kill'):
+            self.tmux.killall(self.wnav)
+            time.sleep(3)
+            self.checkStatus()
+
+
         # move_base
         elif (message=='move_base_node_start'):
             self.tmux.roslaunch(self.wnav,'navigation','move_base')

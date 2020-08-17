@@ -6,7 +6,11 @@ sys.path.append(os.getenv("MARRTINO_APPS_HOME")+"/program")
 import robot_cmd_ros
 from robot_cmd_ros import *
 
-import move, forward_gbn
+robot_cmd_ros.use_audio = False
+robot_cmd_ros.tv_good = 0.5
+
+import move
+
 
 def moveTo(px,py,pth=1001):
     return move.do_move([px,py,pth])
@@ -35,7 +39,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    begin(nodename='navigator', use_desired_cmd_vel=True)
+    begin(nodename='navigator')
+    enableObstacleAvoidance(True)
 
     r = do_path(args.path)
     print("Path completed: %r" %r)

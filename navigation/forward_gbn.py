@@ -17,9 +17,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    begin(use_desired_cmd_vel=True)
+    begin()
 
-    forward(args.GX, obstacleAvoidance=True)
+    enableObstacleAvoidance(True)
+    forward(args.GX)
 
     end()
 

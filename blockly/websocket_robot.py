@@ -130,10 +130,10 @@ def deffunctioncode(code):
     v = code.split("\n")
     incode = False
     for i in v:
-        if (i=='begin()'):
+        if (i[0:5]=='begin'):
             r = r+'  '+i+'\n'
             incode = True
-        elif (i=='end()'):
+        elif (i[0:3]=='end'):
             r = r+'  '+i+'\n'
             incode = False
         elif (incode):
