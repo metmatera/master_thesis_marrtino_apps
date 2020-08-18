@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Blockly Robot</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Blockly robot</title>
+
+  <!-- CSS  -->
+  <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  
   <script src="blockly/blockly_compressed.js"></script>
   <script src="blockly/blocks_compressed.js"></script>
   <script src="blockly/javascript_compressed.js"></script>
@@ -11,53 +17,85 @@
   <script src="robot_blocks.js"></script>
   <script src="robot_blocks_python.js"></script>
   <script src="websocket_robot.js"></script>
-  <style>
-    body {
-      background-color: #fff;
-      font-family: sans-serif;
-    }
-    h1 {
-      font-weight: normal;
-      font-size: 140%;
-    }
-  </style>
 </head>
+
 <body>
-  <h1>Blockly robot</h1>
+
+<nav class="red lighten-1" role="navigation">
+	<div class="nav-wrapper container"><a id="logo-container" href="../index.html" class="brand-logo">MARRtino</a>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../config/index.html">Configuration</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../bringup/index.html">Bringup</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../program/index.html">Programming</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+
+		  <ul id="nav-mobile" class="sidenav">
+			<li><a href="../config/index.html">Configuration</a></li>
+			<li><a href="../bringup/index.html">Bringup</a></li>
+			<li><a href="../program/index.html">Programming</a></li>
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+		  <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+	</div>
+</nav>
+
+
+  <h1 align="center">Blockly robot</h1>
+  
+  <div class="container">
 
   <p>Generating robot code from blocks.</p>
 
   <p>
-    <table border=0>
-    <tr height=40>
+    <table>
+    <tr height=40 style="border:none">
       <td>Robot IP</td>
 <script>
       document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
             window.location.hostname + "\" width=240></td>")
 </script>
-      <td width=100><button onclick="connect()">Connect</button></td>
-      <td width=120><button onclick="disconnect()">Disconnect</button></td>
-      <td><div id="connection"><font color='red'>Not Connected</font></div></td>
+      <tr style="border:none">
+      <td></td>
+      <td>
+		<button onclick="connect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Connect</button>
+		<button onclick="disconnect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Disconnect</button>
+	  </td>	  
     </tr>
-    <tr height=40>
+	<tr>
+		<td></td>
+		<td>
+			<div id="connection"><font color='red'>Not Connected</font></div>
+		</td>
+	</tr>
+    <tr>
       <td>Status</td>
       <td><div id="status" style="color: blue;" >Idle</div></td>
     </tr>
     </table>
   </p>
 
+<br>
+
   <p>
-    <button onclick="showCode()">Show code</button>
-    <button id="run_btn" onclick="runCode()">Run</button>
-    <button id="stop_btn" onclick="stopCode()">Stop</button>
+    <button onclick="showCode()" class="btn waves-effect waves-light blue" style="margin-right:10px">Show code</button>
+    <button id="run_btn" onclick="runCode()" class="btn waves-effect waves-light blue" style="margin-right:10px">Run</button>
+    <button id="stop_btn" onclick="stopCode()" class="btn waves-effect waves-light blue">Stop</button>
   </p>
 
-  <table border=0>
+  <table>
   <tr>
   <th>Blockly workspace</th><th></th><th>Python code</th></tr>
   <tr>
   <td>
-  <div id="blocklyDiv" style="height: 480px; width: 800px;"></div>
+  <div id="blocklyDiv" style="height: 480px; min-width: 500px;"></div>
 
     <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
 
@@ -230,7 +268,7 @@
   </td>
 
   <td>
-    <div id="codeDiv" style="height: 480px; width: 240px; background-color: #DDDDDD; font-size: 120%;"></div>
+    <div id="codeDiv" style="height: 480px; min-width: 200px; background-color: #f8f8f8; font-size: 120%;"></div>
     
   </td>
   </tr>
@@ -241,7 +279,7 @@
   <table border=0>
   <tr>  <th>Display</th>  </tr>
   <tr>
-  <td style="color:#0000FF; background-color: #EEFFCC; font-size: 150%;" width=500 height=20>
+  <td style="color:#0000FF; background-color: #EEFFCC; font-size: 150%;" width=500 height=50>
     <div id="display">
     </div>    
   </td>
@@ -252,7 +290,7 @@
 
   <h3> Blockly XML code </h3>
 
-  <p>  <button onclick="saveCode()">Export block code</button> </p>
+  <p>  <button onclick="saveCode()" class="btn waves-effect waves-light blue">Export block code</button> </p>
 
   <p>
      <textarea id="xmlSave" rows="6" cols="108"></textarea> 
@@ -261,17 +299,22 @@
 
   <br>
 
-  <p>  <button onclick="loadCode()">Import block code</button> </p>
+  <p>  <button onclick="loadCode()" class="btn waves-effect waves-light blue">Import block code</button> </p>
 
   <p>
     <textarea id="xmlLoad" rows="6" cols="108"></textarea> 
   </p>
 
-  <br>
+  <br><br><br>
 
-
+</div>
 
                 <!-- ****** SCRIPTS ****** -->
+
+<script src="../js/jquery-2.1.1.min.js"></script>
+<script src="../js/materialize.js"></script>
+<script src="../js/init.js"></script>
+
 
   <script>
 

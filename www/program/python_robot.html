@@ -1,51 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Python Robot</title>
-  <script src="websocket_robot.js"></script>
-  <style>
-    body {
-      background-color: #fff;
-      font-family: sans-serif;
-    }
-    h1 {
-      font-weight: normal;
-      font-size: 140%;
-    }
-    textarea {
-      font-weight: normal;
-      font-size: 125%;
-    }
-  </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Python robot</title>
+
+  <!-- CSS  -->
+  <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  
+  <script src="websocket_robot.js"></script>  
 </head>
 <body>
-  <h1>Python robot</h1>
+
+<nav class="red lighten-1" role="navigation">
+	<div class="nav-wrapper container"><a id="logo-container" href="../index.html" class="brand-logo">MARRtino</a>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../config/index.html">Configuration</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../bringup/index.html">Bringup</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../program/index.html">Programming</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+
+		  <ul id="nav-mobile" class="sidenav">
+			<li><a href="../config/index.html">Configuration</a></li>
+			<li><a href="../bringup/index.html">Bringup</a></li>
+			<li><a href="../program/index.html">Programming</a></li>
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+		  <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+	</div>
+</nav>
+
+  <h1 align="center">Python robot</h1>
+
+  <div class="container">
 
   <p>Executing Python programs on robot.</p>
 
   <p>
-    <table border=0>
-    <tr height=40>
+    <table>
+    <tr height=40 style="border:none">
       <td>Robot IP</td>
 <script>
       document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
             window.location.hostname + "\" width=240></td>")
 </script>
-      <td width=100><button onclick="connect()">Connect</button></td>
-      <td width=120><button onclick="disconnect()">Disconnect</button></td>
-      <td><div id="connection"><font color='red'>Not Connected</font></div></td>
+      <tr style="border:none">
+      <td></td>
+      <td>
+		<button onclick="connect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Connect</button>
+		<button onclick="disconnect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Disconnect</button>
+	  </td>	  
     </tr>
-    <tr height=40>
+	<tr>
+		<td></td>
+		<td>
+			<div id="connection"><font color='red'>Not Connected</font></div>
+		</td>
+	</tr>
+    <tr>
       <td>Status</td>
       <td><div id="status" style="color: blue;" >Idle</div></td>
     </tr>
     </table>
   </p>
 
+  <br>
+
   <p>
-    <button id="run_btn" onclick="runCode()">Run</button>
-    <button id="stop_btn" onclick="stopCode()">Stop</button>
+    <button id="run_btn" onclick="runCode()" class="btn waves-effect waves-light blue" style="margin-right:10px">Run</button>
+    <button id="stop_btn" onclick="stopCode()" class="btn waves-effect waves-light blue">Stop</button>
   </p>
 
   <table border=0>
@@ -53,7 +85,7 @@
   <tr>
   <td>
     <div>
-<textarea id="code" rows=20 cols=60># Write your robot program here
+<textarea id="code" rows=20 cols=60 style="height:400px"># Write your robot program here
 begin()
 end()
 </textarea>
@@ -68,36 +100,33 @@ end()
   <table border=0>
   <tr>  <th>Display</th>  </tr>
   <tr>
-  <td style="color:#0000FF; background-color: #EEFFCC; font-size: 150%;" width=500 height=20>
+  <td style="color:#0000FF; background-color: #EEFFCC; font-size: 150%;" width=500 height=50>
     <div id="display">
     </div>    
   </td>
   </tr>
   </table>
 
-<hr> <br>
+<br><br>
+
+<hr>
 
 <h3>Commands</h3>
 
 <listing style="font-size:125%;">
-# begin/end
-
-begin()
-end()
-
 # motion
 
-enableObstacleAvoidance(False|True) 
 forward(m)
 backward(m)
 left(n)
 right(n)
-turn(deg, ref='REL'|'ABS', frame='odom'|'map'):
+turn(deg)
 set_speed(lx,az,time,stopend=False)
 stop()
-goto(gx,gy,gth)     # map pose (move_base)
-goto_target(gx,gy, frame='odom'|'map')  # no path planning
+goto(gx,gy,gth)     # map pose
+goto_target(gx,gy)  # odom pose
 p = get_robot_pose()
+
 
 # range distance
 
@@ -107,7 +136,7 @@ d = obstacle_distance(deg=0)
 # audio
 
 sound(name)
-say(text, language='en'|'it'|...)
+say(text, language='en')
 s = asr()
 
 
@@ -137,13 +166,16 @@ d = distance(p1,p2)
 </listing>
 
 
-<br>
+<br> <br><br>
 
-<hr> <br><br>
-
+</div>
 
 
                 <!-- ****** SCRIPTS ****** -->
+
+<script src="../js/jquery-2.1.1.min.js"></script>
+<script src="../js/materialize.js"></script>
+<script src="../js/init.js"></script>
 
   <script>
 

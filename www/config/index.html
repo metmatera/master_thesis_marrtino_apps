@@ -1,27 +1,73 @@
 <html>
 <head>
-  <title>MARRtino config</title>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>MARRtino Config</title>
+
+  <!-- CSS  -->
+  <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  
   <script src="../program/websocket_robot.js"></script>
 </head>
+
 <body>
+
+<nav class="red lighten-1" role="navigation">
+		<div class="nav-wrapper container"><a id="logo-container" href="../index.html" class="brand-logo">MARRtino</a>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../config/index.html">Configuration</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../bringup/index.html">Bringup</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../program/index.html">Programming</a></li>
+		  </ul>
+		  <ul class="right hide-on-med-and-down">
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+
+		  <ul id="nav-mobile" class="sidenav">
+			<li><a href="../config/index.html">Configuration</a></li>
+			<li><a href="../bringup/index.html">Bringup</a></li>
+			<li><a href="../program/index.html">Programming</a></li>
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+		  <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+		</div>
+	</nav>
+
 <h1 align="center">MARRtino config</h1>
 
-<hr>
+<div class="container">
 
-<h1> Robot status </h1>
+<h2> Robot status </h2>
 
-<table border=0>
-    <tr height=40>
+<table>
+    <tr style="border:none">
       <td>Robot IP</td>
 <script>
       document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
             window.location.hostname + "\" width=240></td>")
 </script>
-      <td width=100><button onclick="connect()">Connect</button></td>
-      <td width=120><button onclick="disconnect()">Disconnect</button></td>
-      <td><div id="connection"><font color='red'>Not Connected</font></div></td>
+	</tr>
+	<tr style="border:none">
+      <td></td>
+      <td>
+		<button onclick="connect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Connect</button>
+		<button onclick="disconnect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Disconnect</button>
+	  </td>	  
     </tr>
-    <tr height=40>
+	<tr>
+		<td></td>
+		<td>
+			<div id="connection"><font color='red'>Not Connected</font></div>
+		</td>
+	</tr>
+    <tr>
       <td>Status</td>
       <td><div id="status" style="color: blue;" >Idle</div></td>
     </tr>
@@ -46,23 +92,23 @@
 </tr>
 </table>
 
-<hr>
-
 <p>
-<button id="shutdown_btn" onclick="send_cmd('shutdown')">Shutdown</button>
-<button id="reboot_btn" onclick="send_cmd('reboot')">Reboot</button>
-<button id="bringup_restart_btn" onclick="send_cmd('bringup_restart')">Bringup restart</button>
+<button id="shutdown_btn" onclick="send_cmd('shutdown')" class="btn waves-effect waves-light blue" style="margin-right:10px">Shutdown</button>
+<button id="reboot_btn" onclick="send_cmd('reboot')" class="btn waves-effect waves-light blue" style="margin-right:10px">Reboot</button>
+<button id="bringup_restart_btn" onclick="send_cmd('bringup_restart')" class="btn waves-effect waves-light blue" style="margin-right:10px">Bringup restart</button>
 </p>
 
+<br>
+
 <hr>
 
-<h1>System update</h1>
+<h2>System update</h2>
 
 <ol>
 <li> Access through
 <script>
-document.write("<a target=\"_blank\" href=\"https://" + window.location.hostname + ":9200\"/>")
-document.write("ssh " + window.location.hostname+ " (click here)")
+document.write("<a target=\"_blank\" href=\"https://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
+document.write("ssh " + window.location.hostname)
 document.write("</a>")
 </script>
 
@@ -83,55 +129,58 @@ Confirm and enter password (<tt style="font-size:120%;">marrtino</tt>) when aske
 
 <!-- button id="btn_upsys" onclick="send_cmd('updatesystem')">System Update</button -->
 
+<br>
+
 <hr>
 
-<h1>Apps Update</h1>
+<h2>Apps Update</h2>
 
 <p>
-<button id="btn_upapp" onclick="send_cmd('updatemarrtinoapps')">marrtino_apps Update</button>
+<button id="btn_upapp" onclick="send_cmd('updatemarrtinoapps')" class="btn waves-effect waves-light blue">marrtino_apps Update</button>
 </p>
 
 <p>
-<button id="btn_upmodim" onclick="send_cmd('updatemodim')">MODIM Update</button>
+<button id="btn_upmodim" onclick="send_cmd('updatemodim')" class="btn waves-effect waves-light blue">MODIM Update</button>
 </p>
 
 <p>
-<button id="btn_upmodim" onclick="send_cmd('updaterchome')">RCHOME Update</button>
+<button id="btn_upmodim" onclick="send_cmd('updaterchome')" class="btn waves-effect waves-light blue">RCHOME Update</button>
 </p>
 
 <br>
 
-
 <hr>
 
-<h1> Web config </h1>
+<h2> Web config </h2>
 
 <p>
-<button id="btn_webstart" onclick="send_cmd('startweb')">Start web config</button>
-<button id="btn_webquit" onclick="send_cmd('quitweb')">Quit web config</button>
+<button id="btn_webstart" onclick="send_cmd('startweb')" class="btn waves-effect waves-light blue" style="margin-right:10px">Start web config</button>
+<button id="btn_webquit" onclick="send_cmd('quitweb')" class="btn waves-effect waves-light blue" style="margin-right:10px">Quit web config</button>
 
 <script>
-      document.write("<a target=_blank href=\"http://" + window.location.hostname + ":9000\">Orazio web interface</a>")
+      document.write("<a target=_blank href=\"http://" + window.location.hostname + ":9000\" class=\"btn waves-effect waves-light blue\">Orazio web interface</a>")
 </script>
 
+<br>
+
 <hr>
 
-<h1> SSH </h1>
-<p>
+<h2> SSH </h2>
 <script>
-document.write("<a target=\"_blank\" href=\"https://" + window.location.hostname + ":9200\"/>")
+document.write("<a target=\"_blank\" href=\"https://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
 document.write("ssh " + window.location.hostname)
 document.write("</a>")
 </script>
-</p>
 <br>
 Note: confirm security exception from your browser if needed.
 
 </a>
 
+<br>
+
 <hr>
 
-<h1> Network configuration (under development)</h1>
+<h2> Network configuration (under development)</h2>
 
 Wireless status:
 <div id="wireless_status" style="color: blue;" ></div>
@@ -151,7 +200,7 @@ Ethernet status:
 <td>
 
 <p align='center'> 
-<button id="btn_wirelessAP" onclick="send_cmd('wirelessAP')">Wireless AP server</button> </p>
+<button id="btn_wirelessAP" onclick="send_cmd('wirelessAP')" class="btn waves-effect waves-light blue">Wireless AP server</button> </p>
 
 <listing>
 Mode: AP
@@ -167,7 +216,7 @@ IP: 10.3.1.1
 <td>
 
 <p align='center'>
-<button id="btn_wirelessHome" onclick="send_cmd('wirelessHome')">Wireless Home client</button>
+<button id="btn_wirelessHome" onclick="send_cmd('wirelessHome')" class="btn waves-effect waves-light blue">Wireless Home client</button>
 </p>
 
 <listing>
@@ -180,31 +229,35 @@ IP: (DHCP)
 </tr>
 </table>
 
+<br>
+
 <hr>
 
-<h1> Firmware upload (advanced user only!!!)</h1>
+<h2> Firmware upload (advanced user only!!!)</h2>
 
-<h2>Version 2019 with MARRtinoMB2019</h2>
+<h3>Version 2019 with MARRtinoMB2019</h3>
 <p>Do not use on other versions! &nbsp;&nbsp;&nbsp;
 Use only after updating with &nbsp; 
 <tt style="font-size:14px">marrtino_update_MB2019.bash</tt></p>
 
 
 <p>
-<button id="Firmware_flash_btn" onclick="send_cmd('flash')">Firmware Flash</button>
-<button id="Firmware_update_params_btn" onclick="send_cmd('firmwareparam')">Firmware Update Params</button>
+<button id="Firmware_flash_btn" onclick="send_cmd('flash')" class="btn waves-effect waves-light blue" style="margin-right:10px">Firmware Flash</button>
+<button id="Firmware_update_params_btn" onclick="send_cmd('firmwareparam')" class="btn waves-effect waves-light blue" style="margin-right:10px">Firmware Update Params</button>
 </p>
 
-<hr>
-
-
-
 <br><br><br>
+
+</div>
 
 </body>
 
 
 <!-- ****** SCRIPTS ****** -->
+
+<script src="../js/jquery-2.1.1.min.js"></script>
+<script src="../js/materialize.js"></script>
+<script src="../js/init.js"></script>
 
 <script>
 
