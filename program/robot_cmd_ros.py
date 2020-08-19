@@ -20,6 +20,9 @@ from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from cv_bridge import CvBridge, CvBridgeError
 
+# Android phone sensors read with 'ROS Sensors Driver' App
+from sensor_msgs.msg import Imu, NavSatFix, Illuminance, MagneticField
+
 try:
     from rococo_navigation.msg import FollowPersonAction, FollowPersonGoal
     rococo_navigation_Found = True
@@ -60,9 +63,50 @@ TOPIC_sonar_1 = '/sonar_1'
 TOPIC_sonar_2 = '/sonar_2'
 TOPIC_sonar_3 = '/sonar_3'
 
+# Android sensors
+TOPIC_IMU = '/android/imu'
+IMU_      = None
+IMU_sub   = None
+TOPIC_FIX = '/android/fix'
+FIX_      = None
+FIX_sub   = None
+TOPIC_MAG = '/android/magnetic_field'
+MAG_      = None
+MAG_sub   = None
+TOPIC_ILL = '/android/illuminance'
+ILL_      = None
+ILL_sub   = None
+
+def IMU_cb(data):
+	global IMU_
+	IMU_ = data
+def FIX_cb(data):
+	global FIX_
+	FIX_ = data
+def MAG_cb(data):
+	global MAG_
+	MAG_ = data
+def ILL_cb(data):
+	global ILL_
+	ILL_ = data
+
+
+# functions available for the programmer
+def accel_gyro():
+	global IMU_
+	return IMU_
+def sat_nav():
+	global FIX_
+	return FIX_
+def magnetometer():
+	global MAG_
+	return MAG_
+def illuminance():
+	global ILL_
+	return ILL_
+
 # gbn navigation present
 use_desired_cmd_vel=False
-
 
 # Good values
 tv_good = 0.2
@@ -428,6 +472,10 @@ def begin(nodename='robot_cmd', init_node=True):
     sonar_sub_3 = rospy.Subscriber(TOPIC_sonar_3, Range, sonar_cb)
     localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
     joy_sub = rospy.Subscriber(TOPIC_joy, Joy, joy_cb)
+    IMU_sub = rospy.Subscriber(TOPIC_IMU, Imu,           IMU_cb)
+    FIX_sub = rospy.Subscriber(TOPIC_FIX, NavSatFix,     FIX_cb)
+    MAG_sub = rospy.Subscriber(TOPIC_MAG, MagneticField, MAG_cb)
+    ILL_sub = rospy.Subscriber(TOPIC_ILL, Illuminance,   ILL_cb)
 
     if (use_robot):
         print("Robot enabled")

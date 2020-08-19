@@ -15,18 +15,18 @@
 
 <nav class="red lighten-1" role="navigation">
 	<div class="nav-wrapper container"><a id="logo-container" href="../index.html" class="brand-logo">MARRtino</a>
-		  <ul class="right hide-on-med-and-down">
-			<li><a href="../config/index.html">Configuration</a></li>
-		  </ul>
-		  <ul class="right hide-on-med-and-down">
-			<li><a href="../bringup/index.html">Bringup</a></li>
-		  </ul>
-		  <ul class="right hide-on-med-and-down">
-			<li><a href="../program/index.html">Programming</a></li>
-		  </ul>
-		  <ul class="right hide-on-med-and-down">
-			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
-		  </ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="viewer/index.html">Viewer (Experimental)</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="program/index.html">Programming</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="bringup/index.html">Bringup</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="config/index.html">Configuration</a></li>
+			</ul>
 
 		  <ul id="nav-mobile" class="sidenav">
 			<li><a href="../config/index.html">Configuration</a></li>
@@ -160,13 +160,51 @@ a = tag_angle()    # [deg]
 
 # utils
 
-wait(sec)
-b = marrtino_ok()
-d = distance(p1,p2)
+wait(sec)		#Wait for X seconds
+b = marrtino_ok()	#marrtino_ok() returns 'true' if the robot is ready
+d = distance(p1,p2)	#Euclidean distance between points p1 and p2
+display(x) 		#Print the content of 'x' or the result of function 'x' in the Display area 
+</listing>
+
+<br>
+<hr>
+<br>
+
+<h4>Android smartphone functions</h4>
+
+<p>For exploiting your Android smartphone sensors, "ROS Android Sensors Driver" app is required. Please download and install it from Google Play Store.</p>
+
+<a href="https://play.google.com/store/apps/details?id=org.ros.android.sensors_driver" target="_blank">Link to the page</a>
+
+<p>or</p>
+
+<p>Use this QR code</p>
+
+<img src="QRAndroidDriver.png">
+
+<p>Then, open the App and put the following text in the text area:</p>
+
+<listing style="font-size:125%;">
+http://[your_marrtino_ip]:11311
+</listing>
+
+<p>substituting "[your_marrtino_ip]" with the IP address of your MARRtino robot or your simulator.</p>
+
+<p>Finally, select "OK"</p>
+
+<p>PLEASE, REMEMBER: This application is only working when the smartphone is AWAKEN. It means that on smartphone standby the data won't be sent anymore</p>
+
+<listing style="font-size:125%;">
+
+accel_gyro()	#Read data from Accelerometer and Gyroscope on X, Y and Z axis
+illuminance()	#Read data from Illuminance sensor
+sat_nav() 	#Read data from GPS signal
+magnetometer()	#Read data from Magnetometer
+
 </listing>
 
 
-<br> <br><br>
+<br><br><br>
 
 </div>
 
