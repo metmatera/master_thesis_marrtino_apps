@@ -1,6 +1,6 @@
 define box model
 (
-  size [0.400 0.400 1.00]
+  size [0.400 0.400 0.5]
   gui_nose 0
 )
 
