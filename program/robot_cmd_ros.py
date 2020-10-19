@@ -325,7 +325,7 @@ def tag_cb(data):
                 tag_angle_ = 0
 
 
-
+W4
 def laser_cb(data):
     global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
     nc = len(data.ranges)/2
@@ -706,13 +706,33 @@ def set_speed(lx,az,tm,stopend=False):
 
 def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
 
+    # normalize to setSpeed4W(-0.02,0.02,0.02,-0.02,1,False)
+
+    fln = - fl * 0.02
+    frn = + fr * 0.02
+    bln = + bl * 0.02
+    brn = - br * 0.02
+
+    vlimit = 0.3 # limit 0.3 m/s
+    if fabs(fln)>vlimit: 
+        fln = fln / fabs(fln) * vlimit
+    if fabs(frn)>vlimit:
+        frn = frn / fabs(frn) * vlimit
+    if fabs(bln)>vlimit: 
+        bln = bln / fabs(bln) * vlimit
+    if fabs(brn)>vlimit:
+        brn = brn / fabs(brn) * vlimit
+
+    # maximum values
+    fln 
+
     cnt = 0.0
     delay = 0.1 # sec
     rate = rospy.Rate(1/delay) # Hz
 
     msg = JointJog()
     msg.joint_names = ["front_left_wheel", "front_right_wheel", "back_left_wheel", "back_right_wheel"]
-    msg.velocities = [fl,fr,bl,br]
+    msg.velocities = [fln,frn,bln,brn]
     msg.duration = delay
 
     while not rospy.is_shutdown() and cnt<=tm and not stop_request:
