@@ -723,9 +723,6 @@ def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
     if fabs(brn)>vlimit:
         brn = brn / fabs(brn) * vlimit
 
-    # maximum values
-    fln 
-
     cnt = 0.0
     delay = 0.1 # sec
     rate = rospy.Rate(1/delay) # Hz
