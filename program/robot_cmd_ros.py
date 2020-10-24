@@ -325,7 +325,6 @@ def tag_cb(data):
                 tag_angle_ = 0
 
 
-W4
 def laser_cb(data):
     global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
     nc = len(data.ranges)/2
