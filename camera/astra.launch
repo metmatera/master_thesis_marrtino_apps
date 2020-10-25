@@ -2,7 +2,7 @@
   <arg name="rgbcameraframe" default="rgb_camera_frame" />
   <arg name="depthcameraframe" default="depth_camera_frame" />
   <arg name="viewimage" default="false" />
-
+  <arg name="device" default="/dev/video0" />
   <!-- transforms -->
   <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_astra"
 	    args="-odom_topic odom -odom_frame_id none $(env MARRTINO_APPS_HOME)/camera/config/transforms.txt" output="screen">

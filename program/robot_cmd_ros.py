@@ -705,22 +705,20 @@ def set_speed(lx,az,tm,stopend=False):
 
 def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
 
-    # normalize to setSpeed4W(-0.02,0.02,0.02,-0.02,1,False)
+    vlimit = 0.3 # limit 0.3 m/s
+    if math.fabs(fl)>vlimit:
+        fl = fl / math.fabs(fl) * vlimit
+    if math.fabs(fr)>vlimit:
+        fr = fr / math.fabs(fr) * vlimit
+    if math.fabs(bl)>vlimit:
+        bl = bl / math.fabs(bl) * vlimit
+    if math.fabs(br)>vlimit:
+        br = br / math.fabs(br) * vlimit
 
     fln = - fl * 0.02
     frn = + fr * 0.02
     bln = + bl * 0.02
     brn = - br * 0.02
-
-    vlimit = 0.3 # limit 0.3 m/s
-    if fabs(fln)>vlimit: 
-        fln = fln / fabs(fln) * vlimit
-    if fabs(frn)>vlimit:
-        frn = frn / fabs(frn) * vlimit
-    if fabs(bln)>vlimit: 
-        bln = bln / fabs(bln) * vlimit
-    if fabs(brn)>vlimit:
-        brn = brn / fabs(brn) * vlimit
 
     cnt = 0.0
     delay = 0.1 # sec
