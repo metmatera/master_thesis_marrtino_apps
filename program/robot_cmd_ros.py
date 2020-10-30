@@ -186,21 +186,35 @@ tag_distance_ = 0
 tag_angle_ = 0
 tag_count = 25
 
-def tag_trigger():
+def tagTrigger():
     global tag_trigger_
     return tag_trigger_
 
-def tag_id():
+def tagID():
     global tag_id_
     return tag_id_
 
-def tag_distance():
+def tagDistance():
     global tag_distance_
     return tag_distance_
 
-def tag_angle():
+def tagAngle():
     global tag_angle_
     return tag_angle_
+
+
+def tag_trigger():
+    return tagTrigger()
+
+def tag_id():
+    return tagID()
+
+def tag_distance():
+    return tagDistance()
+
+def tag_angle():
+    return tagAngle()
+
 
 laser_center_dist = 10
 laser_left_dist = 10
@@ -658,10 +672,10 @@ def ready():
 
 
 # check if program can run now
-def marrtinoOK():
-    return marrtino_ok()
-
 def marrtino_ok():
+    return marrtinoOK()
+
+def marrtinoOK():
     global robot_initialized, stop_request
     return robot_initialized and not stop_request and not rospy.is_shutdown()
 
