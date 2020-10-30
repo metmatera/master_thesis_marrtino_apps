@@ -1,4 +1,5 @@
 include "include/hokuyo.inc"
+include "include/camera.inc"
 
 define marrtino position
 (
@@ -30,6 +31,7 @@ define marrtino position
   drive "diff"
   localization "odom"
   odom_error [ 0.01 0.01 0.0 0.1 ]
-  utm30(pose [ 0.050 0 -0.1 0 ])
+  utm30(pose [ 0.05 0 -0.09 0 ])
+  cam160(pose [ 0.02 0 0 0 ])
 )
 

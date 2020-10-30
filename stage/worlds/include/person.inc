@@ -82,5 +82,6 @@ define person position
   head(pose [ 0 0 0.5 0 ])
   front(pose [0.07 0 0.55 0] size [0.1 0.1 0.1] color "pink")
 
+  cam16(pose [ 0.0 0 0 0 ])
 )
 
