@@ -32,6 +32,7 @@ marrtino( pose [ 2.0 11.0 0 0 ] name "orazio" color "blue")
 # boxes
 box( pose [ 6.0 9.0 0 0 ] color "red")
 box( pose [ 6.0 4.0 0 0 ] color "green")
+box( pose [ 12.5 6.5 0 0 ] color "blue")
 
 # people
 person(pose [ 6 11 0 180 ] name "person1" body(color "green"))
