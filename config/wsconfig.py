@@ -66,6 +66,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def checkStatus(self):
         self.setStatus('Checking...')
+        self.write_message('VALUE marrtino_os %s' %self.getMARRtinoOS())
         self.write_message('VALUE marrtino_hwinfo %s' %self.getMARRtinoHWInfo()) 
         self.write_message('VALUE marrtino_version %s' %self.getMARRtinoVersion())
         self.write_message('VALUE marrtino_apps_version %s' %self.getMARRtinoAppVersion())
@@ -79,18 +80,35 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             v1 = f.readline().strip()
             f.close()
         except Exception as e:
-            v1 = ' - '
+            v1 = ' NA '
             #print(e)
         try:
             f = open('%s/.marrtino_motorboard' %self.home, 'r')
             v2 = f.readline().strip()
             f.close()
         except Exception as e:
-            v2 = ' - '
+            v2 = ' NA '
             #print(e)
 
-        v = v1+" "+v2
+        v = v1+" - "+v2
         print('MARRtino info %s' %(v))
+        return v
+
+
+    def getMARRtinoOS(self):
+        v = 'NA'
+        print('Checking MARRtino OS ...')
+        try:
+            self.tmux.cmd(3,'lsb_release -ds > /tmp/.marrtino_os', blocking=True)
+            time.sleep(1)
+            f = open('/tmp/.marrtino_os', 'r')
+            v = f.readline().strip()
+            f.close()
+        except Exception as e:
+            print(e)
+
+        print('MARRtino OS %s' %(v))
+
         return v
 
 
