@@ -13,7 +13,7 @@ from threading import Thread
 import cv2
 
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist, Quaternion, PoseWithCovarianceStamped
+from geometry_msgs.msg import Twist, Quaternion, Pose, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan, Range, Image, Joy
 from control_msgs.msg import JointJog
 from nav_msgs.msg import Odometry
@@ -62,6 +62,8 @@ TOPIC_sonar_0 = '/sonar_0'
 TOPIC_sonar_1 = '/sonar_1'
 TOPIC_sonar_2 = '/sonar_2'
 TOPIC_sonar_3 = '/sonar_3'
+TOPIC_SETPOSE = '/setpose'
+TOPIC_STAGESAY = '/stage_say'
 
 # Android sensors
 TOPIC_IMU = '/android/imu'
@@ -156,6 +158,8 @@ def setRobotNamePrefix(prefix):
     TOPIC_sonar_1 = prefix+'/'+TOPIC_sonar_1
     TOPIC_sonar_2 = prefix+'/'+TOPIC_sonar_2
     TOPIC_sonar_3 = prefix+'/'+TOPIC_sonar_3
+    TOPIC_SETPOSE = prefix+'/'+TOPIC_SETPOSE 
+    TOPIC_STAGESAY = prefix+'/'+TOPIC_STAGESAY
 
 
 def setAudioConnection(ip, port=9001):
@@ -311,6 +315,8 @@ sonar_sub_0 = None
 sonar_sub_1 = None
 sonar_sub_2 = None
 sonar_sub_3 = None
+stage_setpose_pub = None # Stage setpose (needs stagerosPeople)
+stage_say_pub = None # Stage say (needs stagerosPeople)
 
 
 # ROS Callback functions
@@ -455,6 +461,7 @@ def audio_connect_thread():
 def begin(nodename='robot_cmd', init_node=True):
     global cmd_pub, des_cmd_pub, odom_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
            sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3, \
+           stage_say_pub, stage_setpose_pub, \
            odom_robot_pose, robot_initialized, stop_request, \
            use_robot, use_audio, audio_connected
 
@@ -496,6 +503,8 @@ def begin(nodename='robot_cmd', init_node=True):
         des_cmd_pub = rospy.Publisher(TOPIC_desired_cmd_vel, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
         joints_pub = rospy.Publisher(TOPIC_joints, JointJog, queue_size=1)
+        stage_setpose_pub = rospy.Publisher(TOPIC_SETPOSE, Pose, queue_size=1, latch=True)
+        stage_say_pub = rospy.Publisher(TOPIC_STAGESAY, String, queue_size=1,   latch=True)
 
         print("Waiting for robot pose... (5 seconds)")
         delay = 0.25 # sec
@@ -809,6 +818,26 @@ def right(r=1):
     return exec_turn_REL(-90*r)
     #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
+
+# set stage pose
+def stage_setpose(gx,gy,gth_deg):
+    global stage_setpose_pub
+
+    p = Pose()
+    p.position.x=gx
+    p.position.y=gy
+    p.position.z=0
+    th = gth_deg * math.pi / 180.0
+    quaternion = tf.transformations.quaternion_from_euler(0, 0, th)
+    #type(pose) = geometry_msgs.msg.Pose
+    p.orientation.x = quaternion[0]
+    p.orientation.y = quaternion[1]
+    p.orientation.z = quaternion[2]
+    p.orientation.w = quaternion[3]
+
+    stage_setpose_pub.publish(p)
+
+
 # map frame goto (requires localization)
 def goto(gx, gy, gth_deg):
     return exec_movebase(gx, gy, gth_deg)
@@ -860,6 +889,7 @@ def wait(r=1):
         i = 0
         while i<r and not stop_request:
             time.sleep(1)
+            # rospy.sleep(1) ???
             i += 1
 
 
@@ -903,6 +933,13 @@ def say(text, language='en'):
         print data
     except:
         pass
+
+
+def stage_say(text, language='en'):
+    global stagesay_pub
+    s = String()
+    s.data = text
+    stage_say_pub.publish(s)
 
 # ASR
 
