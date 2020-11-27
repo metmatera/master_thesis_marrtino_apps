@@ -57,11 +57,13 @@ TOPIC_desired_cmd_vel = 'desired_cmd_vel'
 TOPIC_odom = 'odom'
 TOPIC_joints = 'cmd_joints_jog'
 TOPIC_joy = 'joy'
+
 ACTION_move_base = 'move_base'
 TOPIC_sonar_0 = '/sonar_0' 
 TOPIC_sonar_1 = '/sonar_1'
 TOPIC_sonar_2 = '/sonar_2'
 TOPIC_sonar_3 = '/sonar_3'
+TOPIC_GROUND_TRUTH = '/base_pose_ground_truth'
 TOPIC_SETPOSE = '/setpose'
 TOPIC_STAGESAY = '/stage_say'
 
@@ -122,8 +124,12 @@ move_step = 1.0
 odom_robot_pose = None
 # robot pose from localization
 map_robot_pose = None
+# robot pose from ground truth simulation
+gt_robot_pose = None
 # move_base target pose
 target_pose = None
+# robot velocity vector [linear.x, angular.z]
+odom_robot_vel = None
 
 move_base_running = False
 ac_movebase = None 
@@ -134,8 +140,7 @@ def setMoveStep(x):
 
 
 def setMaxSpeed(x,r):
-    global tv_good
-    global rv_good
+    global tv_good, rv_good
     tv_good=x
     rv_good=r
 
@@ -158,6 +163,7 @@ def setRobotNamePrefix(prefix):
     TOPIC_sonar_1 = prefix+'/'+TOPIC_sonar_1
     TOPIC_sonar_2 = prefix+'/'+TOPIC_sonar_2
     TOPIC_sonar_3 = prefix+'/'+TOPIC_sonar_3
+    TOPIC_GROUND_TRUTH = prefix+'/'+TOPIC_GROUND_TRUTH
     TOPIC_SETPOSE = prefix+'/'+TOPIC_SETPOSE 
     TOPIC_STAGESAY = prefix+'/'+TOPIC_STAGESAY
 
@@ -230,10 +236,12 @@ def laser_center_distance():
     return laser_center_dist
 
 def getRobotPose(frame=None):
-    return get_robot_pose(frame=None)
+    return get_robot_pose(frame)
 
 def get_robot_pose(frame=None): # returns [x,y,theta]
-    global odom_robot_pose, map_robot_pose
+                         # frame: 'odom', 'map', 'gt'
+    global odom_robot_pose, map_robot_pose, gt_robot_pose
+
     if frame==None: # auto detect
         if map_robot_pose is not None:
             return list(map_robot_pose)
@@ -241,8 +249,21 @@ def get_robot_pose(frame=None): # returns [x,y,theta]
             return list(odom_robot_pose)
     elif frame=='odom':
         return list(odom_robot_pose)
-    else: # frame=='map':
+    elif frame=='map':
         return list(map_robot_pose)
+    else: # frame=='gt':
+        return list(gt_robot_pose)
+
+gt_robot_pose
+
+def getRobotVel():
+    return get_robot_vel()
+
+def get_robot_vel():
+    global odom_robot_vel
+    return list(odom_robot_vel)
+
+
 
 def obstacleDistance(direction=0):
     return obstacle_distance(direction=0)
@@ -376,7 +397,7 @@ def sonar_cb(data):
 
 
 def odom_cb(data):
-    global odom_robot_pose
+    global odom_robot_pose, odom_robot_vel
     if (odom_robot_pose is None):
         odom_robot_pose = [0,0,0]
     odom_robot_pose[0] = data.pose.pose.position.x
@@ -386,6 +407,12 @@ def odom_cb(data):
     euler = tf.transformations.euler_from_quaternion(q)
     odom_robot_pose[2] = euler[2] # yaw
     #odomframe = data.header.frame_id
+
+    if (odom_robot_vel is None):
+        odom_robot_vel = [0,0]
+    odom_robot_vel[0] = data.twist.twist.linear.x
+    odom_robot_vel[1] = data.twist.twist.angular.z
+
 
 def localizer_cb(data):
     global map_robot_pose
@@ -397,6 +424,20 @@ def localizer_cb(data):
     q = (o.x, o.y, o.z, o.w)
     euler = tf.transformations.euler_from_quaternion(q)
     map_robot_pose[2] = euler[2] # yaw
+
+
+def groundtruth_cd(data):
+    global gt_robot_pose
+    if (gt_robot_pose is None):
+        gt_robot_pose = [0,0,0]
+    gt_robot_pose[0] = data.pose.pose.position.x
+    gt_robot_pose[1] = data.pose.pose.position.y
+    o = data.pose.pose.orientation
+    q = (o.x, o.y, o.z, o.w)
+    euler = tf.transformations.euler_from_quaternion(q)
+    gt_robot_pose[2] = euler[2] # yaw
+
+
 
 # speed/jog from Joystick
 joy_cmd_vel = [0, 0]
@@ -459,7 +500,7 @@ def audio_connect_thread():
 # Begin/end
 
 def begin(nodename='robot_cmd', init_node=True):
-    global cmd_pub, des_cmd_pub, odom_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
+    global cmd_pub, des_cmd_pub, odom_sub, gt_sub, joints_pub, joy_sub, tag_sub, laser_sub, \
            sonar_sub_0, sonar_sub_1, sonar_sub_2, sonar_sub_3, \
            stage_say_pub, stage_setpose_pub, \
            odom_robot_pose, robot_initialized, stop_request, \
@@ -502,6 +543,7 @@ def begin(nodename='robot_cmd', init_node=True):
         cmd_pub = rospy.Publisher(TOPIC_cmd_vel, Twist, queue_size=1)
         des_cmd_pub = rospy.Publisher(TOPIC_desired_cmd_vel, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
+        gt_sub = rospy.Subscriber(TOPIC_GROUND_TRUTH, Odometry, groundtruth_cd)
         joints_pub = rospy.Publisher(TOPIC_joints, JointJog, queue_size=1)
         stage_setpose_pub = rospy.Publisher(TOPIC_SETPOSE, Pose, queue_size=1, latch=True)
         stage_say_pub = rospy.Publisher(TOPIC_STAGESAY, String, queue_size=1,   latch=True)
@@ -695,7 +737,8 @@ def setSpeed(lx,az,tm,stopend=False):
     return set_speed(lx,az,tm,stopend)
 
 def set_speed(lx,az,tm,stopend=False):
-    global cmd_pub, des_cmd_pub, use_desired_cmd_vel, stop_request
+    global cmd_pub, des_cmd_pub, use_desired_cmd_vel, stop_request, tv_good, rv_good
+
 
     if (stop_request):
         raise Exception("setSpeed called in stop_request mode")
@@ -772,26 +815,28 @@ def stop():
     print 'stop'
     if (move_base_running):
         exec_movebase_stop()
-    msg = Twist()
-    msg.linear.x = 0
-    msg.angular.z = 0
-    cmd_pub.publish(msg)
-    delay = 0.1 # sec
-    rate = rospy.Rate(1/delay) # Hz
-    try:
-        rate.sleep()
-    except:
-        pass
+    setSpeed(0,0,0.2,True);
+    setSpeed4W(0,0,0,0,0.2,True);
+#    msg = Twist()
+#    msg.linear.x = 0
+#    msg.angular.z = 0
+#    cmd_pub.publish(msg)
+#    delay = 0.2 # sec
+#    rate = rospy.Duration(delay)
+#    try:
+#        rate.sleep()
+#    except:
+#        pass
 
-    msg = JointJog()
-    msg.joint_names = ["front_left_wheel", "front_right_wheel", "back_left_wheel", "back_right_wheel"]
-    msg.velocities = [0,0,0,0]
-    msg.duration = delay
-    joints_pub.publish(msg)
-    try:
-        rate.sleep()
-    except:
-        pass
+#    msg = JointJog()
+#    msg.joint_names = ["front_left_wheel", "front_right_wheel", "back_left_wheel", "back_right_wheel"]
+#    msg.velocities = [0,0,0,0]
+#    msg.duration = delay
+#    joints_pub.publish(msg)
+#    try:
+#        rate.sleep()
+#    except:
+#        pass
 
 
 def forward(r=1):
@@ -800,23 +845,19 @@ def forward(r=1):
     v = exec_move_REL(move_step*r)
     return v
     
-
 def backward(r=1):
     print 'backward',r
     return exec_move_REL(-move_step*r)
-    #setSpeed(-tv_good,0.0,r*move_step/tv_good)
 
 
 def left(r=1):
     print 'left',r
     return exec_turn_REL(90*r)
-    # setSpeed(0.0,rv_good,r*(math.pi/2)/rv_good)
 
 
 def right(r=1):
     print 'right',r
     return exec_turn_REL(-90*r)
-    #setSpeed(0.0,-rv_good,r*(math.pi/2)/rv_good)
 
 
 # set stage pose
@@ -877,20 +918,31 @@ def turn(deg, ref='REL', frame='odom'):
     else:
         return exec_turn_ABS(deg,frame)
 
+def dsleep(d):
+    try:
+        rospy.sleep(d)
+    except KeyboardInterrupt:
+        return False
+    return True
 
 # Wait
 
 def wait(r=1):
     global stop_request
     #print 'wait',r
-    if (r==0):
-        time.sleep(0.1)
+
+    if (r<=0):
+        return dsleep(0.1)
+    elif (r<1):
+        return dsleep(r)
     else:
-        i = 0
-        while i<r and not stop_request:
-            time.sleep(1)
-            # rospy.sleep(1) ???
-            i += 1
+        t = 0
+        e = False
+        while t<r and not stop_request and not e:
+            d = min(1,r-t)
+            e = dsleep(d)
+            t += d
+        return e
 
 
 # Sounds
