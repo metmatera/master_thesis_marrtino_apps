@@ -739,8 +739,7 @@ def setSpeed(lx,az,tm,stopend=False):
 def set_speed(lx,az,tm,stopend=False):
     global cmd_pub, des_cmd_pub, use_desired_cmd_vel, stop_request, tv_good, rv_good
 
-
-    if (stop_request):
+    if (stop_request and (lx!=0.0 or az!=0.0)):
         raise Exception("setSpeed called in stop_request mode")
 
     delay = 0.1 # sec

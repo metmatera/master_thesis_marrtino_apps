@@ -99,6 +99,9 @@ def display(text):
         websocket_server.write_message('display %s' %text)
     except tornado.websocket.WebSocketClosedError:
         print('Cannot write on websocket')
+    except Exception:
+        print('General error when write on websocket')
+        
 
 # Main loop (asynchrounous thread)
 
@@ -127,17 +130,22 @@ def fncode():
 def deffunctioncode(code):
     r = "global fncode\n"
     r = r+"def fncode():\n"
+    r = r+"  begin()\n"
     v = code.split("\n")
-    incode = False
+    #incode = False
     for i in v:
         if (i[0:5]=='begin'):
-            r = r+'  '+i+'\n'
-            incode = True
+            pass
+            #r = r+'  '+i+'\n'
+            #incode = True
         elif (i[0:3]=='end'):
+            pass
+            #r = r+'  '+i+'\n'
+            #incode = False
+        #elif (incode):
+        else:
             r = r+'  '+i+'\n'
-            incode = False
-        elif (incode):
-            r = r+'  '+i+'\n'
+    r = r+"  end()\n"
     return r
 
 # fncode with exception handling
@@ -145,10 +153,13 @@ def fncodeexcept():
     global fncode_running
     fncode_running = True
     try:
+        display('')
         fncode()
     except Exception as e:
         print("CODE EXECUTION ERROR")
-        print e
+        print(e)
+        display(e[0:80])
+
     fncode_running = False
 
 
@@ -157,12 +168,21 @@ run_code_thread = None
 def exec_thread(code):
     global run_code_thread
     fncodestr = deffunctioncode(code)
+    print(len(fncodestr))
+    print(fncodestr)
+    if len(fncodestr)<0:
+        display(e)
+        return
+
     #print(fncodestr)
     try:
         exec(fncodestr)
     except Exception as e:
         print("FN CODE DEFINITION ERROR")
         print e
+        display(e)
+        return
+
     run_code_thread = thread2.Thread(target=fncodeexcept, args=())
     run_code_thread.start()
     #print "Run code thread: ", run_code_thread," started."
