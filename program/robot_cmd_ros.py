@@ -506,7 +506,7 @@ def begin(nodename='robot_cmd', init_node=True):
            odom_robot_pose, robot_initialized, stop_request, \
            use_robot, use_audio, audio_connected
 
-    print 'begin'
+    print('begin')
 
     stop_request = False
 
@@ -572,7 +572,7 @@ def end():
     if not robot_initialized:
         return
 
-    print 'end'    
+    print('end')
 
     if (use_robot):
         stop()
@@ -812,51 +812,30 @@ def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
 
 def stop():
     global cmd_pub, joints_pub, move_base_running
-    print 'stop'
+    print('stop')
     if (move_base_running):
         exec_movebase_stop()
     setSpeed(0,0,0.2,True);
     setSpeed4W(0,0,0,0,0.2,True);
-#    msg = Twist()
-#    msg.linear.x = 0
-#    msg.angular.z = 0
-#    cmd_pub.publish(msg)
-#    delay = 0.2 # sec
-#    rate = rospy.Duration(delay)
-#    try:
-#        rate.sleep()
-#    except:
-#        pass
-
-#    msg = JointJog()
-#    msg.joint_names = ["front_left_wheel", "front_right_wheel", "back_left_wheel", "back_right_wheel"]
-#    msg.velocities = [0,0,0,0]
-#    msg.duration = delay
-#    joints_pub.publish(msg)
-#    try:
-#        rate.sleep()
-#    except:
-#        pass
-
 
 def forward(r=1):
     global tv_good
-    print 'forward',r
+    print('forward %.2f' %r)
     v = exec_move_REL(move_step*r)
     return v
     
 def backward(r=1):
-    print 'backward',r
+    print('backward %.2f' %r)
     return exec_move_REL(-move_step*r)
 
 
 def left(r=1):
-    print 'left',r
+    print('left %.2f' %r)
     return exec_turn_REL(90*r)
 
 
 def right(r=1):
-    print 'right',r
+    print('right %.2f' %r)
     return exec_turn_REL(-90*r)
 
 
@@ -929,7 +908,7 @@ def dsleep(d):
 
 def wait(r=1):
     global stop_request
-    #print 'wait',r
+    #print('wait %.1f' %r)
 
     if (r<=0):
         return dsleep(0.1)
@@ -954,7 +933,7 @@ def sound(name):
         assock.send('SOUND %s\n\r' %name)
         time.sleep(0.5)
         data = assock.recv(80)
-        print data
+        print(data)
     except:
         pass
 
@@ -982,7 +961,7 @@ def say(text, language='en'):
         assock.send('TTS[%s] %s\n\r' %(lstr,text))
         time.sleep(1)
         data = assock.recv(80)
-        print data
+        print(data)
     except:
         pass
 
