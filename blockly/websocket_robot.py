@@ -40,18 +40,23 @@ websocket_server = None     # websocket handler
 run = True                  # main_loop run flag
 server_port = 9020          # web server port
 code = None
-status = "Idle"             # robot status sent to websocket
+status = "Idle"             # global robot status
+
+list_ws = []
 
 # Websocket server handler
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def open(self):
-        global websocket_server, run
+        global websocket_server, run, status, list_connections
         websocket_server = self
         self.run_thread = None
-        print('New connection')
-    
+        self.clientIP = self.request.remote_ip
+        print('New connection from %s' %(self.clientIP))
+        list_ws.append(self)
+        print('Num connected clients: %d' %(len(list_ws)))
+
     # messages from Javascript
     def on_message(self, message):
         global code, status
@@ -74,11 +79,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
                 self.run_thread.start()
             else:
                 print('Program running. This code is discarded.')
-        self.write_message('OK')
+                display('Program running. This code is discarded.', self)
+                
+        #self.write_message('OK')
   
     def on_close(self):
-        print('Connection closed')
+        global list_ws
+        print('Connection closed from %s' %(self.clientIP))
         self.run_thread = None
+        list_ws.remove(self)
+        print('Num connected clients: %d' %(len(list_ws)))
   
     def on_ping(self, data):
         print('ping received: %s' %(data))
@@ -92,30 +102,35 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
 # function to be called by programs to display text on web interface
-def display(text):
-    global websocket_server
-    try:
-        #print('  -- writing on websocket: %s' %text)
-        websocket_server.write_message('display %s' %text)
-    except tornado.websocket.WebSocketClosedError:
-        print('Cannot write on websocket')
-    except Exception:
-        print('General error when write on websocket')
-        
+def display(text, ws=None):
+    global websocket_server, list_ws
+    if ws!=None:
+        try:
+            #print('  -- writing on websocket: %s' %text)
+            ws.write_message('display %s' %text)
+        except tornado.websocket.WebSocketClosedError:
+            print('Cannot write on websocket')
+        except Exception:
+            print('General error when write on websocket')
+    else:
+        for ws in list_ws:
+            display(text,ws)
 
 # Main loop (asynchrounous thread)
 
 def main_loop(data):
-    global run, websocket_server, status
+    global run, websocket_server, status, list_ws
     while (run):
         time.sleep(1)
         if (run and not websocket_server is None):
-            try:
-                websocket_server.write_message(status)
-                #print(status)
-            except tornado.websocket.WebSocketClosedError:
-                #print('Connection closed.')
-                websocket_server = None
+            for ws in list_ws:
+                try:
+                    ws.write_message(status)
+                    #print(status)
+                except tornado.websocket.WebSocketClosedError:
+                    #print('Connection closed.')
+                    #websocket_server = None
+                    pass
     print("Main loop quit.")
 
 

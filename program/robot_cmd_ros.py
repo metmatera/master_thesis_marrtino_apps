@@ -469,7 +469,8 @@ def image_cb(data):
 def autoImageTopic():
     topics = rospy.get_published_topics()
     for t in topics:
-        if t[1]=='sensor_msgs/Image' and 'depth' not in t[0] and '/ir/' not in t[0]:
+        if t[1]=='sensor_msgs/Image' and 'depth' not in t[0] and '/ir/' not in t[0] \
+           and 'person' not in t[0]:
             return t[0]
     return None
 
@@ -572,8 +573,6 @@ def end():
     if not robot_initialized:
         return
 
-    print('end')
-
     if (use_robot):
         stop()
     stop_request = True
@@ -587,8 +586,12 @@ def end():
             assock=None
             audio_connected = False
 
-    time.sleep(0.5) # make sure stuff ends
+    try:
+        rospy.sleep(0.5) # make sure stuff ends
+    except:
+        pass
 
+    print('end')
 
 # to unregister all the subscribers
 def unregisterAll():
@@ -915,11 +918,12 @@ def wait(r=1):
         return dsleep(r)
     else:
         t = 0
-        e = False
-        while t<r and not stop_request and not e:
+        e = True
+        while t<r and not stop_request and e:
             d = min(1,r-t)
             e = dsleep(d)
             t += d
+            print("wait ... %f < %f  %r  %r " %(t,r, stop_request, e))
         return e
 
 
