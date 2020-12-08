@@ -38,7 +38,7 @@ robot_cmd_ros.use_robot = True
 
 websocket_server = None     # websocket handler
 run = True                  # main_loop run flag
-server_port = 9020          # web server port
+server_port = 9913          # web server port
 code = None
 status = "Idle"             # global robot status
 

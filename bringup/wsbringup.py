@@ -34,7 +34,7 @@ from tmuxsend import TmuxSend
 websocket_server = None     # websocket handler
 run = True                  # main_loop run flag
 server_name = 'Bringup'     # server name
-server_port = 9500          # web server port
+server_port = 9912          # web server port
 status = "Idle"             # robot status sent to websocket
 
 
@@ -222,8 +222,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             #self.checkStatus('robot')
 
         # simrobot start/stop
-        elif (message=='simrobot_start'):
-            self.tmux.roslaunch(self.wrobot,'stage','simrobot')
+        elif (message[0:14]=='simrobot_start'):
+            if (message=='simrobot_start'):
+                self.tmux.roslaunch(self.wrobot,'stage','simrobot')
+            elif (message=='simrobot_start_nogui'):  # launch stage without GUI
+                self.tmux.roslaunch(self.wrobot,'stage','simrobot','stageros_args:=\"-g\"')
+                # TODO does not wornk with simulated camera!!!
             self.waitfor('simrobot',5)
             self.waitfor('odom',1)
             self.waitfor('laser',1)

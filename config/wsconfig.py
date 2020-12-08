@@ -24,7 +24,7 @@ from tmuxsend import TmuxSend
 websocket_server = None     # websocket handler
 run = True                  # main_loop run flag
 server_name = 'Config'      # server name
-server_port = 9510          # config web server port
+server_port = 9911          # config web server port
 status = "Idle"             # robot status sent to websocket
 
 

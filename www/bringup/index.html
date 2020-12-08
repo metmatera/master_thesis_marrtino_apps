@@ -190,7 +190,10 @@ ROS topics:
 <tr height=40>
 <td>Simrobot</td> 
 <td width=80 align='center'><span id="simrobot_status" style="color: red;">OFF</span></td>
-<td><button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')" class="btn waves-effect waves-light blue">Simrobot start</button></td>
+<td><button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')" class="btn waves-effect waves-light blue">Simrobot start</button>
+<!-- TODO - does not work with simulated camera  &nbsp;&nbsp;&nbsp; > 
+<!--button id="simrobot_start_nogui_btn" onclick="send_cmd('simrobot_start_nogui')" class="btn waves-effect waves-light blue">Simrobot start (no GUI)</button -->
+</td>
 <td><button id="simrobot_quit_btn" onclick="send_cmd('simrobot_kill')" class="btn waves-effect waves-light blue">Simrobot quit</button></td>
 </tr>
 
@@ -703,7 +706,7 @@ rosrun rococo_navigation follow_person_node -client none stop
     }
 
     function connect() {
-        wsrobot_init(9500);  // init websocket robot
+        wsrobot_init(9912);  // init websocket robot
         setTimeout(check_connection, 1000);
         websocket.onmessage = eventproc;
     }
