@@ -77,7 +77,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
                 set_global_param('event',v[1])
                 print('Global param %s = %s' %('event',v[1]))
         else:
-            print('Code received\n%s')
+            print('Code received\n')
             save_program(message)
             if (status=='Idle'):
                 self.run_thread = thread2.Thread(target=run_code, args=(message,))
@@ -236,10 +236,11 @@ def save_program(code):
         dateTimeObj = datetime.now()
         timestampStr = dateTimeObj.strftime("%Y%m%d-%H%M%S")
         nfile = logdir + timestampStr + '.prg'
-        f = fopen(nfile, 'w')
+        f = open(nfile, 'w')
         f.write(code)
         f.close()
-    except Exception:
+    except Exception as e:
+        print(e)
         print("ERROR. Cannot write program in %s" %nfile)
 
 
