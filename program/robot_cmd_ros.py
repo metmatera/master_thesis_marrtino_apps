@@ -5,6 +5,7 @@ import os
 import socket
 import math
 import sys
+import datetime
 import rospy
 import tf
 import actionlib
@@ -625,7 +626,10 @@ def get_image(tmsleep=3):
     startCameraGrabber() # wait 1 sec for an image
     time.sleep(tmsleep)
     stopCameraGrabber()
+    dateTimeObj = datetime.now()
+    timestampStr = dateTimeObj.strftime("%Y%m%d-%H%M%S")
     cv2.imwrite(os.getenv('MARRTINO_APPS_HOME')+'/www/viewer/img/lastimage.jpg', cvimage)
+    cv2.imwrite(os.getenv('MARRTINO_APPS_HOME')+'/www/viewer/img/%s.jpg' %timestampStr, cvimage)
     return cvimage
 
 def getWebImage(objcat=None):
