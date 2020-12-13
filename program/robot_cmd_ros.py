@@ -49,6 +49,8 @@ use_audio = True
 robot_initialized = False
 stop_request = False
 
+logdir = os.getenv('HOME')+'/log/'  # dir for writing log files (programs, images,... )
+
 # Topic names
 
 TOPIC_tag_detections = 'tag_detections'
@@ -630,7 +632,7 @@ def get_image(tmsleep=3):
     dateTimeObj = datetime.now()
     timestampStr = dateTimeObj.strftime("%Y%m%d-%H%M%S")
     cv2.imwrite(os.getenv('MARRTINO_APPS_HOME')+'/www/viewer/img/lastimage.jpg', cvimage)
-    cv2.imwrite(os.getenv('MARRTINO_APPS_HOME')+'/www/viewer/img/%s.jpg' %timestampStr, cvimage)
+    cv2.imwrite('%s/%s.jpg' %(logdir,timestampStr), cvimage)
     return cvimage
 
 def getWebImage(objcat=None):

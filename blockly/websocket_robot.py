@@ -2,6 +2,7 @@
 # sudo -H pip install tornado
 
 import sys, os, socket, time, random
+from datetime import datetime
 import thread2
 #from thread2 import Thread
 from numbers import Number
@@ -44,6 +45,9 @@ status = "Idle"             # global robot status
 
 list_ws = []
 
+logdir = os.getenv('HOME')+'/log/'  # dir for writing log files (programs, images,... )
+
+
 # Websocket server handler
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
@@ -73,7 +77,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
                 set_global_param('event',v[1])
                 print('Global param %s = %s' %('event',v[1]))
         else:
-            print('Code received:\n%s' %message)
+            print('Code received\n%s')
+            save_program(message)
             if (status=='Idle'):
                 self.run_thread = thread2.Thread(target=run_code, args=(message,))
                 self.run_thread.start()
@@ -177,14 +182,13 @@ def fncodeexcept():
 
     fncode_running = False
 
-
 run_code_thread = None
 
 def exec_thread(code):
     global run_code_thread
     fncodestr = deffunctioncode(code)
-    print(len(fncodestr))
-    print(fncodestr)
+    #print(len(fncodestr))
+    #print(fncodestr)
     if len(fncodestr)<0:
         display(e)
         return
@@ -227,12 +231,26 @@ def exec_thread(code):
     run_code_thread = None    
 
 
+def save_program(code):
+    try:
+        dateTimeObj = datetime.now()
+        timestampStr = dateTimeObj.strftime("%Y%m%d-%H%M%S")
+        nfile = logdir + timestampStr + '.prg'
+        f = fopen(nfile, 'w')
+        f.write(code)
+        f.close()
+    except Exception:
+        print("ERROR. Cannot write program in %s" %nfile)
+
+
 def run_code(code):
     global status
     if (code is None):
         return
     print("Executing")
+    print("----")
     print(code)
+    print("----")
     status = "Executing program"
     print("=== Start code run ===")
     exec_thread(code)
@@ -241,8 +259,11 @@ def run_code(code):
 
 
 # Main program
-  
+
+
 if __name__ == "__main__":
+
+    os.system('mkdir -p %s' %logdir)
 
     # Run main thread
     t = Thread(target=main_loop, args=(None,))
