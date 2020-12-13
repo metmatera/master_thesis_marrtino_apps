@@ -5,11 +5,12 @@ import os
 import socket
 import math
 import sys
-import datetime
+from threading import Thread
+from datetime import datetime
+
 import rospy
 import tf
 import actionlib
-from threading import Thread
 
 import cv2
 
