@@ -227,7 +227,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
                 self.tmux.roslaunch(self.wrobot,'stage','simrobot')
             elif (message=='simrobot_start_nogui'):  # launch stage without GUI
                 self.tmux.roslaunch(self.wrobot,'stage','simrobot','stageros_args:=\"-g\"')
-                # TODO does not wornk with simulated camera!!!
+                # TODO does not work with simulated camera!!! Need dummyX11
             self.waitfor('simrobot',5)
             self.waitfor('odom',1)
             self.waitfor('laser',1)
@@ -522,6 +522,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='shutdown'):
             self.tmux.quitall()
             self.checkStatus()
+            self.tmux.cmd(self.wquit,'touch ~/log/shutdownrequest')
             self.tmux.cmd(self.wquit,'sudo shutdown -h now')
 
 
