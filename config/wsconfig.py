@@ -66,11 +66,39 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
     def checkStatus(self):
         self.setStatus('Checking...')
+        self.write_message('VALUE system_info %s' %self.getSystemInfo())
         self.write_message('VALUE marrtino_os %s' %self.getMARRtinoOS())
         self.write_message('VALUE marrtino_hwinfo %s' %self.getMARRtinoHWInfo()) 
         self.write_message('VALUE marrtino_version %s' %self.getMARRtinoVersion())
         self.write_message('VALUE marrtino_apps_version %s' %self.getMARRtinoAppVersion())
         self.setStatus('Idle')
+
+
+    def getSystemInfo(self):
+        v = 'NA'
+        print('Checking system info from /proc/cpuinfo ...')
+        try:
+            self.tmux.cmd(3,'cat /proc/cpuinfo | grep Model > /tmp/.system_model', blocking=True)
+            time.sleep(1)
+            f = open('/tmp/.system_model', 'r')
+            vv = f.readline().split(':')
+            f.close()
+            if len(vv)>1:
+                v = vv[1].strip()                
+            self.tmux.cmd(3,'cat /proc/meminfo | grep MemTotal > /tmp/.system_memory', blocking=True)
+            time.sleep(1)
+            f = open('/tmp/.system_memory', 'r')
+            vv = f.readline().split(':')
+            f.close()
+            if len(vv)>1:
+                vstr = vv[1].strip().split(" ")
+                v = v + " %.1f GB"  %(float(vstr[0])/1000000)
+        except Exception as e:
+            print(e)
+
+        print('System info %s' %(v))
+
+        return v
 
 
     def getMARRtinoHWInfo(self):
@@ -196,6 +224,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.setStatus('Shutdown!!!')
             self.tmux.quitall()
             self.checkStatus()
+            self.tmux.cmd(0,'touch ~/log/shutdownrequest')
             self.tmux.cmd(0,'sudo shutdown -h now')
 
         elif (message=='reboot'):
