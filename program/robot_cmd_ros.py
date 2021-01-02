@@ -430,7 +430,7 @@ def localizer_cb(data):
     map_robot_pose[2] = euler[2] # yaw
 
 
-def groundtruth_cd(data):
+def groundtruth_cb(data):
     global gt_robot_pose
     if (gt_robot_pose is None):
         gt_robot_pose = [0,0,0]
@@ -548,7 +548,7 @@ def begin(nodename='robot_cmd', init_node=True):
         cmd_pub = rospy.Publisher(TOPIC_cmd_vel, Twist, queue_size=1)
         des_cmd_pub = rospy.Publisher(TOPIC_desired_cmd_vel, Twist, queue_size=1)
         odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
-        gt_sub = rospy.Subscriber(TOPIC_GROUND_TRUTH, Odometry, groundtruth_cd)
+        gt_sub = rospy.Subscriber(TOPIC_GROUND_TRUTH, Odometry, groundtruth_cb)
         joints_pub = rospy.Publisher(TOPIC_joints, JointJog, queue_size=1)
         stage_setpose_pub = rospy.Publisher(TOPIC_SETPOSE, Pose, queue_size=1, latch=True)
         stage_say_pub = rospy.Publisher(TOPIC_STAGESAY, String, queue_size=1,   latch=True)
