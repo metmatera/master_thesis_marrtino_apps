@@ -155,14 +155,25 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         print('MARRtino version read %s %s' %(v1,v2))
         if (v1==None):
-            return v2
+            v = v2
         elif (v2==None):
-            return v1
+            v = v1
         elif (v1>v2):
-            return v1
+            v = v1
         else:
-            return v2
+            v = v2
 
+        try:
+            if (v=='docker'):
+                f = open('%s/src/rc-home-edu-learn-ros/docker/1804/version.txt' %self.home, 'r')
+                v2 = f.readline().strip()
+                f.close()
+                v = v + " " + v2
+            #print('    ... read %s' %v)
+        except Exception as e:
+            print(e)
+
+        return v
 
     def getMARRtinoAppVersion(self):
         print('Checking MARRtino Apps version from git log ...')
@@ -177,10 +188,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             lista = v.split('+')
             v=lista[0]
             f.close()
-            #print('    ... read %s' %v)
         except Exception as e:
             v = 'None'
             print(e)
+
         return v
 
 
