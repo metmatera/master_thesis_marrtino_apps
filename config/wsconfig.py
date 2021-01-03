@@ -242,6 +242,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.setStatus('Reboot!!!')
             self.tmux.quitall()
             self.checkStatus()
+            self.tmux.cmd(0,'touch ~/log/rebootrequest')
             self.tmux.cmd(0,'sudo reboot')
 
         elif(message=='flash'):
