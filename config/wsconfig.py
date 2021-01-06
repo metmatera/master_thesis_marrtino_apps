@@ -93,6 +93,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             if len(vv)>1:
                 vstr = vv[1].strip().split(" ")
                 v = v + " %.1f GB"  %(float(vstr[0])/1000000)
+
+            self.tmux.cmd(3,'cat /proc/meminfo | grep SwapTotal > /tmp/.system_memory', blocking=True)
+            time.sleep(1)
+            f = open('/tmp/.system_memory', 'r')
+            vv = f.readline().split(':')
+            f.close()
+            if len(vv)>1:
+                vstr = vv[1].strip().split(" ")
+                v = v + " + %.1f GB swap"  %(float(vstr[0])/1000000)
+
         except Exception as e:
             print(e)
 
