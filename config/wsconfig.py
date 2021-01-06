@@ -37,7 +37,6 @@ status = "Idle"             # robot status sent to websocket
 
 class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
-
     def open(self):
         global websocket_server, run
         websocket_server = self
@@ -279,11 +278,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             print('quit orazio web server')
             self.tmux.cmd(1,'quit')
 
-        elif (message=='bringup_restart'):
-            print('bringup restart')
-            self.tmux.cmd(3,'tmux kill-session -t bringup')
+        elif (message=='docker_restart'):
+            print('docker restart')
+            self.tmux.cmd(0,'touch ~/log/dockerrestart')
             time.sleep(1)
-
 
         elif (message=='wirelessAP'):
             print('connect to wlan MARRtinoAP')
