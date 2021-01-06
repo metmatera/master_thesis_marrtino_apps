@@ -9,37 +9,44 @@ class TmuxSend:
         self.sessionname = sessionname
         os.system('tmux -2 new-session -d -s %s' %self.sessionname) # tmux session  -- \; setenv ROS_IP "`hostname -I`"
         # os.system('tmux send-keys -t %s:0 "export ROS_IP=\"`hostname -I`\"" C-m' %self.sessionname)
-        os.system('tmux select-window -t %s:0' %self.sessionname)
-        os.system('tmux rename-window \'%s\'' %listwindows[0])      # window 0
+        #os.system('tmux select-window -t %s:0' %self.sessionname)
+        os.system('tmux rename-window -t %s:0 \'%s\'' %(self.sessionname,listwindows[0]))   # window 0
         for i in range(1,self.nwindows):
             os.system('tmux new-window -t %s:%d -n \'%s\'' %(self.sessionname, i, listwindows[i]))    
 
     def roslaunch(self, wid, mdir, mlaunch, mparams=''):
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
-        os.system('tmux send-keys "roslaunch %s.launch %s" C-m' %(mlaunch, mparams))
+        #os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys -t %s:%d "cd $MARRTINO_APPS_HOME/%s" C-m' \
+            %(self.sessionname,wid,mdir))
+        os.system('tmux send-keys -t %s:%d "roslaunch %s.launch %s" C-m' \
+            %(self.sessionname,wid,mlaunch, mparams))
 
     def roscore(self, wid):
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys "roscore" C-m')
+        #os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys -t %s:%d "roscore" C-m' %(self.sessionname,wid))
 
     def roskill(self, rosnode):
         wid = 0
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys "rosnode kill %s" C-m' %(rosnode))
+        #os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys -t %s:%d "rosnode kill %s" C-m' \
+            %(self.sessionname,wid,rosnode))
 
     def python(self, wid, mdir, mpy, mparams=''):
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys "cd $MARRTINO_APPS_HOME/%s" C-m' %(mdir))
-        os.system('tmux send-keys "python %s %s" C-m' %(mpy, mparams))
+        #os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys -t %s:%d "cd $MARRTINO_APPS_HOME/%s" C-m' \
+            %(self.sessionname,wid,mdir))
+        os.system('tmux send-keys -t %s:%d "python %s %s" C-m' \
+            %(self.sessionname,wid,mpy,mparams))
 
     def cmd(self, wid, cmd, sleeptime=0.1, blocking=False):
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        #os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
         if blocking:
-            os.system('tmux send-keys "%s; sleep 1; tmux wait-for -S tmux-end" C-m' %(cmd))
+            os.system('tmux send-keys -t %s:%d "%s; sleep 1; tmux wait-for -S tmux-end" C-m' \
+                %(self.sessionname,wid,cmd))
             self.waitfor('tmux-end')            
         else:
-            os.system('tmux send-keys "%s" C-m' %(cmd))
+            os.system('tmux send-keys -t %s:%d "%s" C-m' \
+                %(self.sessionname,wid,cmd))
             time.sleep(sleeptime)
 
 
@@ -54,12 +61,12 @@ class TmuxSend:
         self.Ck(wid)
 
     def Cc(self, wid):
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys C-c')
+        #os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys -t %s:%d C-c' %(self.sessionname,wid))
 
     def Ck(self, wid):
-        os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
-        os.system('tmux send-keys C-\\')
+        #os.system('tmux select-window -t %s:%d' %(self.sessionname,wid))
+        os.system('tmux send-keys -t %s:%d C-\\' %(self.sessionname,wid))
 
     def quitall(self,wrange=None): # kill all processes in windows (default: 0..n-1)
         #self.roskill('-a')

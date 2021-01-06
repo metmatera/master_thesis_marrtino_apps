@@ -84,7 +84,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             vv = f.readline().split(':')
             f.close()
             if len(vv)>1:
-                v = vv[1].strip()                
+                v = vv[1].strip()
+
             self.tmux.cmd(3,'cat /proc/meminfo | grep MemTotal > /tmp/.system_memory', blocking=True)
             time.sleep(1)
             f = open('/tmp/.system_memory', 'r')
