@@ -2,6 +2,7 @@
   <arg name="map_name" default="map" />
   <arg name="base_frame" default="base_frame" />
   <arg name="laser_topic" default="/scan" />
+  <arg name="use_mapserver" default="true" />
 
   <arg name="initial_pose_x" default="0.0" />
   <arg name="initial_pose_y" default="0.0" />
@@ -10,7 +11,7 @@
   <arg name="paramsdir" default="$(env MARRTINO_APPS_HOME)/navigation/config" />
   <arg name="mapsdir" default="$(env MARRTINO_APPS_HOME)/mapping/maps" />
 
-  <node pkg="map_server" type="map_server" name="map_server" args="$(arg mapsdir)/$(arg map_name).yaml" respawn="false" >
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg mapsdir)/$(arg map_name).yaml" respawn="false" if="$(arg use_mapserver)">
         <param name="frame_id" value="map" />
    </node>
 

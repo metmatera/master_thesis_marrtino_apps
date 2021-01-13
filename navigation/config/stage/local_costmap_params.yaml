@@ -12,7 +12,7 @@ local_costmap:
   obstacle_range: 3.0
   raytrace_range: 3.5
   footprint: '[]'
-  robot_radius: 0.20
+  robot_radius: 0.10
   inflation_radius: 0.10
   cost_scaling_factor: 5.0
 

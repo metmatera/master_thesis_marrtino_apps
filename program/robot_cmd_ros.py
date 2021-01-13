@@ -258,7 +258,6 @@ def get_robot_pose(frame=None): # returns [x,y,theta]
     else: # frame=='gt':
         return list(gt_robot_pose)
 
-gt_robot_pose
 
 def getRobotVel():
     return get_robot_vel()
