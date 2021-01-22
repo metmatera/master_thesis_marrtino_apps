@@ -2,7 +2,7 @@
   <arg name="map_name" default="map" />
   <arg name="base_frame" default="base_frame" />
   <arg name="laser_topic" default="/scan" />
-  <arg name="use_mapserver" default="true" />
+  <arg name="use_mapserver" default="false" />
 
   <arg name="initial_pose_x" default="0.0" />
   <arg name="initial_pose_y" default="0.0" />
@@ -13,7 +13,7 @@
 
   <node pkg="map_server" type="map_server" name="map_server" args="$(arg mapsdir)/$(arg map_name).yaml" respawn="false" if="$(arg use_mapserver)">
         <param name="frame_id" value="map" />
-   </node>
+  </node>
 
   <node pkg="amcl" type="amcl" name="amcl" respawn="true">
 

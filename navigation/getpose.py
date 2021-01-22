@@ -5,21 +5,25 @@ import actionlib
 from threading import Thread
 
 from nav_msgs.msg import Odometry
+from geometry_msgs.msg import PoseWithCovarianceStamped, Quaternion
+
 import tf
 
 TOPIC_odom = '/odom'
-FRAME_map = 'map'
-FRAME_base = 'base_frame'
+TOPIC_amcl_pose = '/amcl_pose'
+FRAME_map = '/laser_frame'
+FRAME_base = '/base_frame'
 
-odom_robot_pose = [0, 0, 0]
-map_robot_pose = [0, 0, 0]
+odom_robot_pose = None
+map_robot_pose = None
 odomcount = 0 
 odomframe = ''
 
-listener = None
 
 def odom_cb(data):
     global odom_robot_pose, odomcount, odomframe
+    if (odom_robot_pose is None):
+        odom_robot_pose = [0,0,0]
     odom_robot_pose[0] = data.pose.pose.position.x
     odom_robot_pose[1] = data.pose.pose.position.y
     o = data.pose.pose.orientation
@@ -29,27 +33,20 @@ def odom_cb(data):
     odomcount += 1
     odomframe = data.header.frame_id
 
+def localizer_cb(data):
+    global map_robot_pose
+    if (map_robot_pose is None):
+        map_robot_pose = [0,0,0]
+    map_robot_pose[0] = data.pose.pose.position.x
+    map_robot_pose[1] = data.pose.pose.position.y
+    o = data.pose.pose.orientation
+    q = (o.x, o.y, o.z, o.w)
+    euler = tf.transformations.euler_from_quaternion(q)
+    map_robot_pose[2] = euler[2] # yaw
 
-def get_robot_pose():
-    global map_robot_pose, listener
 
-    if listener is None:
-        listener = tf.TransformListener()
-        rospy.Rate(5).sleep()
 
-    try:
-        (trans,rot) = listener.lookupTransform(FRAME_map, FRAME_base, rospy.Time(0))
-    except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as e:
-        print(e)
-        return
-
-    roll, pitch, yaw = tf.transformations.euler_from_quaternion(rot)
-    map_robot_pose[0] = trans[0]
-    map_robot_pose[1] = trans[1]
-    map_robot_pose[2] = yaw
-
-    return map_robot_pose
-
+        
 
 def DEG(a):
     return a*180.0/math.pi
@@ -62,21 +59,21 @@ def pose_str(p):
 if __name__ == "__main__":
 
     rospy.init_node('getpose', disable_signals=True)
+    rospy.sleep(1)
 
-    listener = tf.TransformListener()
     odom_sub = rospy.Subscriber(TOPIC_odom, Odometry, odom_cb)
+    localizer_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, localizer_cb)
 
-    time.sleep(1)
+    rate = rospy.Rate(10)
+    while not rospy.is_shutdown() and odom_robot_pose is None \
+            and map_robot_pose is None:
+        rate.sleep()
 
-    p = get_robot_pose()
-
-    print("Robot pose: %s"  %(pose_str(p)))
+    print("Map  Robot pose: %s"  %(pose_str(map_robot_pose)))
+    print("Odom Robot pose: %s"  %(pose_str(odom_robot_pose)))
 
     odom_sub.unregister()
-
-
-
-
+    localizer_sub.unregister()
 
 
 
