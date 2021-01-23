@@ -3,7 +3,7 @@ date
 
 if [ ! "$1" == "-docker" ]; then
   echo "docker runnning..."
-  #sudo service nginx start
+  sudo service nginx start
   sudo service shellinabox start
 
   echo "IP addresses: `hostname -I`"

@@ -112,7 +112,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
     def getMARRtinoHWInfo(self):
-        print('Checking MARRtino HW info from $HOME/.marrtino_* files ...')
+        print('Checking MARRtino HW info from $HOME/.marrtino_motorbord files ...')
         try:
             f = open('%s/.marrtino_machine' %self.home, 'r')
             v1 = f.readline().strip()
