@@ -4,6 +4,10 @@ import argparse
 import sys
 sys.path.append('../bringup')
 
+version = 0 # 3 or 4
+mdir = None  # mount dir
+fileAP = None  # wireless AP configuration file
+
 devicename = '/dev/mmcblk0'
 devicenamep1 = '/dev/mmcblk0p1'
 devicenamep2 = '/dev/mmcblk0p2'
@@ -23,6 +27,23 @@ from tmuxsend import TmuxSend
 #/dev/mmcblk0p3      20613120 61030399 40417280 19,3G 83 Linux
 
 
+def checkVersion():
+    global version, mdir, fileAP
+
+    mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
+    if os.path.isdir(mdir+"/etc"):
+        version = 3
+        fileAP = '%s/etc/NetworkManager/system-connections/MARRtinoAP' %mdir
+        return True
+    mdir = '/media/%s/writable' %os.getenv('SUDO_USER')
+    if os.path.isdir(mdir+"/etc"):
+        version = 4
+        fileAP = '%s/etc/NetworkManager/system-connections/MARRtinoAP.nmconnection' %mdir
+        return True
+
+    return False
+    
+
 def umount(tmux):
     if tmux is None:
         os.system('umount %s' %devicenamep1)
@@ -38,12 +59,14 @@ def umount(tmux):
 
 
 def mount(tmux):
+    global mdir 
+
     if tmux is None:
-        os.system('mkdir -p /media/$SUDO_USER/PI_ROOT')
-        os.system('mount %s /media/$SUDO_USER/PI_ROOT' %devicenamep2)
+        #os.system('mkdir -p /media/$SUDO_USER/PI_ROOT')
+        os.system('mount %s %s' %(devicenamep2, mdir))
     else:
-        tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT',blocking=True)
-        tmux.cmd(1,'mount %s /media/$SUDO_USER/PI_ROOT' %devicenamep2,blocking=True)
+        #tmux.cmd(1,'mkdir /media/$SUDO_USER/PI_ROOT',blocking=True)
+        tmux.cmd(1,'mount %s %s' %(devicenamep2,mdir), blocking=True)
         #tmux.cmd(1,'df -h')
     time.sleep(3)
 
@@ -127,17 +150,27 @@ def getline(fname,n=1):
 
 
 def check(tmux=None, fsck=False, wid=1):
+    global version, mdir, fileAP
+
     if fsck:
         os.system('xterm -e "sudo tmux a -t sdconfig" &')
         umount(tmux)
         tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep2, blocking=True)
         tmux.cmd(wid,'fsck.ext4 -y %s' %devicenamep3, blocking=True)
 
-    mount(None)
+    #mount(None)
 
-    mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
-    fAP = '%s/etc/NetworkManager/system-connections/MARRtinoAP' %mdir
-    f = open(fAP,'r')
+
+    try:
+        f = open(fileAP,'r')
+    except:
+        print('Cannot open wifi configuration %s' %fileAP)
+        
+
+    channel = ''
+    ssid = ''
+    password = ''
+
     l = f.readline()
     while l is not None and l!='':
         if l[0:4]=='chan':
@@ -153,14 +186,17 @@ def check(tmux=None, fsck=False, wid=1):
 
     hosts = getline('%s/etc/hosts' %mdir,2)
 
-    machine = getline('%s/home/ubuntu/.marrtino_machine' %mdir)
+    if version==3:
+        version = getline('%s/home/ubuntu/.marrtino_version' %mdir)
+        machine = getline('%s/home/ubuntu/.marrtino_machine' %mdir)
+        motorboard = getline('%s/home/ubuntu/.marrtino_motorboard' %mdir)
+    else:
+        version = 'docker '+getline('%s/home/marrtino/src/rc-home-edu-learn-ros/docker/1804/version.txt' %mdir)
+        machine = 'N/A'
+        motorboard = 'N/A'
 
-    version = getline('%s/home/ubuntu/.marrtino_version' %mdir)
-
-    motorboard = getline('%s/home/ubuntu/.marrtino_motorboard' %mdir)
-
-    print('Machine: %s' %machine)
     print('Version: %s' %version)
+    print('Machine: %s' %machine)
     print('Motorboard: %s' %motorboard)
     print('Hostname: %s' %hostname)
     print('Hosts: %s' %hosts)
@@ -168,7 +204,7 @@ def check(tmux=None, fsck=False, wid=1):
     print('WLAN Channel: %s' %channel)
     print('WLAN Password: %s' %password)
 
-    os.system('umount %s' %devicenamep2)
+    #os.system('umount %s' %devicenamep2)
 
 
 
@@ -207,6 +243,11 @@ def setDeviceNames(devname):
 
 # Read image from SD card
 def readSDCard(devname, imagefile):
+    global version
+
+    if version==4:
+        print("Read not supported for version 4.")
+        return
 
     setDeviceNames(devname)
 
@@ -227,6 +268,11 @@ def readSDCard(devname, imagefile):
 
 # Write image to SD card
 def writeSDCard(devname, imagefile):
+    global version
+
+    if version==4:
+        print("Write not supported for version 4.")
+        return
 
     setDeviceNames(devname)
 
@@ -268,7 +314,7 @@ def replace(fname, olds, news):
 
 
 def setSDCard(devname, ssid, channel, password, hostname):
-    setDeviceNames(devname)
+    global mdir, fileAP, version
 
     print('Set values in SD card %s' %(devicename))
     print('WLAN SSID: %s\nWLAN Channel: %s\nWLAN Password: %s\nHostname: %s' 
@@ -276,13 +322,12 @@ def setSDCard(devname, ssid, channel, password, hostname):
     if os.geteuid() != 0:
         exit("You need to have root privileges to run this script.")
 
-    mount(None)
+    #setDeviceNames(devname)
+    #mount(None)
 
-    mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
-    fAP = '%s/etc/NetworkManager/system-connections/MARRtinoAP' %mdir
-    os.system('cp %s %s.bak' %(fAP,fAP))
-    fin = open(fAP+'.bak','r')
-    fout = open(fAP,'w')
+    os.system('cp %s %s.bak' %(fileAP,fileAP))
+    fin = open(fileAP+'.bak','r')
+    fout = open(fileAP,'w')
     l = fin.readline()
     while l is not None and l!='':
         if l[0:4]=='chan' and channel is not None:
@@ -295,13 +340,14 @@ def setSDCard(devname, ssid, channel, password, hostname):
         l = fin.readline()
     fin.close()
     fout.close()
+    os.system('rm %s.bak' %(fileAP))
 
     if hostname is not None:
         os.system('echo "%s" > %s/etc/hostname' %(hostname,mdir))
-        fAP = '%s/etc/hosts' %mdir
-        os.system('cp %s %s.bak' %(fAP,fAP))
-        fin = open(fAP+'.bak','r')
-        fout = open(fAP,'w')
+        fh = '%s/etc/hosts' %mdir
+        os.system('cp %s %s.bak' %(fh,fh))
+        fin = open(fh+'.bak','r')
+        fout = open(fh,'w')
         l = fin.readline()
         while l is not None and l!='':
             if l[0:9]=='127.0.1.1' and hostname is not None:
@@ -310,32 +356,30 @@ def setSDCard(devname, ssid, channel, password, hostname):
             l = fin.readline()
         fin.close()
         fout.close()
+        os.system('rm %s.bak' %(fh))
 
-    os.system('umount %s' %devicenamep2)
+    #os.system('umount %s' %devicenamep2)
 
 
 def speedSDCard(devname):
+    global mdir
 
     setDeviceNames(devname)
     print('Check read/write speed of SD card %s' %(devicename))
     if os.geteuid() != 0:
         exit("You need to have root privileges to run this script.")
 
-    mount(None)
-    mdir = '/media/%s/PI_ROOT' %os.getenv('SUDO_USER')
     tf = '%s/tmp/testspeed' %mdir
 
     print('Write test (%s)' %tf)
-    cmd = 'dd if=/dev/urandom of=/tmp/testspeed bs=512 count=200000'
+    cmd = 'dd if=/dev/urandom of=/tmp/testspeed bs=1024 count=200000'
     os.system(cmd)
-    cmd = 'dd if=/tmp/testspeed of=%s bs=512 count=200000' %tf
+    cmd = 'dd if=/tmp/testspeed of=%s bs=1024 count=200000' %tf
     os.system(cmd)
     print('Read test')
-    cmd = 'dd if=%s of=/dev/null bs=512 count=200000' %tf
+    cmd = 'dd if=%s of=/dev/null bs=1024 count=200000' %tf
     os.system(cmd)
     os.system('rm /tmp/testspeed %s' %tf)
-
-    os.system('umount %s' %devicenamep2)
 
 
 # Main program
@@ -356,6 +400,14 @@ if __name__ == "__main__":
     if (args.op=='read' or args.op=='write') and args.imagefile is None:
         print('Image file needed for read/write operations')
         sys.exit(1)
+
+    if args.op!='write':
+        if checkVersion():
+            print("Found SD card in %s version %d" %(mdir,version))
+        else:
+            print("No SD card found!")
+            sys.exit(1)
+
 
     if args.op=='read':
         readSDCard(args.device, args.imagefile)
