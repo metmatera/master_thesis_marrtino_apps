@@ -63,7 +63,7 @@ class MoveBaseActionProxy(ActionProxy):
         rospy.loginfo("move_base: goal %r sent!" %(target_pose))
 
 
-    def monitor_thread(self, params): 
+    def action_thread(self, params): 
 
         self.loc_sub = rospy.Subscriber(TOPIC_amcl_pose, PoseWithCovarianceStamped, self.localizer_cb)
 

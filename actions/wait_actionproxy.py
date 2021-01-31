@@ -8,14 +8,18 @@ ACTION_NAME = 'wait'
 
 class WaitActionProxy(ActionProxy):
 
-    def __init__(self, actionname):
+    def __init__(self, actionname, rospytime=False):
         ActionProxy.__init__(self, actionname)
+        self.rospytime = rospytime
 
-    def monitor_thread(self, params):
+    def action_thread(self, params):
         self.cnt = 0
         timeout = int(params)
         while self.do_run and self.cnt<timeout:
-            time.sleep(1)
+            if self.rospytime:
+                rospy.sleep(1)
+            else:
+                time.sleep(1)
             self.cnt += 1
             print("Action: %s - status: %d" %(self.actionname,self.cnt))
 

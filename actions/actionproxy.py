@@ -2,8 +2,9 @@
 # ActionProxy base class
 #
 
-import rospy
 from threading import Thread
+
+import rospy
 from std_msgs.msg import String
 
 '''
@@ -13,13 +14,13 @@ pnp_ros publishes a String topic named `pnp/action_str` in the form
 
 Action executors should listen to this message and execute the corresponding action. Programmer is responsible for ensuring that only one executor would take care of execution of an action.
 
-Test with
+Test with CLI
 
     rostopic pub pnp/action_str std_msgs/String "data:'wait_10.start'"
 
 Quit all action proxies with
 
-    rostopic pub pnp/action_str std_msgs/String "data:'%quit_server'"
+    rostopic pub pnp/action_str std_msgs/String "data: '%quit_server'" --once
 
 '''
 
@@ -36,11 +37,11 @@ class ActionProxy:
 
     def __init__(self, actionname):
         self.do_run = False
-        self.action_thread = None
+        self.athread = None
         self.actionname = actionname
-        nodename = actionname+"_actionproxy"
 
         # init ROS node
+        nodename = actionname+"_actionproxy"
         rospy.init_node(nodename,  disable_signals=True)
 
         # subscribers
@@ -56,7 +57,7 @@ class ActionProxy:
 
     def actionproxy_cb(self, data):
         sdata = data.data
-        if (sdata=='%quit_server'):
+        if ('%quit_server' in sdata):
             self.quit_server()
             return
 
@@ -97,23 +98,23 @@ class ActionProxy:
 
     # start the action monitor thread / non-blocking
     def start(self, params=None):
-        if self.action_thread != None:
+        if self.athread != None:
             self.end()
         self.do_run = True
-        self.action_thread = Thread(target=self.monitor_thread, args=(params,))
-        self.action_thread.start()
+        self.athread = Thread(target=self.action_thread, args=(params,))
+        self.athread.start()
 
     def interrupt(self):
         self.end()
 
     def end(self):
         self.do_run = False
-        if self.action_thread != None:
-            self.action_thread.join()
-        self.action_thread = None
+        if self.athread != None:
+            self.athread.join()
+        self.athread = None
 
     def isRunning(self):
-        self.do_run = self.action_thread != None and self.action_thread.is_alive()
+        self.do_run = self.athread != None and self.athread.is_alive()
         return self.do_run
 
     # exec the action / blocking, CTRL-C to interrupt
@@ -145,7 +146,7 @@ class ActionProxy:
 
 
     # to be defined by specific ActionProxy class
-    def monitor_thread(self, params):
+    def action_thread(self, params):
         pass
 
 

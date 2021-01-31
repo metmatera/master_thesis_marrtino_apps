@@ -120,7 +120,7 @@ class TurnActionProxy(ActionProxy):
             return self.odom_robot_pose[2]
 
 
-    def monitor_thread(self, params): 
+    def action_thread(self, params): 
 
         rv_good = 1.0 
         rv_min = 0.5
