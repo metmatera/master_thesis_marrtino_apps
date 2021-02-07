@@ -2,13 +2,15 @@
 
 import time, sys
 
+import rospy
+
 from actionproxy import ActionProxy
 
 ACTION_NAME = 'wait'
 
 class WaitActionProxy(ActionProxy):
 
-    def __init__(self, actionname, rospytime=False):
+    def __init__(self, actionname, rospytime=True):
         ActionProxy.__init__(self, actionname)
         self.rospytime = rospytime
 

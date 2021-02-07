@@ -87,7 +87,7 @@ def main():
         %(gt_robot_pose[0], gt_robot_pose[1], gt_robot_pose[2])
 
     print(rstr)
-    os.system(rstr+" & ")
+    os.system(rstr)
 
 
 if __name__=='__main__':

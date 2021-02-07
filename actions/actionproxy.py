@@ -2,6 +2,7 @@
 # ActionProxy base class
 #
 
+import time
 from threading import Thread
 
 import rospy

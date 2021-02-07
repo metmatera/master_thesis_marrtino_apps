@@ -14,7 +14,6 @@ from actionproxy import ActionProxy
 
 ACTION_NAME = 'movebase'        # PNP action
 ACTION_move_base = 'move_base'  # ROS action
-
 TOPIC_amcl_pose = 'amcl_pose'   # localizer pose
 
 
@@ -23,7 +22,6 @@ class MoveBaseActionProxy(ActionProxy):
     def __init__(self,actionname):
         ActionProxy.__init__(self,actionname)
         self.ac_movebase = None
-        
         self.map_robot_pose = [0,0,0]
 
     def target_params(self, params):
