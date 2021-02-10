@@ -224,7 +224,9 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         # simrobot start/stop
         elif (message[0:14]=='simrobot_start'):
             if (message=='simrobot_start'):
-                self.tmux.roslaunch(self.wrobot,'stage','simrobot')
+                #self.tmux.roslaunch(self.wrobot,'stage','simrobot')
+                self.tmux.cmd(self.wrobot,"echo 'DISB1' | netcat -w 1 localhost 9235")
+
             elif (message=='simrobot_start_nogui'):  # launch stage without GUI
                 self.tmux.roslaunch(self.wrobot,'stage','simrobot','stageros_args:=\"-g\"')
                 # TODO does not work with simulated camera!!! Need dummyX11
@@ -233,7 +235,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.waitfor('laser',1)
             # check_tfs() !!! DOES NOT WORK BECAUSE OF use_sim_time unset at startup...
         elif (message=='simrobot_kill'):
-            self.tmux.roskill('stageros')
+            #self.tmux.roskill('stageros')
+            self.tmux.cmd(self.wrobot,"echo '@killstage' | netcat -w 1 localhost 9235")
             time.sleep(1)
             self.tmux.killall(self.wrobot)
             time.sleep(1)
