@@ -1,0 +1,79 @@
+# Docker file for orazio ROS node (MARRtino robot)
+# Luca Iocchi, 10/2/2021
+
+# docker build -t orazio:2018 -f Dockerfile.orazio2018 .
+
+FROM iocchi/rchomeedu-1804-melodic:base
+
+ARG MACHTYPE=default
+
+
+### System libraries ###
+
+# Arduino development
+
+USER root
+
+RUN apt update && \
+    apt install -y arduino arduino-mk libreadline-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+### User software ###
+
+USER robot
+
+# orazio ROS node
+
+RUN mkdir -p $HOME/src/srrg && cd $HOME/src/srrg && \
+    git clone https://gitlab.com/srrg-software/srrg_cmake_modules.git && \
+    git clone https://gitlab.com/srrg-software/srrg2_orazio.git
+
+# version of the firmware 2018
+
+RUN cd $HOME/src/srrg/srrg_cmake_modules && \
+   git checkout 38beab105eff1efb1be685c24377e71dc796c58b
+
+RUN cd $HOME/src/srrg/srrg2_orazio && \
+   git checkout 305680c5a6dcb8807d727ef5a1b4d4388040542f
+
+# Set up .bashrc
+
+RUN echo "export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps" >> $HOME/.bashrc
+
+# Set and compile ROS packages
+
+RUN cd $HOME/ros/catkin_ws/src && \
+    ln -s $HOME/src/srrg/srrg_cmake_modules . && \
+    ln -s $HOME/src/srrg/srrg2_orazio .
+
+# for old version of the firmware
+#RUN cd $HOME/src/srrg/srrg_cmake_modules
+#   git checkout 38beab105eff1efb1be685c24377e71dc796c58b
+
+#RUN cd $HOME/src/srrg/srrg2_orazio && \
+#   git checkout 305680c5a6dcb8807d727ef5a1b4d4388040542f
+
+
+RUN if [ "$MACHTYPE" = "aarch64" ]; then \
+       /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j2" ; \
+    elif [ "$MACHTYPE" = "armv7l" ]; then \
+       /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1" ; \
+    else \
+       /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make" ; \
+    fi
+
+# marrtino_apps
+
+RUN cd $HOME/src && git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
+
+
+# Set working dir and container command
+
+WORKDIR /home/robot
+
+CMD [ "/usr/bin/tmux" ]
+
+#CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/robot && roslaunch robot.launch" ]
+
