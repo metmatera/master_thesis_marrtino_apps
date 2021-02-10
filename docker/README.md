@@ -10,6 +10,9 @@
 
     docker run -it --privileged -v /dev:/dev --net host orazio tmux
 
+
+From the container:
+
 * flash firmware (connect Arduino with USB)
 
     cd ~/src/srrg/srrg2_orazio/srrg2_orazio/firmware_build/atmega2560/
@@ -20,6 +23,11 @@
 
     cd ~/src/marrtino_apps/config
     ./run_orazio2_web.bash
+
+* launch robot node
+
+    cd ~/src/marrtino_apps/robot
+    roslaunch robot.launch
 
 
 ## orazio (version 2018)
