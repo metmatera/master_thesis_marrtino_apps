@@ -10,13 +10,13 @@ or refer to previous checkout ```19c4c221f81e2414651aceeba900ca3a0c66988e``` of 
 * to upload firmware parameters from file to Arduino
 
 
-        cat upload_config.script | rosrun srrg2_orazio_core orazio -serial-device /dev/orazio 
+        cat upload_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio 
 
 
 * to download firmware parameters from Arduino to file
 
 
-        cat download_config.script | rosrun srrg2_orazio_core orazio -serial-device /dev/orazio 
+        cat download_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio 
 
 
 
@@ -29,7 +29,7 @@ Note: change file names in the .script files if needed.
 
 * Download
 
-        rosrun srrg2_orazio_core orazio -serial-device /dev/orazio
+        rosrun srrg2_orazio orazio -serial-device /dev/orazio
         orazio> fetch system_params
         orazio> fetch joint_params[0]
         orazio> fetch joint_params[1]
@@ -46,7 +46,7 @@ Note: change file names in the .script files if needed.
 
 * Upload
 
-        rosrun srrg2_orazio_core orazio -serial-device /dev/orazio
+        rosrun srrg2_orazio orazio -serial-device /dev/orazio
         orazio> load_config XXX_firmware_params.cfg
         orazio> send system_params
         orazio> send joint_params[0]
