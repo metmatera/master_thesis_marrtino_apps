@@ -81,10 +81,10 @@ def run_server(port):
 
 if __name__ == '__main__':
 
-    default_port = 9237
+    default_port = 9236
 
     parser = argparse.ArgumentParser(description='robot bringup')
-    parser.add_argument('server_port', type=int, default=default_port, help='server port')
+    parser.add_argument('-server_port', type=int, default=default_port, help='server port')
 
     args = parser.parse_args()
 

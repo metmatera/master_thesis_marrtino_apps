@@ -24,7 +24,7 @@ def run_server(port):
     sock.listen(1)
     print("ROS navigation server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['loc','nav','laser'])
+    tmux = TmuxSend('bringup', ['camera','cmd'])
 
     connected = False
     dorun = True
@@ -68,37 +68,22 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                navfolder = "~/src/marrtino_apps/navigation"
-                laserfolder = "~/src/marrtino_apps/laser"
-                if data=='@loc':
-                    tmux.cmd(0,'cd %s' %navfolder)
-                    tmux.cmd(0,'python startloc.py')
-                elif data=='@lockill':
+                folder = "~/src/marrtino_apps/camera"
+                if data=='@usbcam':
+                    tmux.cmd(0,'cd %s' %folder)
+                    tmux.cmd(0,'roslaunch usbcam.launch')
+                elif data=='@usbcamkill':
                     tmux.Cc(0)
-                elif data=='@movebase':
-                    tmux.cmd(1,'cd %s' %navfolder)
-                    tmux.cmd(1,'roslaunch move_base.launch')
-                elif data=='@movebasekill':
-                    tmux.Cc(1)
-                elif data=='@hokuyo':
-                    tmux.cmd(2,'cd %s' %laserfolder)
-                    tmux.cmd(2,'roslaunch hokuyo.launch')
-                elif data=='@hokuyokill':
-                    tmux.Cc(2)
-                elif data=='@rplidar':
-                    tmux.cmd(2,'cd %s' %laserfolder)
-                    tmux.cmd(2,'roslaunch rplidar.launch')
-                elif data=='@rplidarkill':
-                    tmux.Cc(2)
                 else:
                     print('Unknown command %s')
 
 
+
 if __name__ == '__main__':
 
-    default_port = 9238
+    default_port = 9237
 
-    parser = argparse.ArgumentParser(description='navigation bringup')
+    parser = argparse.ArgumentParser(description='camera bringup')
     parser.add_argument('-server_port', type=int, default=default_port, help='server port')
 
     args = parser.parse_args()

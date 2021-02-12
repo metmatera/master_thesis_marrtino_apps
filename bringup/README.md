@@ -23,7 +23,7 @@ add a line like this
 
 
 
-## Run ##
+## Run
 
 * Configure and run a web server
 
@@ -33,7 +33,7 @@ add a line like this
 
         python wsbringup.py
 
-    You can check command execution with ```tmux a```
+    You can check command execution with ```tmux a -t bringup```
 
 * Open a browser at the URL
 
@@ -42,7 +42,27 @@ add a line like this
 * Connect to the robot and control its running modules
 
 
-## Start server at boot ##
+## Start server at boot
 
 Use script ```1-bringup.bash``` at init
+
+## Bringup servers
+
+Run the bringup server
+
+        python robot_bringup.py -server_port 9236
+        python camera_bringup.py -server_port 9237
+        python nav_bringup.py -server_port 9238
+
+Send commands to bringup servers
+
+        echo '@robot' | netcat -w 1 localhost 9236
+        echo '@robotkill' | netcat -w 1 localhost 9236
+
+        echo '@usbcam' | netcat -w 1 localhost 9237
+
+        echo '@hokuyo' | netcat -w 1 localhost 9238
+        echo '@rplidar' | netcat -w 1 localhost 9238
+        echo '@loc' | netcat -w 1 localhost 9238
+        echo '@movebase' | netcat -w 1 localhost 9238
 
