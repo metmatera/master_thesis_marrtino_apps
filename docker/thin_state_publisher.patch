@@ -1,8 +1,8 @@
 diff --git a/thin_state_publisher/CMakeLists.txt b/thin_state_publisher/CMakeLists.txt
-index 3f654e5..2f67999 100644
+index 3f654e5..ab97eca 100644
 --- a/thin_state_publisher/CMakeLists.txt
 +++ b/thin_state_publisher/CMakeLists.txt
-@@ -10,8 +10,8 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+@@ -10,10 +10,10 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
  ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
  ## is used, also find other catkin packages
  find_package(catkin REQUIRED COMPONENTS
@@ -11,8 +11,11 @@ index 3f654e5..2f67999 100644
 +#  cv_bridge
 +#  image_transport
    sensor_msgs
-   thin_msgs
+-  thin_msgs
++#  thin_msgs
    roscpp
+   tf
+ )
 @@ -31,8 +31,8 @@ if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES armv7l)
    message("ENABLING ARM NEON OPTIMIZATIONS")
  endif ()
