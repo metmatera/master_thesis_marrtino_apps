@@ -1,0 +1,26 @@
+# Docker file for MARRtino navigation & laser packages
+# Luca Iocchi, 10/2/2021
+
+# docker build -t marrtino:teleop -f Dockerfile.teleop .
+
+FROM marrtino:base
+
+ARG MACHTYPE=default
+
+# System libs
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y \
+        ros-melodic-joy ros-melodic-joystick-drivers && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+USER robot
+
+WORKDIR /home/robot
+
+CMD [ "/usr/bin/tmux" ]
+

@@ -1,0 +1,95 @@
+# Docker file for MARRtino software
+# ROS Melodic, navigation, perception & additional packages
+# Version base
+
+# docker build -t marrtino:base -f Dockerfile.base .
+
+FROM ros:melodic-ros-base-bionic
+
+ARG MACHTYPE=default
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+###### User root ######
+
+# install libraries and ros packages 
+
+RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+
+RUN apt-get update && \
+    apt-get install -y \
+        tmux less sudo eom nano \
+        openssl shellinabox netcat \
+        wget iputils-ping net-tools openssh-client nginx \
+        python-pip libwebsockets-dev \
+        ros-melodic-desktop && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+# User: robot (password: robot) with sudo power
+
+RUN useradd -ms /bin/bash robot && echo "robot:robot" | chpasswd && adduser robot sudo
+
+RUN adduser robot audio
+RUN adduser robot video
+RUN adduser robot dialout
+
+
+###### User robot ######
+
+USER robot
+
+# Configuration
+
+RUN echo "set -g mouse on" > $HOME/.tmux.conf 
+
+# Python packages
+
+RUN pip install --user tornado==5.0.2
+
+# Init ROS workspace
+
+RUN mkdir -p $HOME/ros/catkin_ws/src
+
+RUN /bin/bash -c "source /opt/ros/melodic/setup.bash; cd $HOME/ros/catkin_ws/src; catkin_init_workspace; cd ..; catkin_make"
+
+RUN echo "source \$HOME/ros/catkin_ws/devel/setup.bash" >> $HOME/.bashrc
+
+RUN rosdep update
+
+RUN /bin/bash -ci "cd $HOME/ros/catkin_ws && catkin_make"
+
+
+# marrtino_apps
+
+RUN mkdir -p $HOME/src && cd $HOME/src && \
+    git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
+
+
+# Set up .bashrc
+
+RUN echo "export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps" >> $HOME/.bashrc
+
+RUN echo "export MARRTINO_VERSION=\"docker\"" >> $HOME/.bashrc
+RUN echo "export ROBOT_TYPE=stage" >> $HOME/.bashrc
+
+RUN echo "docker 4.2" >> $HOME/.marrtino_version
+
+
+# Configure web server
+
+USER root
+
+RUN /bin/bash -ci "cd /var/www; mv html html.2; ln -s /home/robot/src/marrtino_apps/www html"
+
+RUN echo "robot ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/robot
+
+
+# Set working dir and container command
+
+WORKDIR /home/robot
+
+CMD [ "/bin/bash", "-ci", "/home/robot/src/marrtino_apps/bringup/1-bringup.bash", "-docker" ]
+#CMD [ "/usr/bin/tmux" ]
+

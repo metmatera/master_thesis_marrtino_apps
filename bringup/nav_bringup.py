@@ -68,25 +68,25 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                navfolder = "~/src/marrtino_apps/navigation"
-                laserfolder = "~/src/marrtino_apps/laser"
+                nfolder = "~/src/marrtino_apps/navigation"
+                lfolder = "~/src/marrtino_apps/laser"
                 if data=='@loc':
-                    tmux.cmd(0,'cd %s' %navfolder)
+                    tmux.cmd(0,'cd %s' %nfolder)
                     tmux.cmd(0,'python startloc.py')
                 elif data=='@lockill':
                     tmux.Cc(0)
                 elif data=='@movebase':
-                    tmux.cmd(1,'cd %s' %navfolder)
+                    tmux.cmd(1,'cd %s' %nfolder)
                     tmux.cmd(1,'roslaunch move_base.launch')
                 elif data=='@movebasekill':
                     tmux.Cc(1)
                 elif data=='@hokuyo':
-                    tmux.cmd(2,'cd %s' %laserfolder)
+                    tmux.cmd(2,'cd %s' %lfolder)
                     tmux.cmd(2,'roslaunch hokuyo.launch')
                 elif data=='@hokuyokill':
                     tmux.Cc(2)
                 elif data=='@rplidar':
-                    tmux.cmd(2,'cd %s' %laserfolder)
+                    tmux.cmd(2,'cd %s' %lfolder)
                     tmux.cmd(2,'roslaunch rplidar.launch')
                 elif data=='@rplidarkill':
                     tmux.Cc(2)
