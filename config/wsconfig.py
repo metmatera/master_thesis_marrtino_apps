@@ -212,9 +212,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         if (message=='updatesystem'):
             print('system update')
             self.setStatus('Updating...')
-            self.tmux.cmd(3,'cd %s/install' %self.home)
-            self.tmux.cmd(3,'python marrtino_update.py --yes', blocking=True)
-            time.sleep(3)
+            self.tmux.cmd(0,'touch ~/log/systemupdate')
+            #self.tmux.cmd(3,'cd %s/install' %self.home)
+            #self.tmux.cmd(3,'python marrtino_update.py --yes', blocking=True)
+            time.sleep(10)
             self.checkStatus()
 
         elif (message=='updatemarrtinoapps'):
@@ -270,13 +271,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.cmd(1,'cd %s/config' %self.mahome)
             mhw = self.getMARRtinoHWInfo()
             if ('MARRtinoMB' in mhw):
-                self.tmux.cmd(1,'source run_orazio2_web.bash')
+                self.tmux.cmd(1,"echo '@orazioweb' | netcat -w 1 localhost 9236")
+                #self.tmux.cmd(1,'source run_orazio2_web.bash')
             else:
-                self.tmux.cmd(1,'source run_orazio_web.bash')
+                self.tmux.cmd(1,"echo '@orazio2018web' | netcat -w 1 localhost 9236")
+                #self.tmux.cmd(1,'source run_orazio_web.bash')
 
         elif (message=='quitweb'):
             print('quit orazio web server')
-            self.tmux.cmd(1,'quit')
+            self.tmux.cmd(1,"echo '@oraziowebkill' | netcat -w 1 localhost 9236")
+            #self.tmux.cmd(1,'quit')
 
         elif (message=='docker_restart'):
             print('docker restart')

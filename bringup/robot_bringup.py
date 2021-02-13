@@ -68,11 +68,20 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                folder = "~/src/marrtino_apps/robot"
+                rfolder = "~/src/marrtino_apps/robot"
+                cfolder = "~/src/marrtino_apps/config"
                 if data=='@robot':
-                    tmux.cmd(0,'cd %s' %folder)
+                    tmux.cmd(0,'cd %s' %rfolder)
                     tmux.cmd(0,'roslaunch robot.launch')
                 elif data=='@robotkill':
+                    tmux.Cc(0)
+                elif data=='@orazioweb':
+                    tmux.cmd(0,'cd %s' %cfolder)
+                    tmux.cmd(0,'./run_orazio2_web.bash')
+                elif data=='@orazio2018web':
+                    tmux.cmd(0,'cd %s' %cfolder)
+                    tmux.cmd(0,'./run_orazio_web.bash')
+                elif data=='@oraziowebkill':
                     tmux.Cc(0)
                 else:
                     print('Unknown command %s')
