@@ -1,15 +1,37 @@
 # Docker images
 
+## Images available
+
+* orazio
+* base
+* teleop
+* navigation
+
+other soon...
+
+## Profiles
+
+        vm      virtual machine (no robot devices)
+        robot   robot sdevice (no stage)
+
+
+## Build
+
+        cd <...>/marrtino_apps/docker
+        docker-compose [--profile vm|robot] build
+
+## Run
+
+        cd <...>/marrtino_apps/docker
+        docker-compose [--profile vm|robot] up
+
+## Quit
+
+        cd <...>/marrtino_apps/docker
+        docker-compose [--profile vm|robot] down
+
+
 ## orazio
-
-* build
-
-    docker build -t orazio -f Dockerfile.orazio .
-
-* run
-
-    docker run -it --privileged -v /dev:/dev --net host orazio tmux
-
 
 From the container:
 
