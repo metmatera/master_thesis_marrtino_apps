@@ -22,9 +22,9 @@ def run_server(port):
     server_address = ('', port)
     sock.bind(server_address)
     sock.listen(1)
-    print("MARRtino navigation server started on port %d ..." %port)
+    print("MARRtino teleop server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['loc','nav','laser'])
+    tmux = TmuxSend('bringup', ['joy'])
 
     connected = False
     dorun = True
@@ -68,37 +68,21 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                nfolder = "~/src/marrtino_apps/navigation"
-                lfolder = "~/src/marrtino_apps/laser"
-                if data=='@loc':
-                    tmux.cmd(0,'cd %s' %nfolder)
-                    tmux.cmd(0,'python startloc.py')
-                elif data=='@lockill':
+                jfolder = "~/src/marrtino_apps/teleop"
+                if data=='@joystick':
+                    tmux.cmd(0,'cd %s' %jfolder)
+                    tmux.cmd(0,'roslaunch teleop.launch')
+                elif data=='@joystickkill':
                     tmux.Cc(0)
-                elif data=='@movebase':
-                    tmux.cmd(1,'cd %s' %nfolder)
-                    tmux.cmd(1,'roslaunch move_base.launch')
-                elif data=='@movebasekill':
-                    tmux.Cc(1)
-                elif data=='@hokuyo':
-                    tmux.cmd(2,'cd %s' %lfolder)
-                    tmux.cmd(2,'roslaunch hokuyo.launch')
-                elif data=='@hokuyokill':
-                    tmux.Cc(2)
-                elif data=='@rplidar':
-                    tmux.cmd(2,'cd %s' %lfolder)
-                    tmux.cmd(2,'roslaunch rplidar.launch')
-                elif data=='@rplidarkill':
-                    tmux.Cc(2)
                 else:
                     print('Unknown command %s')
 
 
 if __name__ == '__main__':
 
-    default_port = 9238
+    default_port = 9239
 
-    parser = argparse.ArgumentParser(description='navigation bringup')
+    parser = argparse.ArgumentParser(description='teleop bringup')
     parser.add_argument('-server_port', type=int, default=default_port, help='server port')
 
     args = parser.parse_args()
