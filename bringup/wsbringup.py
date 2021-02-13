@@ -183,16 +183,18 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # robot start/stop
         elif (message=='robot_start'):
-            self.tmux.roslaunch(self.wrobot,'robot','robot')
+            self.tmux.cmd(self.wrobot,"echo '@robot' | netcat -w 1 localhost 9236")
+            #self.tmux.roslaunch(self.wrobot,'robot','robot')
             self.waitfor('robot',5)
             self.waitfor('odom',1)
             self.waitfor('sonar',1)
         elif (message=='robot_kill'):
-            self.tmux.roskill('orazio')
-            self.tmux.roskill('state_pub_robot')
+            self.tmux.cmd(self.wrobot,"echo '@robotkill' | netcat -w 1 localhost 9236")
+            #self.tmux.roskill('orazio')
+            #self.tmux.roskill('state_pub_robot')
             time.sleep(1)
-            self.tmux.killall(self.wrobot)
-            time.sleep(1)
+            #self.tmux.killall(self.wrobot)
+            #time.sleep(1)
             if check_robot():
                 self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
                 time.sleep(1)
@@ -238,8 +240,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             #self.tmux.roskill('stageros')
             self.tmux.cmd(self.wrobot,"echo '@stagekill' | netcat -w 1 localhost 9235")
             time.sleep(1)
-            self.tmux.killall(self.wrobot)
-            time.sleep(1)
+            #self.tmux.killall(self.wrobot)
+            #time.sleep(1)
             if check_simrobot():
                 self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
                 time.sleep(1)
