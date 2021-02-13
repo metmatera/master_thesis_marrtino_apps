@@ -13,14 +13,15 @@ services:
     tty: true
     volumes:
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+    - $HOME/log:/home/robot/log
 
   stage:
     profiles: ["vm"]
     image: iocchi/stage_environments
     build:
-      context: .
-      dockerfile: Dockerfile:base
-    container_name: stage_environments
+      context: $HOME/src/stage_environments/docker
+      dockerfile: Dockerfile.melodic
+    container_name: stage
     network_mode: "host"
     tty: true
     environment:

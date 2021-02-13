@@ -89,6 +89,7 @@ RUN echo "robot ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/robot
 
 
 # Set working dir and container command
+USER robot
 
 WORKDIR /home/robot
 
