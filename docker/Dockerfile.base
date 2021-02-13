@@ -22,7 +22,7 @@ RUN apt-get update && \
         openssl shellinabox netcat \
         wget iputils-ping net-tools openssh-client nginx \
         python-pip libwebsockets-dev \
-        ros-melodic-desktop && \
+        ros-melodic-desktop ros-melodic-move-base-msgs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
