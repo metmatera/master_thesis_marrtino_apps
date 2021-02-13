@@ -64,6 +64,8 @@ RUN cd $HOME/src/thin_drivers && \
 RUN echo "export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps" >> $HOME/.bashrc
 RUN echo "set -g mouse on" > $HOME/.tmux.conf
 
+RUN touch ~/.sudo_as_admin_successful
+
 
 # Set and compile ROS packages
 
@@ -83,7 +85,9 @@ RUN cd $HOME/src && git clone --depth 1 https://bitbucket.org/iocchi/marrtino_ap
 
 WORKDIR /home/robot
 
-CMD [ "/usr/bin/tmux" ]
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python robot_bringup.py -server_port 9236" ]
+
+#CMD [ "/usr/bin/tmux" ]
 
 #CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/robot && roslaunch robot.launch" ]
 

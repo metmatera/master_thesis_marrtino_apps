@@ -22,5 +22,6 @@ USER robot
 
 WORKDIR /home/robot
 
-CMD [ "/usr/bin/tmux" ]
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python teleop_bringup.py" ]
+#CMD [ "/usr/bin/tmux" ]
 

@@ -1,0 +1,60 @@
+version: "3.9"  # optional since v1.27.0
+
+services:
+
+  base:
+    image: marrtino:base
+    container_name: base
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+  stage:
+    image: iocchi/stage_environments
+    container_name: stage_environments
+    network_mode: "host"
+    tty: true
+    environment:
+    - DISPLAY=:0
+    volumes:
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    - $HOME/.Xauthority:/home/robot/.Xauthority
+    - $HOME/src/stage_environments:/home/robot/src/stage_environments
+    entrypoint:
+    - bash
+    - -ci
+    - "rosrun stage_environments start_simulation.py --server -server_port 9235"
+
+  orazio:
+    image: orazio
+    container_name: orazio
+    restart: always
+    privileged: true
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - /dev:/dev
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+  teleop:
+    image: marrtino:teleop
+    container_name: teleop
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+  navigation:
+    image: marrtino:navigation
+    container_name: navigation
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+

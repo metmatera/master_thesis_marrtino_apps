@@ -57,5 +57,6 @@ RUN if [ "$MACHTYPE" = "aarch64" ]; then \
 
 WORKDIR /home/robot
 
-CMD [ "/usr/bin/tmux" ]
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python nav_bringup.py" ]
+#CMD [ "/usr/bin/tmux" ]
 

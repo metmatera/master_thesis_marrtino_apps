@@ -76,6 +76,8 @@ RUN echo "export ROBOT_TYPE=stage" >> $HOME/.bashrc
 
 RUN echo "docker 4.2" >> $HOME/.marrtino_version
 
+RUN touch ~/.sudo_as_admin_successful
+
 
 # Configure web server
 
