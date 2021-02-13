@@ -236,7 +236,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             # check_tfs() !!! DOES NOT WORK BECAUSE OF use_sim_time unset at startup...
         elif (message=='simrobot_kill'):
             #self.tmux.roskill('stageros')
-            self.tmux.cmd(self.wrobot,"echo '@killstage' | netcat -w 1 localhost 9235")
+            self.tmux.cmd(self.wrobot,"echo '@stagekill' | netcat -w 1 localhost 9235")
             time.sleep(1)
             self.tmux.killall(self.wrobot)
             time.sleep(1)
