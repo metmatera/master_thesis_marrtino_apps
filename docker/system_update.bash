@@ -23,16 +23,22 @@ echo "- system profile: $SYSTEM_PROFILE"
 echo "- motor board: $MBTYPE"
 
 if [ "$MACHTYPE" == "aarch64" ] || [ "$MACHTYPE" == "armv7l" ]; then
+  ARCH="arm64"
   if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
-    ARCH="2018-arm64"
+    ORAZIO_TAG="2018-arm64"
+    DOCKER_PROFILE="robot2018arm64"
   else
-    ARCH="arm64"
+    ORAZIO_TAG="arm64"
+    DOCKER_PROFILE="robotarm64"
   fi
 else
+  ARCH=""
   if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
-    ARCH="2018"
+    ORAZIO_TAG="2018"
+    DOCKER_PROFILE="robot2018"
   else
-    ARCH=""
+    ORAZIO_TAG=""
+    DOCKER_PROFILE="robot"
   fi
 fi
 
@@ -47,10 +53,10 @@ if [ "$SYSTEM_PROFILE" = "simulator" ]; then
 fi
 
 if [ "$SYSTEM_PROFILE" = "robot" ]; then
-  docker pull iocchi/orazio:${ARCH}
+  docker pull iocchi/orazio:${ORAZIO_TAG+}
 fi
 
-cd $MARRTINO_APPS_HOME/docker && docker-compose --profile $SYSTEM_PROFILE build
+cd $MARRTINO_APPS_HOME/docker && docker-compose --profile $DOCKER_PROFILE build
 
 docker container prune -f
 docker image prune -f
