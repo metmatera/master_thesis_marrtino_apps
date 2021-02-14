@@ -2,10 +2,6 @@
 
 Just shortcuts for typical app configurations.
 
-### run_webserver ###
-
-Starts web server for configuration and settings.
-
 
 ### run_joystick ###
 
