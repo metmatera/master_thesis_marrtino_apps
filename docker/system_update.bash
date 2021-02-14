@@ -53,7 +53,7 @@ if [ "$SYSTEM_PROFILE" = "simulator" ]; then
 fi
 
 if [ "$SYSTEM_PROFILE" = "robot" ]; then
-  docker pull iocchi/orazio:${ORAZIO_TAG+}
+  docker pull iocchi/orazio:${ORAZIO_TAG}
 fi
 
 cd $MARRTINO_APPS_HOME/docker && docker-compose --profile $DOCKER_PROFILE build
