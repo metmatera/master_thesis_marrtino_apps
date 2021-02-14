@@ -11,24 +11,31 @@ other soon...
 
 ## Profiles
 
-        simulator   stage simulator (no robot devices)
-        robot       robot device (no stage)
+        simulator       stage simulator (no robot devices)
+        robot           robot device (amd64 arch)
+        robotarm64      robot device (arm64 arch)
+        robot2018       robot device (amd64 arch, ArduinoMB 2018)
+        robot2018arm64  robot device (arm64 arch, ArduinoMB 2018)
+
+Export your system profile in `$HOME/.system_profile`
+
+        echo "simulator" > $HOME/.system_profile
 
 
-## Build
+## Update and build
 
         cd <...>/marrtino_apps/docker
-        docker-compose [--profile simulator|robot] build
+        ./system_update.bash
 
 ## Run
 
         cd <...>/marrtino_apps/docker
-        docker-compose [--profile simulator|robot] up
+        ./start_docker.bash
 
 ## Quit
 
         cd <...>/marrtino_apps/docker
-        docker-compose [--profile simulator|robot] down
+        ./stop_docker.bash
 
 
 ## orazio

@@ -270,7 +270,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             print('start orazio web server')
             self.tmux.cmd(1,'cd %s/config' %self.mahome)
             mhw = self.getMARRtinoHWInfo()
-            if ('MARRtinoMB' in mhw):
+            if (not 'ArduinoMotorShield' in mhw):
                 self.tmux.cmd(1,"echo '@orazioweb' | netcat -w 1 localhost 9236")
                 #self.tmux.cmd(1,'source run_orazio2_web.bash')
             else:

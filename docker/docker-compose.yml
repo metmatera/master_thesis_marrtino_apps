@@ -2,19 +2,6 @@ version: "3.9"  # optional since v1.27.0
 
 services:
 
-  base:
-    image: marrtino:base
-    build:
-      context: $MARRTINO_APPS_HOME/docker
-      dockerfile: Dockerfile.base
-    container_name: base
-    dns: 8.8.8.8
-    network_mode: "host"
-    tty: true
-    volumes:
-    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
-    - $HOME/log:/home/robot/log
-
   stage:
     profiles: ["simulator"]
     image: iocchi/stage_environments
@@ -34,6 +21,32 @@ services:
 
   orazio:
     profiles: ["robot"]
+    image: iocchi/orazio
+    container_name: orazio
+    restart: always
+    privileged: true
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - /dev:/dev
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+  orazio:
+    profiles: ["robot2018"]
+    image: iocchi/orazio:2018
+    container_name: orazio
+    restart: always
+    privileged: true
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - /dev:/dev
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+  orazio:
+    profiles: ["robotarm64"]
     image: iocchi/orazio:arm64
     container_name: orazio
     restart: always
@@ -44,6 +57,32 @@ services:
     volumes:
     - /dev:/dev
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+  orazio:
+    profiles: ["robot2018arm64"]
+    image: iocchi/orazio:2018-arm64
+    container_name: orazio
+    restart: always
+    privileged: true
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - /dev:/dev
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+
+  base:
+    image: marrtino:base
+    build:
+      context: $MARRTINO_APPS_HOME/docker
+      dockerfile: Dockerfile.base
+    container_name: base
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+    - $HOME/log:/home/robot/log
 
   teleop:
     image: marrtino:teleop
