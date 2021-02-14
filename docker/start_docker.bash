@@ -15,6 +15,9 @@ if [ "$MBTYPE" = "" ]; then
   echo "Using default value: $MBTYPE"
 fi
 
+DOCKER_PROFILE=$SYSTEM_PROFILE
+
+if [ "$SYSTEM_PROFILE" = "robot" ]; then
 if [ "$MACHTYPE" == "aarch64" ] || [ "$MACHTYPE" == "armv7l" ]; then
   ARCH="arm64"
   if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
@@ -29,6 +32,7 @@ else
   else
     DOCKER_PROFILE="robot"
   fi
+fi
 fi
 
 SESSION=compose
