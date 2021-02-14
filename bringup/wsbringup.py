@@ -227,7 +227,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message[0:14]=='simrobot_start'):
             if (message=='simrobot_start'):
                 #self.tmux.roslaunch(self.wrobot,'stage','simrobot')
-                self.tmux.cmd(self.wrobot,"echo 'DISB1' | netcat -w 1 localhost 9235")
+                stagestr = "montreal;marrtino;1"
+                self.tmux.cmd(self.wrobot,"echo '%s' | netcat -w 1 localhost 9235" %stagestr)
 
             elif (message=='simrobot_start_nogui'):  # launch stage without GUI
                 self.tmux.roslaunch(self.wrobot,'stage','simrobot','stageros_args:=\"-g\"')
