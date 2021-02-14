@@ -34,7 +34,7 @@ services:
 
   orazio:
     profiles: ["robot"]
-    image: orazio
+    image: iocchi/orazio:arm64
     container_name: orazio
     restart: always
     privileged: true
