@@ -18,9 +18,6 @@ services:
   stage:
     profiles: ["simulator"]
     image: iocchi/stage_environments
-    build:
-      context: $HOME/src/stage_environments/docker
-      dockerfile: Dockerfile.melodic
     container_name: stage
     network_mode: "host"
     tty: true
@@ -72,4 +69,11 @@ services:
     volumes:
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
 
+  nginx:
+    image: nginx
+    profiles: ["local"]
+    container_name: nginx
+    network_mode: "host"
+    volumes:
+    - $HOME/src/marrtino_apps/www:/usr/share/nginx/html
 
