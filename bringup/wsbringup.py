@@ -388,10 +388,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # joystick
         elif (message=='joystick_start'):
+            self.tmux.cmd(self.wrobot,"echo '@joystick' | netcat -w 1 localhost 9239")
             self.tmux.roslaunch(self.wjoystick,'teleop','teleop')
             time.sleep(3)
             self.checkStatus('joystick')
         elif (message=='joystick_kill'):
+            self.tmux.cmd(self.wrobot,"echo '@joystickkill' | netcat -w 1 localhost 9239")
             self.tmux.roskill('joystick')
             self.tmux.roskill('joy')
             time.sleep(3)

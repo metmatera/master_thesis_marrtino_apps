@@ -94,6 +94,7 @@ services:
     network_mode: "host"
     tty: true
     volumes:
+    - /dev:/dev
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
 
   navigation:
