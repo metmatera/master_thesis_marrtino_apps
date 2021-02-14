@@ -39,3 +39,5 @@ tmux new-window -t $SESSION:1 -n 'compose down'
 
 tmux send-keys -t $SESSION:1 "cd \$MARRTINO_APPS_HOME/docker && docker-compose --profile $DOCKER_PROFILE down" C-m
 
+tmux send-keys -t $SESSION:1 "docker container prune -f" C-m
+
