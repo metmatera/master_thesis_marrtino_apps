@@ -16,7 +16,7 @@ services:
     - $HOME/log:/home/robot/log
 
   stage:
-    profiles: ["vm"]
+    profiles: ["simulator"]
     image: iocchi/stage_environments
     build:
       context: $HOME/src/stage_environments/docker

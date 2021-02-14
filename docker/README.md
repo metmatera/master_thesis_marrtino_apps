@@ -11,24 +11,24 @@ other soon...
 
 ## Profiles
 
-        vm      virtual machine (no robot devices)
-        robot   robot sdevice (no stage)
+        simulator   stage simulator (no robot devices)
+        robot       robot device (no stage)
 
 
 ## Build
 
         cd <...>/marrtino_apps/docker
-        docker-compose [--profile vm|robot] build
+        docker-compose [--profile simulator|robot] build
 
 ## Run
 
         cd <...>/marrtino_apps/docker
-        docker-compose [--profile vm|robot] up
+        docker-compose [--profile simulator|robot] up
 
 ## Quit
 
         cd <...>/marrtino_apps/docker
-        docker-compose [--profile vm|robot] down
+        docker-compose [--profile simulator|robot] down
 
 
 ## orazio
