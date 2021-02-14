@@ -32,7 +32,7 @@ services:
     - /dev:/dev
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
 
-  orazio:
+  orazio2018:
     profiles: ["robot2018"]
     image: iocchi/orazio:2018
     container_name: orazio
@@ -45,7 +45,7 @@ services:
     - /dev:/dev
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
 
-  orazio:
+  orazioarm:
     profiles: ["robotarm64"]
     image: iocchi/orazio:arm64
     container_name: orazio
@@ -58,7 +58,7 @@ services:
     - /dev:/dev
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
 
-  orazio:
+  orazio2018arm:
     profiles: ["robot2018arm64"]
     image: iocchi/orazio:2018-arm64
     container_name: orazio
