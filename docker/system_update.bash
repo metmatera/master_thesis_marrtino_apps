@@ -22,32 +22,31 @@ echo "- system arch: $MACHTYPE"
 echo "- system profile: $SYSTEM_PROFILE"
 echo "- motor board: $MBTYPE"
 
+if [ "$MACHTYPE" == "aarch64" ] || [ "$MACHTYPE" == "armv7l" ]; then
+  if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
+    ARCH="2018-arm64"
+  else
+    ARCH="arm64"
+  fi
+else
+  if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
+    ARCH="2018"
+  else
+    ARCH=""
+  fi
+fi
 
-docker pull iocchi/rchomeedu-1804-melodic
+docker pull iocchi/rchomeedu-1804-melodic:${ARCH}
+
 cd $HOME/src/marrtino_apps && git pull
 cd $HOME/src/rc-home-edu-learn-ros && git pull
 
 if [ "$SYSTEM_PROFILE" = "simulator" ]; then
-  docker pull iocchi/stage_environments
+  docker pull iocchi/stage_environments:${ARCH}
   cd $HOME/src/stage_environments && git pull
 fi
 
 if [ "$SYSTEM_PROFILE" = "robot" ]; then
-  
-  if [ "$MACHTYPE" == "aarch64" ] || [ "$MACHTYPE" == "armv7l" ]; then
-    if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
-      ARCH="2018-arm64"
-    else
-      ARCH="arm64"
-    fi
-  else
-    if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
-      ARCH="2018"
-    else
-      ARCH=""
-    fi
-  fi
-
   docker pull iocchi/orazio:${ARCH}
 fi
 
