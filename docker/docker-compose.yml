@@ -90,6 +90,7 @@ services:
       context: $MARRTINO_APPS_HOME/docker
       dockerfile: Dockerfile.teleop
     container_name: teleop
+    privileged: true
     dns: 8.8.8.8
     network_mode: "host"
     tty: true
