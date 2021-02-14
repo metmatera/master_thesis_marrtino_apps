@@ -17,11 +17,6 @@ if [ "$MBTYPE" = "" ]; then
   echo "Using default value: $MBTYPE"
 fi
 
-echo "System update"
-echo "- system arch: $MACHTYPE"
-echo "- system profile: $SYSTEM_PROFILE"
-echo "- motor board: $MBTYPE"
-
 if [ "$MACHTYPE" == "aarch64" ] || [ "$MACHTYPE" == "armv7l" ]; then
   ARCH="arm64"
   if [ "$MBTYPE" = "ArduinoMotorShield" ]; then
@@ -41,6 +36,15 @@ else
     DOCKER_PROFILE="robot"
   fi
 fi
+
+
+echo "System update"
+echo "- system arch: $MACHTYPE"
+echo "- system profile: $SYSTEM_PROFILE"
+echo "- motor board: $MBTYPE"
+echo "- docker profile: $DOCKER_PROFILE"
+echo "- orazio tag: $ORAZIO_TAG"
+
 
 docker pull iocchi/rchomeedu-1804-melodic:${ARCH}
 
