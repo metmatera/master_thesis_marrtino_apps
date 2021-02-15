@@ -137,6 +137,7 @@ setSpeed(lx,az,tm,stopend=False)
 setSpeed4W(fl,fr,bl,br,tm,stopend=False)
 stop()
 goto(gx,gy,gth)     # map pose (move_base)
+gotoLabel(label)    # semantic map (map_server, move_base)
 gotoTarget(gx,gy, frame='odom'|'map')  # no path planning
 p = getRobotPose()
 

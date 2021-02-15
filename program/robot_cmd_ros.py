@@ -871,9 +871,19 @@ def goto(gx, gy, gth_deg):
     return exec_movebase(gx, gy, gth_deg)
 
 # map frame goto (requires localization)
-def goto(target_pose):
+def gotoPose(target_pose):
     return exec_movebase(target_pose[0], target_pose[1], target_pose[2])
 
+# map frame goto (requires localization)
+def gotoLabel(target_label):
+    # TODO
+    pname = "/map_server/%s/gotopose" %target_label
+    if rospy.has_param(pname):
+      p = rospy.get_param(pname)
+      return exec_movebase(p[0], p[1], p[2])
+    else:
+      rospy.logerr("Label %s not found." %target_label)
+      return False
 
 
 # odom frame direct control (no path planning)
@@ -1265,7 +1275,10 @@ def movebase_step(delay):  # executes one move_base step of delay seconds
 
     try:
         res = ac_movebase.wait_for_result(rospy.Duration(delay))  # true: action finished
-        gd = rospy.get_param('/move_base_node/TrajectoryPlannerROS/xy_goal_tolerance')
+        if rospy.has_param('/move_base_node/TrajectoryPlannerROS/xy_goal_tolerance'):
+            gd = rospy.get_param('/move_base_node/TrajectoryPlannerROS/xy_goal_tolerance')
+        else:
+            gd = 0.5
         d = dist_from_goal()
         if not res and target_pose[2]>1000 and d<gd:
             print('Goal reached, ignoring orientation')
