@@ -1,0 +1,14 @@
+  teleop:
+    image: marrtino:teleop
+    build:
+      context: $MARRTINO_APPS_HOME/docker
+      dockerfile: Dockerfile.teleop
+    container_name: teleop
+    privileged: true
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - /dev:/dev
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+

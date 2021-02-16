@@ -1,0 +1,19 @@
+system:
+  nginx: on
+
+simulator:
+  stage: on
+
+robot:
+  motorboard: off  # MARRtinoMB2019  # ArduinoMotorShield
+  4wd: off
+  teleop: on
+  speakers: off
+  laser: off
+  camera: off
+  
+functions:
+  navigation: on
+  mapping: off
+  social: off
+

@@ -1,0 +1,12 @@
+  navigation:
+    image: marrtino:navigation
+    build:
+      context: $MARRTINO_APPS_HOME/docker
+      dockerfile: Dockerfile.navigation
+    container_name: navigation
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    volumes:
+    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+

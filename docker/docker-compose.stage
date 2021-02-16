@@ -1,0 +1,16 @@
+  stage:
+    image: iocchi/stage_environments
+    container_name: stage
+    network_mode: "host"
+    tty: true
+    environment:
+    - DISPLAY=:0
+    volumes:
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    - $HOME/.Xauthority:/home/robot/.Xauthority
+    - $HOME/src/stage_environments:/home/robot/src/stage_environments
+    entrypoint:
+    - bash
+    - -ci
+    - "rosrun stage_environments start_simulation.py --server -server_port 9235"
+
