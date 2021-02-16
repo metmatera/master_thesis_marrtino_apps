@@ -1,9 +1,9 @@
-  navigation:
-    image: marrtino:navigation
+  speech:
+    image: marrtino:speech
     build:
       context: $MARRTINO_APPS_HOME/docker
-      dockerfile: Dockerfile.navigation
-    container_name: navigation
+      dockerfile: Dockerfile.speech
+    container_name: speech
     dns: 8.8.8.8
     network_mode: "host"
     tty: true

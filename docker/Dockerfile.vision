@@ -1,0 +1,68 @@
+# Docker file for camera and vision packages
+# Luca Iocchi, 16/2/2021
+
+# docker build -t marrtino:vision -f Dockerfile.vision .
+
+FROM marrtino:base
+
+ARG MACHTYPE=default
+
+# System libs
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y \
+        v4l-utils \
+        ros-melodic-rgbd-launch ros-melodic-web-video-server \
+        ros-melodic-camera-info-manager ros-melodic-libuvc \
+        ros-melodic-image-view && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+USER robot
+
+# ROS packages
+
+RUN mkdir -p $HOME/src/ros &&  cd $HOME/src/ros && \
+    git clone https://github.com/seqsense/usb_cam.git  && \  
+    git clone https://github.com/orbbec/ros_astra_camera.git && \
+    git clone https://github.com/orbbec/ros_astra_launch.git && \
+    git clone https://github.com/RIVeR-Lab/apriltags_ros.git
+#   git clone https://bitbucket.org/iocchi/apriltags_ros.git NOT WORKING
+
+# thin_state_publisher (with patch)
+
+RUN cd $HOME/src/ && \
+    git clone https://bitbucket.org/ggrisetti/thin_drivers.git 
+
+COPY thin_state_publisher.patch /home/robot/src/thin_drivers/thin_state_publisher.patch 
+
+RUN cd $HOME/src/thin_drivers && \
+    git apply thin_state_publisher.patch
+
+# Set up .bashrc
+
+RUN echo "if [ -d /usr/lib/nvidia-384/ ]; then" >> $HOME/.bashrc
+RUN echo "  export PATH=\"/usr/lib/nvidia-384/bin:\${PATH}\"" >> $HOME/.bashrc
+RUN echo "  export LD_LIBRARY_PATH=\"/usr/lib/nvidia-384:/usr/lib32/nvidia-384:\${LD_LIBRARY_PATH}\" " >> $HOME/.bashrc
+RUN echo "fi" >> $HOME/.bashrc
+
+# Set and compile ROS packages
+
+RUN cd $HOME/ros/catkin_ws/src && \
+    ln -s $HOME/src/ros/usb_cam . && \
+    ln -s $HOME/src/ros/ros_astra_camera . && \
+    ln -s $HOME/src/ros/ros_astra_launch . && \
+    ln -s $HOME/src/ros/apriltags_ros . && \
+    ln -s $HOME/src/thin_drivers/thin_state_publisher .
+
+RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
+
+# Set working dir and container command
+
+WORKDIR /home/robot
+
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python vision_bringup.py" ]
+#CMD [ "/usr/bin/tmux" ]
+

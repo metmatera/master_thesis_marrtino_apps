@@ -1,13 +1,15 @@
-  navigation:
-    image: marrtino:navigation
+  vision:
+    image: marrtino:vision
     build:
       context: $MARRTINO_APPS_HOME/docker
-      dockerfile: Dockerfile.navigation
-    container_name: navigation
+      dockerfile: Dockerfile.vision
+    container_name: vision
     dns: 8.8.8.8
     network_mode: "host"
     tty: true
     privileged: true
+    environment:
+    - DISPLAY=:0
     volumes:
     - /dev:/dev
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps

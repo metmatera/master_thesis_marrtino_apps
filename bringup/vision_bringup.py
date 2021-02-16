@@ -22,7 +22,8 @@ def run_server(port):
     server_address = ('', port)
     sock.bind(server_address)
     sock.listen(1)
-    print("ROS navigation server started on port %d ..." %port)
+
+    print("Vision server started on port %d ..." %port)
 
     tmux = TmuxSend('bringup', ['camera','cmd'])
 
@@ -71,7 +72,7 @@ def run_server(port):
                 folder = "~/src/marrtino_apps/camera"
                 if data=='@usbcam':
                     tmux.cmd(0,'cd %s' %folder)
-                    tmux.cmd(0,'roslaunch usbcam.launch')
+                    tmux.cmd(0,'roslaunch usbcam.launch viewimage:=true')
                 elif data=='@usbcamkill':
                     tmux.Cc(0)
                 else:
@@ -83,7 +84,7 @@ if __name__ == '__main__':
 
     default_port = 9237
 
-    parser = argparse.ArgumentParser(description='camera bringup')
+    parser = argparse.ArgumentParser(description='vision bringup')
     parser.add_argument('-server_port', type=int, default=default_port, help='server port')
 
     args = parser.parse_args()

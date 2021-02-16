@@ -19,6 +19,7 @@ def machinearch():
     return info
 
 def addservice(f, service, version=None):
+    print(" - "+service)
     with open("docker-compose.%s" %service, 'r') as r:
         for l in r:
             if (l.strip()[0:6]=='image:' and version is not None):
@@ -28,6 +29,7 @@ def addservice(f, service, version=None):
 
 def writeout(config, arch):
     nfile = "docker-compose.yml"
+    print("\nservices:")
     with open(nfile, 'w') as f:
         f.write("version: \"3.9\"\n\n")
         f.write("services:\n\n")
@@ -59,9 +61,6 @@ def writeout(config, arch):
         if config['robot']['4wd']=='':
             pass
 
-        if config['robot']['speakers']=='':
-            pass
-
         if config['robot']['laser']=='':
             pass
 
@@ -74,16 +73,22 @@ def writeout(config, arch):
         if config['functions']['navigation']:
             addservice(f,'navigation')
 
+        if config['functions']['vision']:
+            addservice(f,'vision')
+
+        if config['functions']['speech']:
+            addservice(f,'speech')
+
 
 if __name__=='__main__':
 
     yamlfile = os.getenv('HOME')+"/system_config.yaml"
 
     config = readconfig(yamlfile)
-    print(config)
+    print("Config: "+str(config))
 
     arch = machinearch()
-    print(arch)
+    print("Arch: %s" %arch)
 
     writeout(config, arch)
 

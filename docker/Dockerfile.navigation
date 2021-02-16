@@ -1,7 +1,7 @@
 # Docker file for MARRtino navigation & laser packages
 # Luca Iocchi, 10/2/2021
 
-# docker build -t ros-navigation -f Dockerfile.navigation .
+# docker build -t marrtino:navigation -f Dockerfile.navigation .
 
 FROM marrtino:base
 
