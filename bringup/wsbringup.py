@@ -425,10 +425,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # audio
         elif (message=='audio_start'):
+            self.tmux.cmd(self.wnet,"echo '@audio' | netcat -w 1 localhost 9239")
             self.tmux.python(self.waudio,'audio','audio_server.py')
             time.sleep(3)
             self.checkStatus()
         elif (message=='audio_kill'):
+            self.tmux.cmd(self.wnet,"echo '@audiokill' | netcat -w 1 localhost 9239")
             self.tmux.killall(self.waudio)
             time.sleep(3)
             self.checkStatus()
