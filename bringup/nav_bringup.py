@@ -83,12 +83,10 @@ def run_server(port):
                 elif data=='@hokuyo':
                     tmux.cmd(2,'cd %s' %lfolder)
                     tmux.cmd(2,'roslaunch hokuyo.launch')
-                elif data=='@hokuyokill':
-                    tmux.Cc(2)
                 elif data=='@rplidar':
                     tmux.cmd(2,'cd %s' %lfolder)
                     tmux.cmd(2,'roslaunch rplidar.launch')
-                elif data=='@rplidarkill':
+                elif data=='@laserkill':
                     tmux.Cc(2)
                 else:
                     print('Unknown command %s')

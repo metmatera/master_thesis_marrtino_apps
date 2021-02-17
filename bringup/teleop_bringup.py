@@ -80,7 +80,7 @@ def run_server(port):
 
 if __name__ == '__main__':
 
-    default_port = 9239
+    default_port = 9240
 
     parser = argparse.ArgumentParser(description='teleop bringup')
     parser.add_argument('-server_port', type=int, default=default_port, help='server port')

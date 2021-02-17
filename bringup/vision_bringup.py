@@ -73,7 +73,7 @@ def run_server(port):
                 if data=='@usbcam':
                     tmux.cmd(0,'cd %s' %folder)
                     tmux.cmd(0,'roslaunch usbcam.launch viewimage:=true')
-                elif data=='@usbcamkill':
+                elif data=='@camerakill':
                     tmux.Cc(0)
                 else:
                     print('Unknown command %s')

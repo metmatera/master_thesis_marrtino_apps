@@ -54,6 +54,7 @@ Run the bringup server
         python vision_bringup.py -server_port 9237
         python nav_bringup.py -server_port 9238
         python speech_bringup.py -server_port 9239
+        python teleop_bringup.py -server_port 9240
 
 Send commands to bringup servers
 
@@ -61,13 +62,17 @@ Send commands to bringup servers
         echo '@robotkill' | netcat -w 1 localhost 9236
 
         echo '@usbcam' | netcat -w 1 localhost 9237
-        echo '@usbcamkill' | netcat -w 1 localhost 9237
+        echo '@camerakill' | netcat -w 1 localhost 9237
 
         echo '@hokuyo' | netcat -w 1 localhost 9238
         echo '@rplidar' | netcat -w 1 localhost 9238
+        echo '@laserkill' | netcat -w 1 localhost 9238
         echo '@loc' | netcat -w 1 localhost 9238
         echo '@movebase' | netcat -w 1 localhost 9238
 
         echo '@audio' | netcat -w 1 localhost 9239
         echo '@audiokill' | netcat -w 1 localhost 9239
+
+        echo '@joystick' | netcat -w 1 localhost 9240
+        echo '@joystickkill' | netcat -w 1 localhost 9240
 
