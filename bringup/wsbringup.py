@@ -539,8 +539,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.quitall()
             self.checkStatus()
             self.tmux.cmd(self.wquit,'touch ~/log/shutdownrequest')
-            self.tmux.cmd(self.wquit,'sudo shutdown -h now')
-
+            self.tmux.cmd(self.wquit,'sleep 10 && sudo shutdown -h now')
 
         else:
             print('Code received:\n%s' %message)

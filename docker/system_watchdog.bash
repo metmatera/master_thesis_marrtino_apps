@@ -1,6 +1,10 @@
 #!/bin/bash
 
 date
+
+rm -f ~/log/shutdownrequest
+rm -f ~/log/rebootrequest
+
 sleep 10
 cd /home/marrtino/bin && source start_docker.bash
 sleep 30

@@ -247,7 +247,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.quitall()
             self.checkStatus()
             self.tmux.cmd(0,'touch ~/log/shutdownrequest')
-            self.tmux.cmd(0,'sudo shutdown -h now')
+            self.tmux.cmd(0,'sleep 10 && sudo shutdown -h now')
 
         elif (message=='reboot'):
             self.setStatus('Reboot!!!')
