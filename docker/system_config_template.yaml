@@ -7,13 +7,14 @@ simulator:
 robot:
   motorboard: off  # MARRtinoMB2019  # ArduinoMotorShield
   4wd: off
-  teleop: off
-  speakers: off
+  joystick: off
   laser: off
   camera: off
   
 functions:
   navigation: off
+  vision: off
+  speech: off
   mapping: off
   social: off
 
