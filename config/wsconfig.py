@@ -41,7 +41,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         global websocket_server, run
         websocket_server = self
         print('New connection')
-        self.tmux = TmuxSend('config',['cmd','robot','network','apps','update'])
+        self.tmux = TmuxSend('config',['cmd','robot','network','apps','update','netcat'])
         self.home = os.getenv('HOME')
         if (self.home=='/root'): # started at boot on MARRtino cards
             self.home = '/home/ubuntu'
@@ -258,11 +258,13 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         elif(message=='flash'):
             print('firmware upload')
+            self.tmux.cmd(5,"echo '@firmware' | netcat -w 1 localhost 9236")
             self.tmux.cmd(3,'cd %s/config' %self.mahome)
             self.tmux.cmd(3,'./uploadfirmware.bash')
 
         elif(message=='firmwareparam'):
             print('firmware parameters upload')
+            self.tmux.cmd(5,"echo '@firmwareparams' | netcat -w 1 localhost 9236")
             self.tmux.cmd(3,'cd %s/config' %self.mahome)
             self.tmux.cmd(3,'cat upload_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio')
 
@@ -271,16 +273,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.cmd(1,'cd %s/config' %self.mahome)
             mhw = self.getMARRtinoHWInfo()
             if (not 'ArduinoMotorShield' in mhw):
-                self.tmux.cmd(1,"echo '@orazioweb' | netcat -w 1 localhost 9236")
-                #self.tmux.cmd(1,'source run_orazio2_web.bash')
+                self.tmux.cmd(5,"echo '@orazioweb' | netcat -w 1 localhost 9236")
+                self.tmux.cmd(1,'source run_orazio2_web.bash')
             else:
-                self.tmux.cmd(1,"echo '@orazio2018web' | netcat -w 1 localhost 9236")
-                #self.tmux.cmd(1,'source run_orazio_web.bash')
+                self.tmux.cmd(5,"echo '@orazio2018web' | netcat -w 1 localhost 9236")
+                self.tmux.cmd(1,'source run_orazio_web.bash')
 
         elif (message=='quitweb'):
             print('quit orazio web server')
-            self.tmux.cmd(1,"echo '@oraziowebkill' | netcat -w 1 localhost 9236")
-            #self.tmux.cmd(1,'quit')
+            self.tmux.cmd(5,"echo '@oraziowebkill' | netcat -w 1 localhost 9236")
+            self.tmux.cmd(1,'quit')
 
         elif (message=='docker_restart'):
             print('docker restart')

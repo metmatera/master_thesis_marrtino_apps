@@ -83,6 +83,12 @@ def run_server(port):
                     tmux.cmd(0,'./run_orazio_web.bash')
                 elif data=='@oraziowebkill':
                     tmux.Cc(0)
+                elif data=='@firmware':
+                    tmux.cmd(0,'cd %s' %cfolder)
+                    tmux.cmd(0,'./uploadfirmware.bash')
+                elif data=='@firmwareparams':
+                    tmux.cmd(0,'cd %s' %cfolder)
+                    tmux.cmd(0,'cat upload_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio')
                 else:
                     print('Unknown command %s')
 

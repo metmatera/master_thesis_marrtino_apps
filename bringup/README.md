@@ -60,6 +60,11 @@ Send commands to bringup servers
 
         echo '@robot' | netcat -w 1 localhost 9236
         echo '@robotkill' | netcat -w 1 localhost 9236
+        echo '@orazioweb' | netcat -w 1 localhost 9236
+        echo '@orazio2018web' | netcat -w 1 localhost 9236
+        echo '@oraziowebkill' | netcat -w 1 localhost 9236
+        echo '@firmware' | netcat -w 1 localhost 9236
+        echo '@firmwareparams' | netcat -w 1 localhost 9236
 
         echo '@usbcam' | netcat -w 1 localhost 9237
         echo '@camerakill' | netcat -w 1 localhost 9237
