@@ -86,7 +86,7 @@ def run_server(port):
                 elif data=='@firmware':
                     tmux.cmd(0,'cd %s' %cfolder)
                     tmux.cmd(0,'./uploadfirmware.bash')
-                elif data=='@firmwareparams':
+                elif data[0:15]=='@firmwareparams':
                     # firmwareparams;[arduino|ln298|pka03|marrtino2019]
                     v = data.split(";")
                     mb = 'marrtino2019'

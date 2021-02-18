@@ -33,11 +33,15 @@ Note: change file names in the .script files if needed.
         orazio> fetch system_params
         orazio> fetch joint_params[0]
         orazio> fetch joint_params[1]
+        orazio> fetch joint_params[2]
+        orazio> fetch joint_params[3]
         orazio> fetch drive_params
         orazio> fetch sonar_params
         orazio> request system_params
         orazio> request joint_params[0]
         orazio> request joint_params[1]
+        orazio> request joint_params[2]
+        orazio> request joint_params[3]
         orazio> request drive_params
         orazio> request sonar_params
         orazio> save_config XXX_firmware_params.cfg
@@ -51,11 +55,15 @@ Note: change file names in the .script files if needed.
         orazio> send system_params
         orazio> send joint_params[0]
         orazio> send joint_params[1]
+        orazio> send joint_params[2]
+        orazio> send joint_params[3]
         orazio> send drive_params
         orazio> send sonar_params
         orazio> store system_params
         orazio> store joint_params[0]
         orazio> store joint_params[1]
+        orazio> store joint_params[2]
+        orazio> store joint_params[3]
         orazio> store drive_params
         orazio> store sonar_params
         orazio> quit
