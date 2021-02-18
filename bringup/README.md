@@ -64,7 +64,7 @@ Send commands to bringup servers
         echo '@orazio2018web' | netcat -w 1 localhost 9236
         echo '@oraziowebkill' | netcat -w 1 localhost 9236
         echo '@firmware' | netcat -w 1 localhost 9236
-        echo '@firmwareparams' | netcat -w 1 localhost 9236
+        echo '@firmwareparams;[marrtino2019|pka03|ln298|arduino]' | netcat -w 1 localhost 9236
 
         echo '@usbcam' | netcat -w 1 localhost 9237
         echo '@camerakill' | netcat -w 1 localhost 9237

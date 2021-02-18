@@ -87,8 +87,13 @@ def run_server(port):
                     tmux.cmd(0,'cd %s' %cfolder)
                     tmux.cmd(0,'./uploadfirmware.bash')
                 elif data=='@firmwareparams':
+                    # firmwareparams;[arduino|ln298|pka03|marrtino2019]
+                    v = data.split(";")
+                    mb = 'marrtino2019'
+                    if len(v)>1:
+                        mb = v[1]
                     tmux.cmd(0,'cd %s' %cfolder)
-                    tmux.cmd(0,'cat upload_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio')
+                    tmux.cmd(0,'./uploadfirmwareparams.bash %s' %mb)
                 else:
                     print('Unknown command %s')
 

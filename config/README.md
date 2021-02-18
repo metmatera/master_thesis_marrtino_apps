@@ -10,7 +10,7 @@ or refer to previous checkout ```19c4c221f81e2414651aceeba900ca3a0c66988e``` of 
 * to upload firmware parameters from file to Arduino
 
 
-        cat upload_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio 
+        ./uploadfirmwareparams.bash [marrtino2019|pka03|ln298|arduino]
 
 
 * to download firmware parameters from Arduino to file

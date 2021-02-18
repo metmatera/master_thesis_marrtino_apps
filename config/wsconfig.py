@@ -261,12 +261,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.cmd(5,"echo '@firmware' | netcat -w 1 localhost 9236")
             self.tmux.cmd(3,'cd %s/config' %self.mahome)
             self.tmux.cmd(3,'./uploadfirmware.bash')
-
         elif(message=='firmwareparam'):
             print('firmware parameters upload')
             self.tmux.cmd(5,"echo '@firmwareparams' | netcat -w 1 localhost 9236")
             self.tmux.cmd(3,'cd %s/config' %self.mahome)
-            self.tmux.cmd(3,'cat upload_config.script | rosrun srrg2_orazio orazio -serial-device /dev/orazio')
+            self.tmux.cmd(3,'./uploadfirmwareparams.bash %s' %mb)
 
         elif (message=='startweb'):
             print('start orazio web server')
