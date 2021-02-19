@@ -231,7 +231,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             #self.tmux.cmd(4,'cd %s/install' %self.home)
             #self.tmux.cmd(4,'python marrtino_update.py --yes', blocking=True)
             time.sleep(10)
-            self.setStatus('RELOAD THIS PAGE!!!')
+            self.setStatus('RELOAD-THIS-PAGE!!!')
             #self.checkStatus()
 
         elif (message=='updatemarrtinoapps'):
