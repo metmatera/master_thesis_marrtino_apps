@@ -228,8 +228,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             print('system update')
             self.setStatus('Updating...')
             self.tmux.cmd(0,'touch ~/log/systemupdate')
-            #self.tmux.cmd(3,'cd %s/install' %self.home)
-            #self.tmux.cmd(3,'python marrtino_update.py --yes', blocking=True)
+            #self.tmux.cmd(4,'cd %s/install' %self.home)
+            #self.tmux.cmd(4,'python marrtino_update.py --yes', blocking=True)
             time.sleep(10)
             self.setStatus('RELOAD THIS PAGE!!!')
             #self.checkStatus()
@@ -237,24 +237,24 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='updatemarrtinoapps'):
             print('marrtino_apps update')
             self.setStatus('Updating...')
-            self.tmux.cmd(3,'cd %s' %self.mahome)
-            self.tmux.cmd(3,'git pull', blocking=True)
+            self.tmux.cmd(4,'cd %s' %self.mahome)
+            self.tmux.cmd(4,'git pull', blocking=True)
             time.sleep(3)
             self.checkStatus()
 
         elif (message=='updatemodim'):
             print('MODIM update')
             self.setStatus('Updating...')
-            self.tmux.cmd(3,'cd %s/src/modim' %self.home)
-            self.tmux.cmd(3,'git pull', blocking=True)
+            self.tmux.cmd(4,'cd %s/src/modim' %self.home)
+            self.tmux.cmd(4,'git pull', blocking=True)
             time.sleep(3)
             self.checkStatus()
 
         elif (message=='updaterchome'):
             print('RCHOME-learn update')
             self.setStatus('Updating...')
-            self.tmux.cmd(3,'cd %s/src/rc-home-edu-learn-ros' %self.home)
-            self.tmux.cmd(3,'git pull', blocking=True)
+            self.tmux.cmd(4,'cd %s/src/rc-home-edu-learn-ros' %self.home)
+            self.tmux.cmd(4,'git pull', blocking=True)
             time.sleep(3)
             self.checkStatus()
 
@@ -275,16 +275,16 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif(message=='flash'):
             print('firmware upload')
             self.tmux.cmd(5,"echo '@firmware' | netcat -w 1 localhost 9236")
-            self.tmux.cmd(3,'cd %s/config' %self.mahome)
-            self.tmux.cmd(3,'./uploadfirmware.bash')
+            self.tmux.cmd(1,'cd %s/config' %self.mahome)
+            self.tmux.cmd(1,'./uploadfirmware.bash')
         elif(message=='firmwareparam'):
             print('firmware parameters upload')
             # firmwareparams;[arduino|ln298|pka03|marrtino2019]
             fpcfg=self.config['robot']['motorboard']
             if fpcfg!=False:
                 self.tmux.cmd(5,"echo '@firmwareparams;%s' | netcat -w 1 localhost 9236" %fpcfg)
-            self.tmux.cmd(3,'cd %s/config' %self.mahome)
-            self.tmux.cmd(3,'./uploadfirmwareparams.bash')
+            self.tmux.cmd(1,'cd %s/config' %self.mahome)
+            self.tmux.cmd(1,'./uploadfirmwareparams.bash')
 
         elif (message=='startweb'):
             print('start orazio web server')
@@ -309,15 +309,15 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         elif (message=='wirelessAP'):
             print('connect to wlan MARRtinoAP')
-            self.tmux.cmd(3,'tmux kill-session -t bringup')
+            self.tmux.cmd(2,'tmux kill-session -t bringup')
             time.sleep(3)
-            self.tmux.cmd(3,'sudo nmcli c up MARRtinoAP')
+            self.tmux.cmd(2,'sudo nmcli c up MARRtinoAP')
 
         elif (message=='wirelessHome'):
             print('connect to wlan MARRtinoHome')
-            self.tmux.cmd(3,'tmux kill-session -t bringup')
+            self.tmux.cmd(2,'tmux kill-session -t bringup')
             time.sleep(3)
-            self.tmux.cmd(3,'sudo nmcli c up MARRtinoHome')
+            self.tmux.cmd(2,'sudo nmcli c up MARRtinoHome')
 
         else:
             print('Code received:\n%s' %message)
