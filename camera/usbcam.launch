@@ -1,6 +1,7 @@
 <launch>
   <arg name="rgbcameraframe" default="rgb_camera_frame" />
   <arg name="viewimage" default="false" />
+  <arg name="videoserver" default="false" />
   <arg name="device" default="/dev/video0" />
   <arg name="format" default="yuyv" />  <!-- yuyv, mjpeg -->
 
@@ -26,6 +27,13 @@
     <param name="autosize" value="true" />
   </node>
   </group>
+
+  <group if="$(arg videoserver)">
+  <node name="web_video_server" pkg="web_video_server" type="web_video_server" respawn="false" output="screen">
+    <param name="port" value="9090" />
+  </node>
+  </group>
+
 
 </launch>
 

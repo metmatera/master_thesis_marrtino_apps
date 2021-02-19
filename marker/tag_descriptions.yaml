@@ -1,0 +1,16 @@
+tag_descriptions:
+  - {id:  0, size: 0.162, frame_id: tag0_frame}
+  - {id:  1, size: 0.162, frame_id: tag1_frame}
+  - {id:  2, size: 0.162, frame_id: tag2_frame}
+  - {id:  3, size: 0.162, frame_id: tag3_frame}
+  - {id:  4, size: 0.162, frame_id: tag4_frame}
+  - {id:  5, size: 0.162, frame_id: tag5_frame}
+  - {id:  6, size: 0.162, frame_id: tag5_frame}
+  - {id:  7, size: 0.162, frame_id: tag5_frame}
+  - {id:  8, size: 0.162, frame_id: tag5_frame}
+  - {id:  9, size: 0.162, frame_id: tag5_frame}
+  - {id: 10, size: 0.162, frame_id: tag5_frame}
+  - {id: 11, size: 0.162, frame_id: tag5_frame}
+  - {id: 12, size: 0.162, frame_id: tag5_frame}
+
+

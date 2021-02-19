@@ -25,7 +25,7 @@ def run_server(port):
 
     print("Vision server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['camera','cmd'])
+    tmux = TmuxSend('bringup', ['camera','vidserver','april','cmd'])
 
     connected = False
     dorun = True
@@ -69,12 +69,23 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                folder = "~/src/marrtino_apps/camera"
+                cfolder = "~/src/marrtino_apps/camera"
+                mfolder = "~/src/marrtino_apps/marker"
                 if data=='@usbcam':
-                    tmux.cmd(0,'cd %s' %folder)
-                    tmux.cmd(0,'roslaunch usbcam.launch viewimage:=true')
+                    tmux.cmd(0,'cd %s' %cfolder) # videoserver:=true
+                    tmux.cmd(0,'roslaunch usbcam.launch')
                 elif data=='@camerakill':
                     tmux.Cc(0)
+                elif data=='@videoserver':
+                    tmux.cmd(1,'cd %s' %cfolder)
+                    tmux.cmd(1,'roslaunch videoserver.launch')
+                elif data=='@videoserverkill':
+                    tmux.Cc(1)
+                elif data=='@apriltags':
+                    tmux.cmd(2,'cd %s' %mfolder)
+                    tmux.cmd(2,'roslaunch tags.launch')
+                elif data=='@apriltagskill':
+                    tmux.Cc(2)
                 else:
                     print('Unknown command %s')
 

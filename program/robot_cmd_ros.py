@@ -39,6 +39,7 @@ except:
     print("apriltag_ros not found")
     AprilTagFound = False
 
+
 AUDIO_SERVER_IP = '127.0.0.1'
 AUDIO_SERVER_PORT = 9001
 assock = None

@@ -438,10 +438,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # apriltags detector
         elif (message=='apriltags_start'):
+            self.tmux.cmd(self.wnet,"echo '@apriltags' | netcat -w 1 localhost 9237")
             self.tmux.roslaunch(self.wimgproc,'marker','tags')
             time.sleep(3)
             self.checkStatus()
         elif (message=='apriltags_kill'):
+            self.tmux.cmd(self.wnet,"echo '@apriltagskill' | netcat -w 1 localhost 9237")
             self.tmux.killall(self.wimgproc)
             time.sleep(3)
             self.checkStatus()

@@ -12,7 +12,7 @@ Astra:
 
 Xtion:
 
-* ros-kinetic-openni2-camera  
+* ros-kinetic-openni2-camera
 * ros-kinetic-openni2-launch
 
 
@@ -23,11 +23,11 @@ Xtion:
 
 Launch
 
-    roslaunch astra.launch [viewimage:=true]
+    roslaunch astra.launch [viewimage:=true] [videoserver:=true]
 
 or
 
-    roslaunch usbcam.launch [viewimage:=true]
+    roslaunch usbcam.launch [viewimage:=true] [videoserver:=true]
 
 or
 
@@ -38,8 +38,10 @@ To visualize images and depth data
 
     rosrun image_view image_view image:=/rgb/image_raw
 
+If using videoserver
+
+    http://localhost:9090/
 
 Note: To visualize images from another PC, export ROS_MASTER_URI. This feature may be very slow specially if using a wireless network.
-
 
 

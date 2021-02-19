@@ -78,18 +78,30 @@ RUN echo "docker 4.2" >> $HOME/.marrtino_version
 
 RUN touch ~/.sudo_as_admin_successful
 
+# Create ROS node with useful messages
 
-# Configure web server
+RUN cd $HOME/src && \
+    catkin_create_pkg apriltags_ros std_msgs geometry_msgs && \
+    mkdir apriltags_ros/msg && \
+    cd apriltags_ros/msg && \
+    wget -N https://raw.githubusercontent.com/RIVeR-Lab/apriltags_ros/indigo-devel/apriltags_ros/msg/AprilTagDetection.msg && \
+    wget -N https://raw.githubusercontent.com/RIVeR-Lab/apriltags_ros/indigo-devel/apriltags_ros/msg/AprilTagDetectionArray.msg && \
+    cd .. && \
+    echo "cmake_minimum_required(VERSION 2.8.3)" > CMakeLists.txt && \
+    echo "project(apriltags_ros)" >> CMakeLists.txt && \
+    echo "find_package(catkin REQUIRED COMPONENTS message_generation std_msgs geometry_msgs)" >> CMakeLists.txt && \
+    echo "add_message_files(FILES AprilTagDetection.msg AprilTagDetectionArray.msg)" >> CMakeLists.txt && \
+    echo "generate_messages(DEPENDENCIES std_msgs geometry_msgs)" >> CMakeLists.txt 
 
-USER root
 
-RUN /bin/bash -ci "cd /var/www; mv html html.2; ln -s /home/robot/src/marrtino_apps/www html"
+RUN cd $HOME/ros/catkin_ws/src && \
+    ln -s $HOME/src/apriltags_ros .
 
-RUN echo "robot ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/robot
+RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j2"
+
 
 
 # Set working dir and container command
-USER robot
 
 WORKDIR /home/robot
 

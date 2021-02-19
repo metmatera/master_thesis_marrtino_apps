@@ -53,6 +53,10 @@ Send commands to bringup servers
 
         echo '@usbcam' | netcat -w 1 localhost 9237
         echo '@camerakill' | netcat -w 1 localhost 9237
+        echo '@videoserver' | netcat -w 1 localhost 9237
+        echo '@videoserverkill' | netcat -w 1 localhost 9237
+        echo '@apriltags' | netcat -w 1 localhost 9237
+        echo '@apriltagskill' | netcat -w 1 localhost 9237
 
         echo '@hokuyo' | netcat -w 1 localhost 9238
         echo '@rplidar' | netcat -w 1 localhost 9238
