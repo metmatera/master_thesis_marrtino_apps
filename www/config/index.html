@@ -44,7 +44,7 @@
 
 <div class="container">
 
-<h2> Robot status </h2>
+<h2> Robot connection </h2>
 
 <table>
     <tr style="border:none">
@@ -62,18 +62,22 @@
 	  </td>	  
     </tr>
 	<tr>
-		<td></td>
+		<td>Connection status</td>
 		<td>
 			<div id="connection"><font color='red'>Not Connected</font></div>
 		</td>
 	</tr>
     <tr>
-      <td>Status</td>
-      <td><div id="status" style="color: blue;" >Idle</div></td>
+      <td>Server status</td>
+      <td><div id="status" style="color: red;" >Idle</div></td>
     </tr>
 </table>
 
-<p>
+<br>
+<br>
+
+
+<h2>System configuration</h2>
 
 <table>
 
@@ -112,14 +116,14 @@
 
 <hr>
 
-<h2>System update (version 4.x)</h2>
+<h3>System update (version 4.x)</h3>
 
-<h3>Web interface</h3>
+<h4>Web interface</h4>
 <button id="docker_restart_btn" onclick="send_cmd('updatesystem')" class="btn waves-effect waves-light blue" style="margin-right:10px">System update</button>
 
 <button id="docker_restart_btn" onclick="send_cmd('docker_restart')" class="btn waves-effect waves-light blue" style="margin-right:10px">Docker restart</button>
 
-<h3>Shell interface</h3>
+<h4>Shell interface</h4>
 
 <ol>
 <li> Access through
@@ -148,7 +152,7 @@ cd bin
 </p>
 
 
-<h2>System update (version 3.x)</h2>
+<h3>System update (version 3.x)</h3>
 
 <ol>
 <li> Access through
