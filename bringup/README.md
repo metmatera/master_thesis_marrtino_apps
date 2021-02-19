@@ -2,38 +2,22 @@
 
 ## Install ##
 
-Install ```tmux```  and ```nginx```
+Install ```tmux```
 
-    sudo apt install tmux nginx
-
-
-Link this folder from a folder accessible from a web server
-
-    cd /var/www/html
-    ln -s $MARRTINO_APPS_HOME/bringup .
-
-
-Note: for ```shutdown``` you need to modify the sudo settings
-
-    sudo visudo
-
-add a line like this
-
-    ubuntu ALL=(ALL) NOPASSWD: /sbin/poweroff, /sbin/reboot, /sbin/shutdown
-
+    sudo apt install tmux
 
 
 ## Run
-
-* Configure and run a web server
-
-        sudo service nginx start
 
 * Run the server
 
         python wsbringup.py
 
     You can check command execution with ```tmux a -t bringup```
+
+## Web server
+
+* Configure a web server to read <...>/marrtino_apps/www
 
 * Open a browser at the URL
 
@@ -46,9 +30,10 @@ add a line like this
 
 Use script ```1-bringup.bash``` at init
 
+
 ## Bringup servers
 
-Run the bringup server
+Run the bringup servers
 
         python robot_bringup.py -server_port 9236
         python vision_bringup.py -server_port 9237

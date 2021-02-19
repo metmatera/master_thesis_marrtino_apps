@@ -5,7 +5,7 @@ simulator:
   stage: off
 
 robot:
-  motorboard: off  # MARRtinoMB2019  # ArduinoMotorShield
+  motorboard: off  # arduino|ln298|pka03|marrtino2019
   4wd: off
   joystick: off
   laser: off

@@ -6,20 +6,37 @@
 * base
 * teleop
 * navigation
+* vision
+* speech
 
-other soon...
+## Configuration
 
-## Profiles
+Copy and edit `system_config.yaml`
 
-        simulator       stage simulator (no robot devices)
-        robot           robot device (amd64 arch)
-        robotarm64      robot device (arm64 arch)
-        robot2018       robot device (amd64 arch, ArduinoMB 2018)
-        robot2018arm64  robot device (arm64 arch, ArduinoMB 2018)
+        cd ~
+        cp <...>/marrtino_apps/docker/system_config_template.yaml system_config.yaml
+        nano system_config.yaml
 
-Export your system profile in `$HOME/.system_profile`
+            system:
+              nginx: off
 
-        echo "simulator" > $HOME/.system_profile
+            simulator:
+              stage: off
+
+            robot:
+              motorboard: off  # arduino|ln298|pka03|marrtino2019
+              4wd: off
+              joystick: off
+              laser: off
+              camera: off
+
+            functions:
+              navigation: off
+              vision: off
+              speech: off
+              mapping: off
+              social: off
+
 
 
 ## Update and build
@@ -38,34 +55,13 @@ Export your system profile in `$HOME/.system_profile`
         ./stop_docker.bash
 
 
-## orazio
+## Bringup servers
 
-From the container:
+To interact with docker containers, see 
+[bringup/README](https://bitbucket.org/iocchi/marrtino_apps/src/master/bringup/README.md)
 
-* flash firmware (connect Arduino with USB)
+## docker access
 
-        cd ~/src/srrg/srrg2_orazio/srrg2_orazio/firmware_build/atmega2560/
-        make
-        make orazio.hex
+        docker exec -it <container_name> tmux a
 
-* run orazio web server
-
-        cd ~/src/marrtino_apps/config
-        ./run_orazio2_web.bash
-
-* launch robot node
-
-        cd ~/src/marrtino_apps/robot
-        roslaunch robot.launch
-
-
-## orazio (version 2018)
-
-* build
-
-        docker build -t orazio:2018 -f Dockerfile.orazio2018 .
-
-* run
-
-        docker run -it --privileged -v /dev:/dev --net host orazio:2018 tmux
 

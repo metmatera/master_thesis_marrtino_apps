@@ -4,7 +4,9 @@ source stop_docker.bash
 
 sleep 5
 
-cd $MARRTINO_APPS_HOME/docker && git pull && python3 dockerconfig.py && docker-compose build
+cd $MARRTINO_APPS_HOME/docker && \
+    git pull && python3 dockerconfig.py && \
+    docker-compose pull && docker-compose build
 
 docker container prune -f
 docker image prune -f

@@ -43,13 +43,15 @@ def writeout(config, arch):
             addservice(f,'stage')
 
         # robot
+        # motorboard: marrtino2019|pka03|ln298|arduino
         orazioversion = None
-        if config['robot']['motorboard']=='MARRtinoMB2019':
+        if config['robot']['motorboard']!=False:
+          # default
           if arch=='x86_64':
             orazioversion=""
           else:
             orazioversion=":arm64"
-        if config['robot']['motorboard']=='ArduinoMotorShield':
+        if config['robot']['motorboard']=='arduino':
           if arch=='x86_64':
             orazioversion=":2018"
           else:
