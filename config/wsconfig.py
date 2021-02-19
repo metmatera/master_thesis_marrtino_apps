@@ -8,6 +8,7 @@ import tornado.web
 import socket
 import time
 import os
+import yaml
 
 from threading import Thread
 
@@ -28,7 +29,15 @@ server_port = 9911          # config web server port
 status = "Idle"             # robot status sent to websocket
 
 
-
+def readconfig(yamlfile):
+    info = None
+    try:
+        with open(yamlfile, 'r') as f:
+            info = yaml.safe_load(f)
+    except:
+        print("Cannot open system configuration file: %s" %yamlfile)
+        pass
+    return info
 
 # check connection
 # nmcli c show --active
@@ -48,6 +57,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         self.mahome = os.getenv('MARRTINO_APPS_HOME')
         if self.mahome==None:
             self.mahome = self.home+'/src/marrtino_apps'
+        yamlfile = os.getenv('HOME')+"/system_config.yaml"
+        self.config = readconfig(yamlfile)
         self.checkStatus()
         sys.stdout.flush()
 
@@ -129,6 +140,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             #print(e)
 
         v = v1+" - "+v2
+
+        if (self.config != None):
+            v = "MB: "+self.config['robot']['motorboard']
+
         print('MARRtino info %s' %(v))
         return v
 
@@ -263,9 +278,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.cmd(3,'./uploadfirmware.bash')
         elif(message=='firmwareparam'):
             print('firmware parameters upload')
-            self.tmux.cmd(5,"echo '@firmwareparams' | netcat -w 1 localhost 9236")
+            # firmwareparams;[arduino|ln298|pka03|marrtino2019]
+            fpcfg=self.config['robot']['motorboard']
+            if fpcfg!=False:
+                self.tmux.cmd(5,"echo '@firmwareparams;%s' | netcat -w 1 localhost 9236" %fpcfg)
             self.tmux.cmd(3,'cd %s/config' %self.mahome)
-            self.tmux.cmd(3,'./uploadfirmwareparams.bash %s' %mb)
+            self.tmux.cmd(3,'./uploadfirmwareparams.bash')
 
         elif (message=='startweb'):
             print('start orazio web server')

@@ -10,4 +10,5 @@
     volumes:
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
     - $HOME/log:/home/robot/log
+    - $HOME/system_config.yaml:/home/robot/system_config.yaml
 
