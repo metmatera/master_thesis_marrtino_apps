@@ -474,7 +474,7 @@ def autoImageTopic():
     topics = rospy.get_published_topics()
     for t in topics:
         if t[1]=='sensor_msgs/Image' and 'depth' not in t[0] and '/ir/' not in t[0] \
-           and 'person' not in t[0]:
+           and 'person' not in t[0] and 'tag' not in t[0]:
             return t[0]
     return None
 
