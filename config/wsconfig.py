@@ -308,7 +308,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         elif (message=='docker_restart'):
             print('docker restart')
             self.tmux.cmd(0,'touch ~/log/dockerrestart')
-            time.sleep(1)
+            time.sleep(5)
+            self.setStatus('RELOAD-THIS-PAGE!!!')
 
         elif (message=='wirelessAP'):
             print('connect to wlan MARRtinoAP')
