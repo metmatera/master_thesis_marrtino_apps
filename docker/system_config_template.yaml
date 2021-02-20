@@ -5,11 +5,11 @@ simulator:
   stage: off
 
 robot:
-  motorboard: off  # arduino|ln298|pka03|marrtino2019
+  motorboard: off   # arduino|ln298|pka03|marrtino2019
   4wd: off
   joystick: off
-  laser: off
-  camera: off
+  laser: off        # hokuyo | rplidar
+  camera: off       # usbcam | astra | xtion
   
 functions:
   navigation: off
