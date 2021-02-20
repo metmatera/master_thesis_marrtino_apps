@@ -237,7 +237,7 @@ def check_laser():
     if r:
         lasercount = 0
         laser_sub = rospy.Subscriber('scan', LaserScan, laser_cb)
-        dt = 2.0
+        dt = 5.0
         time.sleep(dt)
         laser_sub.unregister()
         laserrate = lasercount/dt
@@ -288,7 +288,7 @@ def check_rgb_camera():
     if r:
         cameracount = 0
         camera_sub = rospy.Subscriber(topicim, Image, image_cb)
-        dt = 2.0
+        dt = 5.0
         time.sleep(dt)
         camera_sub.unregister()
         camerarate = cameracount/dt
