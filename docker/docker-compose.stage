@@ -5,6 +5,7 @@
     tty: true
     environment:
     - DISPLAY=:0
+    - ROS_IP=$ROS_IP
     volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
     - $HOME/.Xauthority:/home/robot/.Xauthority

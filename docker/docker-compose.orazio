@@ -1,10 +1,12 @@
   orazio:
     image: iocchi/orazio
     container_name: orazio
-    privileged: true
     dns: 8.8.8.8
     network_mode: "host"
     tty: true
+    privileged: true
+    environment:
+    - ROS_IP=$ROS_IP
     volumes:
     - /dev:/dev
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps

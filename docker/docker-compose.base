@@ -7,6 +7,8 @@
     dns: 8.8.8.8
     network_mode: "host"
     tty: true
+    environment:
+    - ROS_IP=$ROS_IP
     volumes:
     - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
     - $HOME/log:/home/robot/log
