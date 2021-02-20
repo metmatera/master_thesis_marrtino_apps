@@ -94,11 +94,22 @@ RUN cd $HOME/src && \
     echo "generate_messages(DEPENDENCIES std_msgs geometry_msgs)" >> CMakeLists.txt 
 
 
+# thin_state_publisher (with patch)
+
+RUN cd $HOME/src/ && \
+    git clone https://bitbucket.org/ggrisetti/thin_drivers.git 
+
+COPY thin_state_publisher.patch /home/robot/src/thin_drivers/thin_state_publisher.patch 
+
+RUN cd $HOME/src/thin_drivers && \
+    git apply thin_state_publisher.patch
+
+
 RUN cd $HOME/ros/catkin_ws/src && \
-    ln -s $HOME/src/apriltags_ros .
+    ln -s $HOME/src/apriltags_ros . && \
+    ln -s $HOME/src/thin_drivers/thin_state_publisher .
 
 RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j2"
-
 
 
 # Set working dir and container command
