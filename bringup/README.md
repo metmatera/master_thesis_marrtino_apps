@@ -70,5 +70,6 @@ Send commands to bringup servers
         echo '@audiokill' | netcat -w 1 localhost 9239
 
         echo '@joystick' | netcat -w 1 localhost 9240
+        echo '@joystick4wd' | netcat -w 1 localhost 9240
         echo '@joystickkill' | netcat -w 1 localhost 9240
 

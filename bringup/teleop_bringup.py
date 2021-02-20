@@ -72,6 +72,9 @@ def run_server(port):
                 if data=='@joystick':
                     tmux.cmd(0,'cd %s' %jfolder)
                     tmux.cmd(0,'roslaunch teleop.launch')
+                elif data=='@joystick4wd':
+                    tmux.cmd(0,'cd %s' %jfolder)
+                    tmux.cmd(0,'roslaunch teleop.launch use_4wd:=true')
                 elif data=='@joystickkill':
                     tmux.Cc(0)
                 else:

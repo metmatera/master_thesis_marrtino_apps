@@ -37,6 +37,7 @@ server_name = 'Bringup'     # server name
 server_port = 9912          # web server port
 status = "Idle"             # robot status sent to websocket
 
+usenetcat = True
 
 # Websocket server handler
 
@@ -184,17 +185,21 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # robot start/stop
         elif (message=='robot_start'):
-            self.tmux.cmd(self.wnet,"echo '@robot' | netcat -w 1 localhost 9236")
-            self.tmux.roslaunch(self.wrobot,'robot','robot')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@robot' | netcat -w 1 localhost 9236")
+            else:
+                self.tmux.roslaunch(self.wrobot,'robot','robot')
             self.waitfor('robot',5)
             self.waitfor('odom',1)
             self.waitfor('sonar',1)
         elif (message=='robot_kill'):
-            self.tmux.cmd(self.wnet,"echo '@robotkill' | netcat -w 1 localhost 9236")
-            self.tmux.roskill('orazio')
-            self.tmux.roskill('state_pub_robot')
-            time.sleep(1)
-            self.tmux.killall(self.wrobot)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@robotkill' | netcat -w 1 localhost 9236")
+            else:
+                self.tmux.roskill('orazio')
+                self.tmux.roskill('state_pub_robot')
+                time.sleep(1)
+                self.tmux.killall(self.wrobot)
             time.sleep(1)
             if check_robot():
                 self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
@@ -227,9 +232,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         # simrobot start/stop
         elif (message[0:14]=='simrobot_start'):
             if (message=='simrobot_start'):
-                stagestr = "montreal;marrtino;1"
-                self.tmux.cmd(self.wnet,"echo '%s' | netcat -w 1 localhost 9235" %stagestr)
-                self.tmux.roslaunch(self.wrobot,'stage','simrobot')
+                if usenetcat:
+                    stagestr = "montreal;marrtino;1"
+                    self.tmux.cmd(self.wnet,"echo '%s' | netcat -w 1 localhost 9235" %stagestr)
+                else:
+                    self.tmux.roslaunch(self.wrobot,'stage','simrobot')
             elif (message=='simrobot_start_nogui'):  # launch stage without GUI
                 self.tmux.roslaunch(self.wrobot,'stage','simrobot','stageros_args:=\"-g\"')
                 # TODO does not work with simulated camera!!! Need dummyX11
@@ -238,10 +245,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.waitfor('laser',1)
             # check_tfs() !!! DOES NOT WORK BECAUSE OF use_sim_time unset at startup...
         elif (message=='simrobot_kill'):
-            self.tmux.cmd(self.wnet,"echo '@stagekill' | netcat -w 1 localhost 9235")
-            self.tmux.roskill('stageros')
-            time.sleep(1)
-            self.tmux.killall(self.wrobot)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@stagekill' | netcat -w 1 localhost 9235")
+            else:
+                self.tmux.roskill('stageros')
+                time.sleep(1)
+                self.tmux.killall(self.wrobot)
             time.sleep(1)
             if check_simrobot():
                 self.tmux.cmd(wquit,"kill -9 `ps ax | grep websocket_robot | awk '{print $1}'`")
@@ -272,14 +281,18 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # usbcam
         elif (message=='usbcam_start'):
-            self.tmux.cmd(self.wnet,"echo '@usbcam' | netcat -w 1 localhost 9237")
-            self.tmux.roslaunch(self.wcamera,'camera','usbcam')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@usbcam' | netcat -w 1 localhost 9237")
+            else:
+                self.tmux.roslaunch(self.wcamera,'camera','usbcam')
             self.waitfor('rgb_camera',5)
             #time.sleep(5)
             #self.checkStatus('camera')
         elif (message=='usbcam_kill'):
-            self.tmux.cmd(self.wnet,"echo '@camerakill' | netcat -w 1 localhost 9237")
-            self.tmux.roskill('usb_cam')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@camerakill' | netcat -w 1 localhost 9237")
+            else:
+                self.tmux.roskill('usb_cam')
             self.tmux.roskill('state_pub_usbcam')
             time.sleep(2)
             self.tmux.killall(self.wcamera)
@@ -334,33 +347,41 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # hokuyo
         elif (message=='hokuyo_start'):
-            self.tmux.cmd(self.wnet,"echo '@hokuyo' | netcat -w 1 localhost 9238")
-            self.tmux.roslaunch(self.wlaser,'laser','hokuyo')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@hokuyo' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.roslaunch(self.wlaser,'laser','hokuyo')
             self.waitfor('laser',5)
             #time.sleep(5)
             #self.checkStatus('laser')
         elif (message=='hokuyo_kill'):
-            self.tmux.cmd(self.wnet,"echo '@laserkill' | netcat -w 1 localhost 9238")
-            self.tmux.roskill('hokuyo')
-            self.tmux.roskill('state_pub_laser')
-            time.sleep(3)
-            self.tmux.killall(self.wlaser)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@laserkill' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.roskill('hokuyo')
+                self.tmux.roskill('state_pub_laser')
+                time.sleep(3)
+                self.tmux.killall(self.wlaser)
             time.sleep(3)
             self.checkStatus('laser')
 
         # rplidar
         elif (message=='rplidar_start'):
-            self.tmux.cmd(self.wnet,"echo '@rplidar' | netcat -w 1 localhost 9238")
-            self.tmux.roslaunch(self.wlaser,'laser','rplidar')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@rplidar' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.roslaunch(self.wlaser,'laser','rplidar')
             self.waitfor('laser',5)
             #time.sleep(5)
             #self.checkStatus('laser')
         elif (message=='rplidar_kill'):
-            self.tmux.cmd(self.wnet,"echo '@laserkill' | netcat -w 1 localhost 9238")
-            self.tmux.roskill('rplidar')
-            self.tmux.roskill('state_pub_laser')
-            time.sleep(3)
-            self.tmux.killall(self.wlaser)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@laserkill' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.roskill('rplidar')
+                self.tmux.roskill('state_pub_laser')
+                time.sleep(3)
+                self.tmux.killall(self.wlaser)
             time.sleep(3)
             self.checkStatus('laser')
 
@@ -394,57 +415,76 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # joystick
         elif (message=='joystick_start'):
-            self.tmux.cmd(self.wnet,"echo '@joystick' | netcat -w 1 localhost 9240")
-            self.tmux.roslaunch(self.wjoystick,'teleop','teleop')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@joystick' | netcat -w 1 localhost 9240")
+            else:
+                self.tmux.roslaunch(self.wjoystick,'teleop','teleop')
             time.sleep(3)
             self.checkStatus('joystick')
         elif (message=='joystick_kill'):
-            self.tmux.cmd(self.wnet,"echo '@joystickkill' | netcat -w 1 localhost 9240")
-            self.tmux.roskill('joystick')
-            self.tmux.roskill('joy')
-            time.sleep(3)
-            self.tmux.killall(self.wjoystick)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@joystickkill' | netcat -w 1 localhost 9240")
+            else:
+                self.tmux.roskill('joystick')
+                self.tmux.roskill('joy')
+                time.sleep(3)
+                self.tmux.killall(self.wjoystick)
             time.sleep(3)
             self.checkStatus('joystick')
 
 
         # joystick 4wd
         elif (message=='joystick4wd_start'):
-            self.tmux.roslaunch(self.wjoystick,'teleop','teleop','use_4wd:=true &')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@joystick4wd' | netcat -w 1 localhost 9240")
+            else:
+                self.tmux.roslaunch(self.wjoystick,'teleop','teleop','use_4wd:=true &')
             time.sleep(3)
             self.tmux.python(self.wjoystick,'teleop','joy4w.py')
             time.sleep(3)
             self.checkStatus('joystick')
         elif (message=='joystick4wd_kill'):
-            self.tmux.roskill('joy')
-            time.sleep(3)
-            self.tmux.killall(self.wjoystick)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@joystickkill' | netcat -w 1 localhost 9240")
+            else:
+                self.tmux.roskill('joystick')
+                self.tmux.roskill('joy')
+                time.sleep(3)
+                self.tmux.killall(self.wjoystick)
             time.sleep(3)
             self.checkStatus('joystick')
 
 
         # audio
         elif (message=='audio_start'):
-            self.tmux.cmd(self.wnet,"echo '@audio' | netcat -w 1 localhost 9239")
-            self.tmux.python(self.waudio,'audio','audio_server.py')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@audio' | netcat -w 1 localhost 9239")
+            else:
+                self.tmux.python(self.waudio,'audio','audio_server.py')
             time.sleep(3)
             self.checkStatus()
         elif (message=='audio_kill'):
-            self.tmux.cmd(self.wnet,"echo '@audiokill' | netcat -w 1 localhost 9239")
-            self.tmux.killall(self.waudio)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@audiokill' | netcat -w 1 localhost 9239")
+            else:
+                self.tmux.killall(self.waudio)
             time.sleep(3)
             self.checkStatus()
 
 
         # apriltags detector
         elif (message=='apriltags_start'):
-            self.tmux.cmd(self.wnet,"echo '@apriltags' | netcat -w 1 localhost 9237")
-            self.tmux.roslaunch(self.wimgproc,'marker','tags')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@apriltags' | netcat -w 1 localhost 9237")
+            else:
+                self.tmux.roslaunch(self.wimgproc,'marker','tags')
             time.sleep(3)
             self.checkStatus()
         elif (message=='apriltags_kill'):
-            self.tmux.cmd(self.wnet,"echo '@apriltagskill' | netcat -w 1 localhost 9237")
-            self.tmux.killall(self.wimgproc)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@apriltagskill' | netcat -w 1 localhost 9237")
+            else:
+                self.tmux.killall(self.wimgproc)
             time.sleep(3)
             self.checkStatus()
 
