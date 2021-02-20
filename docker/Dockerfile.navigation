@@ -40,10 +40,10 @@ RUN echo "fi" >> $HOME/.bashrc
 # Set and compile ROS packages
 
 RUN cd $HOME/ros/catkin_ws/src && \
-    ln -s $HOME/src/ros/urg_c . && \
-    ln -s $HOME/src/ros/urg_node . && \
-    ln -s $HOME/src/ros/rplidar_ros . && \
-    ln -s $HOME/src/ros/laser_proc .  && \
+    ln -s $HOME/src/urg_c . && \
+    ln -s $HOME/src/urg_node . && \
+    ln -s $HOME/src/rplidar_ros . && \
+    ln -s $HOME/src/laser_proc .  && \
     ln -s $HOME/src/gradient_based_navigation .
 
 RUN if [ "$MACHTYPE" = "aarch64" ]; then \
