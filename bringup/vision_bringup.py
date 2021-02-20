@@ -72,8 +72,14 @@ def run_server(port):
                 cfolder = "~/src/marrtino_apps/camera"
                 mfolder = "~/src/marrtino_apps/marker"
                 if data=='@usbcam':
-                    tmux.cmd(0,'cd %s' %cfolder) # videoserver:=true
+                    tmux.cmd(0,'cd %s' %cfolder)
                     tmux.cmd(0,'roslaunch usbcam.launch')
+                elif data=='@astra':
+                    tmux.cmd(0,'cd %s' %cfolder)
+                    tmux.cmd(0,'roslaunch astra.launch')
+                elif data=='@astra':
+                    tmux.cmd(0,'cd %s' %cfolder)
+                    tmux.cmd(0,'roslaunch xtion2.launch')
                 elif data=='@camerakill':
                     tmux.Cc(0)
                 elif data=='@videoserver':

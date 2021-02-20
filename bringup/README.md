@@ -52,6 +52,8 @@ Send commands to bringup servers
         echo '@firmwareparams;[marrtino2019|pka03|ln298|arduino]' | netcat -w 1 localhost 9236
 
         echo '@usbcam' | netcat -w 1 localhost 9237
+        echo '@astra' | netcat -w 1 localhost 9237
+        echo '@xtion' | netcat -w 1 localhost 9237
         echo '@camerakill' | netcat -w 1 localhost 9237
         echo '@videoserver' | netcat -w 1 localhost 9237
         echo '@videoserverkill' | netcat -w 1 localhost 9237
