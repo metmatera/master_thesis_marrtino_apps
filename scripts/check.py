@@ -151,7 +151,7 @@ def check_odom():
     if r:
         odomcount = 0
         odom_sub = rospy.Subscriber('odom', Odometry, odom_cb)
-        dt = 2.0
+        dt = 5.0
         time.sleep(dt)
         odom_sub.unregister()
         odomrate = odomcount/dt
