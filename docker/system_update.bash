@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source stop_docker.bash 
+source $MARRTINO_APPS_HOME/docker/stop_docker.bash 
 
 sleep 5
 
@@ -16,5 +16,5 @@ docker image prune -f
 
 date > ~/log/last_systemupdate
 
-source start_docker.bash
+source $MARRTINO_APPS_HOME/docker/start_docker.bash
 

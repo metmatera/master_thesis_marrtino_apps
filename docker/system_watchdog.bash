@@ -2,8 +2,7 @@
 
 date
 
-rm -f ~/log/shutdownrequest
-rm -f ~/log/rebootrequest
+rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart
 
 sleep 10
 cd /home/marrtino/bin && source start_docker.bash
@@ -22,9 +21,7 @@ while [ ! -f ~/log/shutdownrequest ] && [ ! -f  ~/log/rebootrequest ]; do
 
     if [ -f  ~/log/dockerrestart ]; then
       echo "docker restart..."
-      source stop_docker.bash
-      sleep 1
-      source start_docker.bash
+      source restart_docker.bash
       rm -f ~/log/dockerrestart
     fi
 
