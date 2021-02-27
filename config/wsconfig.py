@@ -142,7 +142,11 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         v = v1+" - "+v2
 
         if (self.config != None):
-            v = "MB: "+self.config['robot']['motorboard']
+            if (self.config['robot']['motorboard'] == False):
+                mbstr='OFF'
+            else:
+                mbstr = self.config['robot']['motorboard']
+            v = "MB: "+ mbstr
 
         print('MARRtino info %s' %(v))
         return v
