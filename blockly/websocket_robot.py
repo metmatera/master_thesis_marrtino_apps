@@ -115,8 +115,9 @@ def display(text, ws=None):
             ws.write_message('display %s' %text)
         except tornado.websocket.WebSocketClosedError:
             print('Cannot write on websocket')
-        except Exception:
-            print('General error when write on websocket')
+        except Exception as e:
+            print('Error when writing on websocket')
+            print(e)
     else:
         for ws in list_ws:
             display(text,ws)
@@ -131,11 +132,18 @@ def main_loop(data):
             for ws in list_ws:
                 try:
                     ws.write_message(status)
+                    rospy.sleep(0.1)
                     #print(status)
                 except tornado.websocket.WebSocketClosedError:
                     #print('Connection closed.')
                     #websocket_server = None
                     pass
+                except Exception as e:
+                    print("ERROR in Main loop")
+                    print(e)
+                    ioloop = tornado.ioloop.IOLoop.instance()
+                    ioloop.add_callback(ioloop.stop)
+                    run=False
     print("Main loop quit.")
 
 
@@ -198,7 +206,7 @@ def exec_thread(code):
         exec(fncodestr)
     except Exception as e:
         print("FN CODE DEFINITION ERROR")
-        print e
+        print(e)
         display(e)
         return
 
@@ -225,8 +233,8 @@ def exec_thread(code):
                 run_code_thread.terminate()
                 #print "Run code thread: ", run_code_thread," terminated."
             except Exception as e:
-                print e
-                #print "Thread already terminated"
+                print("ERROR in Thread termination")
+                print(e)
     run_code_thread.join()
     run_code_thread = None    
 
@@ -280,8 +288,10 @@ if __name__ == "__main__":
         http_server = tornado.httpserver.HTTPServer(application)
         http_server.listen(server_port)
         print("%sWebsocket server listening on port %d%s" %(GREEN,server_port,RESET))
+
+        ioloop = tornado.ioloop.IOLoop.instance()
         try:
-            tornado.ioloop.IOLoop.instance().start()
+            ioloop.start()
         except KeyboardInterrupt:
             print(" -- Keyboard interrupt --")
 

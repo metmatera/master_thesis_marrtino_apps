@@ -775,7 +775,10 @@ def set_speed(lx,az,tm,stopend=False):
         msg.linear.x = 0
         msg.angular.z = 0
         cmd_pub.publish(msg)
-        rate.sleep()
+        try:
+            rate.sleep()
+        except:
+            pass
     return True
 
 def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
@@ -815,7 +818,10 @@ def setSpeed4W(fl,fr,bl,br,tm,stopend=False):
     if (stopend):
         msg.velocities = [0,0,0,0]
         joints_pub.publish(msg)
-        rate.sleep()
+        try:
+            rate.sleep()
+        except:
+            pass
     return True
 
 
@@ -1232,9 +1238,13 @@ def start_movebase_pose(target_pose): # non-blocking
 
 def start_movebase(gx, gy, gth_deg): # non-blocking
     global ac_movebase, move_base_running, target_pose
+
     if (ac_movebase == None):
         ac_movebase = actionlib.SimpleActionClient(ACTION_move_base,MoveBaseAction)
-    ac_movebase.wait_for_server()
+        timeout = rospy.Duration(5)
+        if not ac_movebase.wait_for_server(timeout):
+            print("ERROR start_movebase: Cannot connect with move_base server")
+            return False
 
     target_pose = [gx, gy, gth_deg/180.0*math.pi]
 
@@ -1251,7 +1261,7 @@ def start_movebase(gx, gy, gth_deg): # non-blocking
     move_base_running = True
     print("move_base action started: target %r" %(target_pose))
     rospy.sleep(0.2)
-
+    return True
 
 def movebase_running():
     global ac_movebase, move_base_running
@@ -1274,25 +1284,49 @@ def movebase_step(delay):  # executes one move_base step of delay seconds
     finish = False
     success = False
 
+    rospy.sleep(delay)
+
     try:
-        res = ac_movebase.wait_for_result(rospy.Duration(delay))  # true: action finished
+        st = ac_movebase.get_state()
+        #res = ac_movebase.wait_for_result(rospy.Duration(delay))  # true: action finished
+
+        #res2 = ac_movebase.get_result()
+
+        #print("-- movebase wait_for_result: %r" %res)
+        #print("-- movebase result: %s" %res2)
+        #print("-- movebase state: %s" %st)
+        # state  1: running, 3: succeed, 4: abort
+    
+
         if rospy.has_param('/move_base_node/TrajectoryPlannerROS/xy_goal_tolerance'):
-            gd = rospy.get_param('/move_base_node/TrajectoryPlannerROS/xy_goal_tolerance')
+            gt = rospy.get_param('/move_base_node/TrajectoryPlannerROS/xy_goal_tolerance')
+        elif rospy.has_param('/move_base_node/DWAPlannerROS/xy_goal_tolerance'):
+            gt = rospy.get_param('/move_base_node/DWAPlannerROS/xy_goal_tolerance')
         else:
-            gd = 0.5
-        d = dist_from_goal()
-        if not res and target_pose[2]>1000 and d<gd:
+            gt = 0.25
+
+        #gt *= 1.5 # margin needed to avoid deadlocks
+
+        #d = dist_from_goal()
+        #print("-- d: %f < %f" %(d,gt))
+
+        if st==1 and target_pose[2]>=999 and dist_from_goal()<gt:
             print('Goal reached, ignoring orientation')
             finish = True
             success = True
-        elif res:
-            print("move_base action finished: %s" %ac_movebase.get_result())
+        elif st==3:
             finish = True
             success = True
+        elif st==4:
+            finish = True
+            success = False
     except KeyboardInterrupt:
         print("move_base action canceled by user")
         finish = True
         success = False
+
+    if finish:
+        print("move_base action finished. success: %r" %success)
 
     return (finish, success)
 
@@ -1300,12 +1334,15 @@ def movebase_step(delay):  # executes one move_base step of delay seconds
 def exec_movebase(gx, gy, gth_deg):  # blocking
     global ac_movebase, move_base_running, target_pose
 
-    start_movebase(gx, gy, gth_deg)
+    r = start_movebase(gx, gy, gth_deg)
+    if not r:
+        return False
+
     success = True
 
     delay = 0.5
     while move_base_running:
-        finish, successs = movebase_step(delay)
+        finish, success = movebase_step(delay)
         if finish:  # action is terminated
             exec_movebase_stop()
     
@@ -1321,12 +1358,15 @@ def movebase_stop():
 
 def exec_movebase_stop():
     global ac_movebase, move_base_running
-    if (ac_movebase == None):
-        ac_movebase = actionlib.SimpleActionClient('move_base',MoveBaseAction)
-    ac_movebase.wait_for_server()
-    ac_movebase.cancel_all_goals()
     move_base_running = False
     target_pose = None
+    if (ac_movebase == None):
+        ac_movebase = actionlib.SimpleActionClient('move_base',MoveBaseAction)
+        timeout = rospy.Duration(5)
+        if not ac_movebase.wait_for_server(timeout):
+            print("ERROR stop_movebase: Cannot connect with move_base server")
+            return
+    ac_movebase.cancel_all_goals()
 
 
 ac_follow_person = None  # action client

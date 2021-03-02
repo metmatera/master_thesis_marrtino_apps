@@ -64,7 +64,9 @@ Send commands to bringup servers
         echo '@rplidar' | netcat -w 1 localhost 9238
         echo '@laserkill' | netcat -w 1 localhost 9238
         echo '@loc' | netcat -w 1 localhost 9238
+        echo '@lockill' | netcat -w 1 localhost 9238
         echo '@movebase' | netcat -w 1 localhost 9238
+        echo '@movebasekill' | netcat -w 1 localhost 9238
 
         echo '@audio' | netcat -w 1 localhost 9239
         echo '@audiokill' | netcat -w 1 localhost 9239

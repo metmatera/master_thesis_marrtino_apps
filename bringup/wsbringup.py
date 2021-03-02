@@ -517,9 +517,12 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.tmux.cmd(self.wplayground,'rosrun map_server map_saver -f lastmap')
             self.checkStatus()
 
-        # amcl
+        # amcl / localization
         elif (message=='amcl_start'):
-            self.tmux.roslaunch(self.wmaploc,'navigation','amcl')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@loc' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.roslaunch(self.wmaploc,'navigation','amcl')
             time.sleep(5)
             self.checkStatus()
         elif (message=='amcl_lastmap_start'):
@@ -527,7 +530,10 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             time.sleep(5)
             self.checkStatus()
         elif (message=='amcl_kill'):
-            self.tmux.killall(self.wmaploc)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@lockill' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.killall(self.wmaploc)
             time.sleep(5)
             self.checkStatus()
 
@@ -556,13 +562,19 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.checkStatus()
 
 
-        # move_base
+        # move_base / navigation
         elif (message=='move_base_node_start'):
-            self.tmux.roslaunch(self.wnav,'navigation','move_base')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@movebase' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.roslaunch(self.wnav,'navigation','move_base')
             time.sleep(5)
             self.checkStatus()
         elif (message=='move_base_node_kill'):
-            self.tmux.killall(self.wnav)
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@movebasekill' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.killall(self.wnav)
             time.sleep(5)
             self.checkStatus()
 

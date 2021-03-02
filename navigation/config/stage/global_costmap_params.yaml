@@ -1,5 +1,5 @@
 global_costmap:
-  global_frame: /map
+  global_frame: map
   robot_base_frame: base_frame
   update_frequency: 5.0
   publish_frequency: 2.0
@@ -8,8 +8,8 @@ global_costmap:
   obstacle_range: 6.0
   raytrace_range: 3.5
   footprint: '[]'
-  robot_radius: 0.5
-  inflation_radius: 0.5
+  robot_radius: 0.2
+  inflation_radius: 0.3
   cost_scaling_factor: 5.0
 
   observation_sources: laser_scan_sensor 
