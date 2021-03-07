@@ -983,20 +983,25 @@ def say(text, language='en'):
     lstr = 'en-US'
     if (language!='en'):
         lstr = language+'-'+language.upper()
+    stage_say(text)
     try:
         assock.send('TTS[%s] %s\n\r' %(lstr,text))
-        time.sleep(1)
+        rospy.sleep(1)
         data = assock.recv(80)
         print(data)
     except:
+        rospy.sleep(3)
         pass
+    stage_say("")
+    
 
 
 def stage_say(text, language='en'):
-    global stagesay_pub
+    global stage_say_pub
     s = String()
     s.data = text
     stage_say_pub.publish(s)
+
 
 # ASR
 
