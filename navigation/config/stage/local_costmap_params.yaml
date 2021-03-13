@@ -11,8 +11,8 @@ local_costmap:
   obstacle_range: 3.0
   raytrace_range: 3.5
   footprint: '[]'
-  robot_radius: 0.15
-  inflation_radius: 0.15
+  robot_radius: 0.2
+  inflation_radius: 0.4
   cost_scaling_factor: 5.0
 
   observation_sources: laser_scan_sensor 
@@ -22,7 +22,7 @@ local_costmap:
     enabled: true
     cost_scaling_factor: 5.0
     inflate_unknown: false
-    inflation_radius: 0.05
+    inflation_radius: 0.4
 
   obstacle_layer:
     enabled: true

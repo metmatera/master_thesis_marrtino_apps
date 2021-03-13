@@ -34,7 +34,7 @@ DWAPlannerROS:
   holonomic_robot: false
 
   yaw_goal_tolerance: 0.2
-  xy_goal_tolerance: 0.2
+  xy_goal_tolerance: 0.4
   latch_xy_goal_tolerance: true
 
   heading_lookahead: 0.5
@@ -45,7 +45,7 @@ DWAPlannerROS:
 #(double, default: 32.0)
 #The weighting for how much the controller should stay close to the path it was given
 
-  goal_distance_bias: 24.0
+  goal_distance_bias: 20.0
 # (double, default: 24.0)
 #The weighting for how much the controller should attempt to reach its local goal, also controls speed
 
