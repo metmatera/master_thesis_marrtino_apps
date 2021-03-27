@@ -210,9 +210,9 @@ class TTSServer(threading.Thread):
 
         self.setVolume(99)  # set volume (99% = +3 dB)
 
-        print 'bip'
-        self.play('bip')
-        time.sleep(3)
+        #print('bip')
+        #self.play('bip')
+        #time.sleep(3)
 
         self.say('Hello!', 'en')
         self.say('Audio server is running.', 'en')
