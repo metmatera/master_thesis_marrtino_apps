@@ -24,7 +24,7 @@ def run_server(port):
     sock.listen(1)
     print("MARRtino teleop server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['joy'])
+    tmux = TmuxSend('bringup', ['joy', 'joy4w'])
 
     connected = False
     dorun = True
@@ -75,6 +75,8 @@ def run_server(port):
                 elif data=='@joystick4wd':
                     tmux.cmd(0,'cd %s' %jfolder)
                     tmux.cmd(0,'roslaunch teleop.launch use_4wd:=true')
+                    tmux.cmd(1,'cd %s' %jfolder)
+                    tmux.cmd(1,'python joy4w.py')
                 elif data=='@joystickkill':
                     tmux.Cc(0)
                 else:
