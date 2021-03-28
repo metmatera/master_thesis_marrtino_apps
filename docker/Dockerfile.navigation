@@ -30,13 +30,6 @@ RUN mkdir -p $HOME/src &&  cd $HOME/src && \
     git clone https://github.com/ros-perception/laser_proc.git
 
 
-# Set up .bashrc
-
-RUN echo "if [ -d /usr/lib/nvidia-384/ ]; then" >> $HOME/.bashrc
-RUN echo "  export PATH=\"/usr/lib/nvidia-384/bin:\${PATH}\"" >> $HOME/.bashrc
-RUN echo "  export LD_LIBRARY_PATH=\"/usr/lib/nvidia-384:/usr/lib32/nvidia-384:\${LD_LIBRARY_PATH}\" " >> $HOME/.bashrc
-RUN echo "fi" >> $HOME/.bashrc
-
 # Set and compile ROS packages
 
 RUN cd $HOME/ros/catkin_ws/src && \

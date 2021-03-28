@@ -1,7 +1,7 @@
 obstaclesDistanceInfluence_m: 0.3
 max_vel_x: 0.3
 max_vel_theta: 0.5
-force_scale: 0.3
+force_scale: 0.1
 momentum_scale: 0.1
 rate: 10
 

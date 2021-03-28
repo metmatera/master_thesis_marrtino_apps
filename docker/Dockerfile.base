@@ -72,7 +72,6 @@ RUN mkdir -p $HOME/src && cd $HOME/src && \
 RUN echo "export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps" >> $HOME/.bashrc
 
 RUN echo "export MARRTINO_VERSION=\"docker\"" >> $HOME/.bashrc
-RUN echo "export ROBOT_TYPE=stage" >> $HOME/.bashrc
 
 RUN echo "docker 4.2" >> $HOME/.marrtino_version
 

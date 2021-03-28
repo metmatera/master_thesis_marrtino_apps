@@ -12,5 +12,5 @@
     - ROS_IP=$ROS_IP
     volumes:
     - /dev:/dev
-    - $HOME/src/marrtino_apps:/home/robot/src/marrtino_apps
+    - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
 
