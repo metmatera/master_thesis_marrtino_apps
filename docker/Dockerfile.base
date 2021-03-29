@@ -6,6 +6,8 @@
 
 FROM ros:melodic-ros-base-bionic
 
+ARG MARRTINO_SYSTEM_VERSION=4.2.1
+
 ARG MACHTYPE=default
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -73,7 +75,7 @@ RUN echo "export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps" >> $HOME/.bashrc
 
 RUN echo "export MARRTINO_VERSION=\"docker\"" >> $HOME/.bashrc
 
-RUN echo "docker 4.2" >> $HOME/.marrtino_version
+RUN echo "docker $MARRTINO_SYSTEM_VERSION" >> $HOME/.marrtino_version
 
 RUN touch ~/.sudo_as_admin_successful
 
