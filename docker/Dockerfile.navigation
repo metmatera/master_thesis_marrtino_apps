@@ -23,12 +23,13 @@ RUN apt-get update && \
 USER robot
 
 RUN mkdir -p $HOME/src &&  cd $HOME/src && \
-    git clone https://github.com/Imperoli/gradient_based_navigation.git && \
     git clone https://github.com/ros-drivers/urg_c.git && \
     git clone https://github.com/ros-drivers/urg_node.git && \
     git clone https://github.com/Slamtec/rplidar_ros.git && \
     git clone https://github.com/ros-perception/laser_proc.git
 
+RUN cd $HOME/src && \
+    git clone https://github.com/Imperoli/gradient_based_navigation.git
 
 # Set and compile ROS packages
 

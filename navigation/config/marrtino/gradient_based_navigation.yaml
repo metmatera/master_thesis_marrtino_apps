@@ -4,6 +4,8 @@ max_vel_theta: 0.5
 force_scale: 0.1
 momentum_scale: 0.1
 rate: 10
+minScanRange: 0.25
+maxScanRange: 6.0
 
 gbnEnabled: false
 GUI: false
