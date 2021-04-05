@@ -11,6 +11,7 @@
     environment:
     - DISPLAY=:0
     - ROS_IP=$ROS_IP
+    - CAMRES=$CAMRES
     volumes:
     - /dev:/dev
     - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
