@@ -77,6 +77,9 @@ def run_server(port):
                     tmux.Cc(0)
                 elif data=='@movebase':
                     tmux.cmd(1,'cd %s' %nfolder)
+                    tmux.cmd(1,'roslaunch move_base.launch')
+                elif data=='@movebasegbn':
+                    tmux.cmd(1,'cd %s' %nfolder)
                     tmux.cmd(1,'roslaunch move_base_gbn.launch')
                 elif data=='@movebasekill':
                     tmux.Cc(1)
