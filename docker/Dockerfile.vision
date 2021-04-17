@@ -3,7 +3,7 @@
 
 # docker build -t marrtino:vision -f Dockerfile.vision .
 
-FROM marrtino:base
+FROM marrtino:system
 
 ARG MACHTYPE=default
 
@@ -50,10 +50,13 @@ RUN cd $HOME/ros/catkin_ws/src && \
 
 RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
 
-# Set working dir and container command
+# marrtino_apps
+
+RUN cd $HOME/src && \
+    git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
 
 WORKDIR /home/robot
 
 CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python vision_bringup.py" ]
-#CMD [ "/usr/bin/tmux" ]
+
 
