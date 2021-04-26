@@ -25,6 +25,10 @@ USER robot
 
 RUN pip install --user sox==1.3.7 pyalsaaudio==0.8.4
 
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
 # marrtino_apps
 
 RUN cd $HOME/src && \

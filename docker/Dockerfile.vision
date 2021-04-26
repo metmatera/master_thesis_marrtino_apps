@@ -50,6 +50,10 @@ RUN cd $HOME/ros/catkin_ws/src && \
 
 RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
 
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
 # marrtino_apps
 
 RUN cd $HOME/src && \

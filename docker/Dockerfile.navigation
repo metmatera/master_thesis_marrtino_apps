@@ -48,6 +48,10 @@ RUN if [ "$MACHTYPE" = "aarch64" ]; then \
        /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make" ; \
     fi
 
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
 # marrtino_apps
 
 RUN cd $HOME/src && \

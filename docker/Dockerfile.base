@@ -8,6 +8,10 @@ FROM marrtino:system
 
 USER robot
 
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
 # marrtino_apps
 
 RUN cd $HOME/src && \
