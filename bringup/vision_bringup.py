@@ -33,7 +33,7 @@ def run_server(port):
 
     print("Vision server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['camera','vidserver','april','cmd'])
+    tmux = TmuxSend('bringup', ['camera','vidserver','april','takephoto','cmd'])
 
     connected = False
     dorun = True
@@ -110,6 +110,11 @@ def run_server(port):
                     tmux.cmd(2,'roslaunch tags.launch')
                 elif data=='@apriltagskill':
                     tmux.Cc(2)
+                elif data=='@takephoto':
+                    tmux.cmd(3,'cd %s' %cfolder)
+                    tmux.cmd(3,'python takephoto.py')
+                elif data=='@takephotokill':
+                    tmux.Cc(3)
                 else:
                     print('Unknown command %s' %data)
 
