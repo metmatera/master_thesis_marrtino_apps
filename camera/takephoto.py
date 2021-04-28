@@ -19,7 +19,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 from __future__ import print_function
-import sys
+import os,sys,socket
 import rospy
 import cv2
 from std_msgs.msg import String
@@ -27,6 +27,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import time
 import argparse
+import numpy
 
 ROS_NODE_NAME = 'takephoto'
 TAKEPHOTO_TOPIC = '/takephoto'
@@ -89,18 +90,42 @@ class TakePhoto:
             if (rospy.has_param(PARAM_takephoto_image_folder)):
                 self.takephoto_image_folder = rospy.get_param(PARAM_takephoto_image_folder)
             # Set filename
-            img_file = self.takephoto_image_folder + "/" + img_title
+            timestr = ""
             if usetimestamp:
                 timestr = time.strftime("%Y%m%d-%H%M%S-")
-                img_file = self.takephoto_image_folder + "/" + timestr + img_title
+            img_file = self.takephoto_image_folder + "/" + timestr + img_title
             # Save an image
             rospy.loginfo("Saving image " + img_file)
             cv2.imwrite(img_file, self.image)
+            cmd = 'ln -sf %s %s/lastimage.%s' \
+                    %(img_file,self.takephoto_image_folder,img_title[-3:])
+            os.system(cmd)
             rospy.loginfo("Saved image " + img_file)
             return True
         else:
             rospy.loginfo("No images received")
             return False
+
+    def send_image(self):
+        if self.image_received:
+            
+            sendimage = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+
+            data = numpy.array(sendimage)
+            stringData = data.tostring()
+
+            sock = socket.socket()
+            sock.connect(('localhost', 9250)) # stagepersondetection
+            (h,w,c) = self.image.shape
+            print("Sending %dx%d image " %(w,h))
+            sock.sendall("RGB %d %d\n\r" %(w,h))
+            rospy.sleep(0.2)
+            sock.sendall(stringData);
+            data = sock.recv(256)
+            data = data.strip().decode('UTF-8')
+            print(data)    
+            sock.close()
+
 
     def show_image(self):
         if self.image_received:
@@ -112,6 +137,9 @@ class TakePhoto:
         if msg.data == "get":
             # Take a photo
             self.take_image('photo.jpg', usetimestamp=True)
+        elif msg.data == "send":
+            # Take a photo
+            self.send_image()
 
     def waitForImage(self):
         time.sleep(0.5)
