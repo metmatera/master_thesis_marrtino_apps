@@ -75,6 +75,14 @@ class TakePhoto:
 
         print("Save image folder: %s" %self.takephoto_image_folder)
 
+        self.sendimage_server = 'localhost'
+        self.sendimage_port = 9250
+
+        print("Default send image server: %s:%d"
+               %(self.sendimage_server,self.sendimage_port) )
+
+
+
     def image_cb(self, data):
         # Convert image to OpenCV format
         try:
@@ -114,18 +122,21 @@ class TakePhoto:
             data = numpy.array(sendimage)
             stringData = data.tostring()
 
-            sock = socket.socket()
-            sock.connect(('localhost', 9250)) # stagepersondetection
-            (h,w,c) = self.image.shape
-            print("Sending %dx%d image " %(w,h))
-            sock.sendall("RGB %d %d\n\r" %(w,h))
-            rospy.sleep(0.2)
-            sock.sendall(stringData);
-            data = sock.recv(256)
-            data = data.strip().decode('UTF-8')
-            print(data)    
-            sock.close()
-
+            try:
+                sock = socket.socket()   # stagepersondetection
+                sock.connect((self.sendimage_server, self.sendimage_port))
+                (h,w,c) = self.image.shape
+                print("Sending %dx%d image " %(w,h))
+                sock.sendall("RGB %d %d\n\r" %(w,h))
+                rospy.sleep(0.2)
+                sock.sendall(stringData);
+                data = sock.recv(256)
+                data = data.strip().decode('UTF-8')
+                print(data)    
+                sock.close()
+            except Exception as e:
+                print(e)
+                print("Cannot send image to %s:%d" %(self.sendimage_server, self.sendimage_port))
 
     def show_image(self):
         if self.image_received:
@@ -137,7 +148,11 @@ class TakePhoto:
         if msg.data == "get":
             # Take a photo
             self.take_image('photo.jpg', usetimestamp=True)
-        elif msg.data == "send":
+        elif msg.data[0:4] == "send":
+            v = msg.data.split(" ")
+            if (len(v)>=3):
+                self.sendimage_server = v[1]
+                self.sendimage_port = int(v[2])
             # Take a photo
             self.send_image()
 
