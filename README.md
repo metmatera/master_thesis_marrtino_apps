@@ -4,6 +4,9 @@ Apps for MARRtino robot. See https://www.marrtino.org for more info about MARRti
 
 Please follow the instructions in the README files in each folder.
 
+To run these app, you can use the virtual machine available in https://www.marrtino.org/software
+or create docker images as shown in  [docker](https://bitbucket.org/iocchi/marrtino_apps/src/master/docker/).
+
 ## [robot](https://bitbucket.org/iocchi/marrtino_apps/src/master/robot/) ##
 
 Robot base. 
