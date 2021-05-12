@@ -1,5 +1,15 @@
 # Docker images
 
+## Pre requisites
+
+To use dockerized version of marrtino_apps you need on your OS
+
+* docker (tested on v. 19.03)
+* docker-compose (tested on v. 1.28.2)
+* python
+
+Set the environment variable `MARRTINO_APPS_HOME`to the folder where you downloaded your repository.
+
 ## Images available
 
 * orazio
