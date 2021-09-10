@@ -10,7 +10,7 @@ USER robot
 
 # Trick to force build from here
 
-RUN echo "2021-09-10" > /tmp/lastdockerbuild
+RUN echo "20210910" > /tmp/lastdockerbuild
 
 # marrtino_apps
 

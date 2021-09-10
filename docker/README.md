@@ -76,15 +76,17 @@ To interact with docker containers, see
 
 ## Docker push
 
+    Edit `Dockerfile.<component>` setting last docker build date
+
+        RUN echo "<date>" > /tmp/lastdockerbuild
+
+
     Commit ang push last changes
 
         git commit -am "dockerhub <date>"
         git push
 
 
-    Edit `Dockerfile.base` setting last docker build date
-
-        RUN echo "20210910" > /tmp/lastdockerbuild
 
     Push on Docker hub (you may need to change the docker tags)
 
