@@ -78,7 +78,7 @@ To interact with docker containers, see
 
     Commit ang push last changes
 
-        git commit ...
+        git commit -am "dockerhub <date>"
         git push
 
 
