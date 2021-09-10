@@ -70,8 +70,25 @@ Copy and edit `system_config.yaml`
 To interact with docker containers, see 
 [bringup/README](https://bitbucket.org/iocchi/marrtino_apps/src/master/bringup/README.md)
 
-## docker access
+## Docker access
 
         docker exec -it <container_name> tmux a
+
+## Docker push
+
+    Commit ang push last changes
+
+        git commit ...
+        git push
+
+
+    Edit `Dockerfile.base` setting last docker build date
+
+        RUN echo "20210910" > /tmp/lastdockerbuild
+
+    Push on Docker hub (you may need to change the docker tags)
+
+        ./docker_build.bash
+        ./docker_push.bash
 
 
