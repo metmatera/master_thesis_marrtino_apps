@@ -138,8 +138,8 @@ setSpeed4W(fl,fr,bl,br,tm,stopend=False)
 stop()
 goto(gx,gy,gth)     # map pose (move_base)
 gotoLabel(label)    # semantic map (map_server, move_base)
-gotoTarget(gx,gy, frame='odom'|'map')  # no path planning
-p = getRobotPose()
+gotoTarget(gx,gy, frame='odom'|'map'|'gt')  # no path planning
+p = getRobotPose(frame='odom'|'map'|'gt')
 
 
 # range distance
@@ -178,6 +178,11 @@ wait(sec)		    # Wait for X seconds
 b = marrtinoOK()	# returns 'true' if the robot is ready
 d = distance(p1,p2)	# Euclidean distance between points p1 and p2
 display(x) 		    # Print the content of 'x' or the result of function 'x' in the Display area 
+
+
+# simulator
+
+stage_setpose(gx,gy,gth_deg)    # place the simulated robot in gx,gy,gth_deg
 </listing>
 
 <br>

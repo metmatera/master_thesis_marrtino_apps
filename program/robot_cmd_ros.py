@@ -270,7 +270,7 @@ def get_robot_vel():
 
 
 def obstacleDistance(direction=0):
-    return obstacle_distance(direction=0)
+    return obstacle_distance(direction)
 
 def obstacle_distance(direction=0):
     global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
