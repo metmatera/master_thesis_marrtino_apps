@@ -553,13 +553,19 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # gradient_based_navigation
         elif (message=='obst_avoid_start'):
-            self.tmux.roslaunch(self.wnav,'navigation','obstacle_avoidance')
-            time.sleep(3)
-            self.checkStatus()
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@gbn' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.roslaunch(self.wnav,'navigation','obstacle_avoidance')
+                time.sleep(3)
+                self.checkStatus()
         elif (message=='obst_avoid_kill'):
-            self.tmux.killall(self.wnav)
-            time.sleep(3)
-            self.checkStatus()
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@gbnkill' | netcat -w 1 localhost 9238")
+            else:
+                self.tmux.killall(self.wnav)
+                time.sleep(3)
+                self.checkStatus()
 
 
         # move_base / navigation
