@@ -85,7 +85,7 @@ def run_server(port):
                     tmux.Cc(1)
                 elif data=='@gbn':
                     tmux.cmd(2,'cd %s' %nfolder)
-                    tmux.cmd(2,'obstacle_avoidance.launch')
+                    tmux.cmd(2,'roslaunch obstacle_avoidance.launch')
                 elif data=='@gbnkill':
                     tmux.Cc(2)
                 elif data=='@hokuyo':
