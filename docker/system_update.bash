@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "System update started"
+
 source $MARRTINO_APPS_HOME/docker/stop_docker.bash 
 
 sleep 5
@@ -19,3 +21,4 @@ date > ~/log/last_systemupdate
 
 source $MARRTINO_APPS_HOME/docker/start_docker.bash
 
+echo "System update completed"
