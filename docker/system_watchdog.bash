@@ -2,7 +2,7 @@
 
 date
 
-rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart
+rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart ~/log/logincompleted
 
 echo "Waiting for login ..."
 
