@@ -4,6 +4,17 @@ date
 
 rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart ~/log/logincompleted
 
+
+# add tmux session to .bashrc
+grep logincompleted ~/.bashrc
+
+if [ $? != 0 ]; then
+  echo "tmux -2 new-session -d -s compose\n" >> ~/.bashrc
+  echo "touch ~/log/logincompleted\n" >> ~/.bashrc
+  touch ~/log/logincompleted
+  sleep 10
+fi
+
 echo "Waiting for login ..."
 
 # add `touch ~/log/logincompleted` at the end of .bashrc
