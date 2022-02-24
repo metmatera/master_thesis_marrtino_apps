@@ -4,8 +4,18 @@ date
 
 rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart
 
-sleep 10
+echo "Waiting for login ..."
+
+# add `touch ~/log/logincompleted` at the end of .bashrc
+while [ ! -f ~/log/logincompleted ]; do
+    sleep 2.5
+done
+rm -f ~/log/logincompleted
+
+echo "Starting docker ..."
+
 cd /home/marrtino/bin && source start_docker.bash
+
 sleep 30
 
 

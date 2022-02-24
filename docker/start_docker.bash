@@ -4,7 +4,13 @@
 
 SESSION=compose
 
-tmux -2 new-session -d -s $SESSION
+# check if session already exists
+tmux has-session -t $SESSION 2>/dev/null
+
+if [ $? != 0 ]; then
+  # Set up your session
+  tmux -2 new-session -d -s $SESSION
+fi
 
 tmux rename-window -t $SESSION:0 'compose up'
 
