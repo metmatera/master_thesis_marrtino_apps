@@ -9,8 +9,13 @@ rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerr
 grep logincompleted ~/.bashrc
 
 if [ $? != 0 ]; then
-  echo "tmux -2 new-session -d -s compose" >> ~/.bashrc
-  echo "touch ~/log/logincompleted" >> ~/.bashrc
+  echo "# check if session already exists" >> ~/.bashrc
+  echo "tmux has-session -t compose 2>/dev/null" >> ~/.bashrc
+  echo "" >> ~/.bashrc
+  echo "if [ $? != 0 ]; then" >> ~/.bashrc
+  echo "  tmux -2 new-session -d -s compose" >> ~/.bashrc
+  echo "  touch ~/log/logincompleted" >> ~/.bashrc
+  echo "fi" >> ~/.bashrc
   echo "" >> ~/.bashrc
   touch ~/log/logincompleted
   sleep 10
