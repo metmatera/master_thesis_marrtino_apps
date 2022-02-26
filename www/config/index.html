@@ -141,8 +141,8 @@ Password: marrtino
 
 <li> Start the update from the terminal
 <pre style="font-size:140%;">
-cd bin
-./system_update.bash
+cd ~/src/marrtino_apps && git pull
+system_update.bash
 </pre>
 
 Note: this procedure can take many minutes, up to an hour.
@@ -223,13 +223,10 @@ Username: marrtino
 Password: marrtino
 </pre>
 
-<li> Start the update from the terminal
+<li> Restart the system (docker containers)
 <pre style="font-size:140%;">
-cd bin
-./restart_docker.bash
+restart_docker.bash
 </pre>
-
-Note: this procedure can take many minutes, up to an hour.
 
 <li> Reload this page and re-connect after a few minutes.
 
