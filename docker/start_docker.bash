@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+# This script runs in marrtino user space
 
 SESSION=compose
 
