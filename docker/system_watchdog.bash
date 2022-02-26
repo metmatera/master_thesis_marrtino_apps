@@ -22,12 +22,16 @@ if [ $? != 0 ]; then
   sleep 10
 fi
 
-echo "Waiting for login ..."
-
+# Only for VM
 # add `touch ~/log/logincompleted` at the end of .bashrc
-while [ ! -f ~/log/logincompleted ]; do
+
+if [ -f ~/.marrtino_vm ]; then
+  echo "Waiting for login ..."
+
+  while [ ! -f ~/log/logincompleted ]; do
     sleep 2.5
-done
+  done
+fi
 rm -f ~/log/logincompleted
 
 echo "Starting docker ..."
