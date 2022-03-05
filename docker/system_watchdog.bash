@@ -24,7 +24,7 @@ fi
 
 # Only for VM
 # add `touch ~/log/logincompleted` at the end of .bashrc
-if [ -f ~/.marrtino_vm ]; then
+if [ -f ~/.marrtino_vm ] || [ "$HOSTNAME" == "marrtino-VM" ]; then
   echo "Waiting for login ..."
 
   while [ ! -f ~/log/logincompleted ]; do
