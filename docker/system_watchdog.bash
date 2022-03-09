@@ -2,7 +2,7 @@
 
 date
 
-rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart ~/log/logincompleted
+rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart
 
 
 # add tmux session to .bashrc
