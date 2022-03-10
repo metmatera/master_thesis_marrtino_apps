@@ -27,8 +27,10 @@ fi
 if [ -f ~/.marrtino_vm ] || [ "$HOSTNAME" == "marrtino-VM" ]; then
   echo "Waiting for login ..."
 
-  while [ ! -f ~/log/logincompleted ]; do
+  XORG=`ps ax | grep -c Xorg`
+  while [ ! -f ~/log/logincompleted ] && [ $XORG < 2 ]; do
     sleep 2.5
+    XORG=`ps ax | grep -c Xorg`
   done
 else
   sleep 10
