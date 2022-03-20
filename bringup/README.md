@@ -35,13 +35,23 @@ Use script ```1-bringup.bash``` at init
 
 Run the bringup servers
 
+        # in stage_environments package
+        rosrun stage_environments start_simulation.py --server -server_port 9235
+
+        # in marrtino_apps/bringup
         python robot_bringup.py -server_port 9236
         python vision_bringup.py -server_port 9237
         python nav_bringup.py -server_port 9238
         python speech_bringup.py -server_port 9239
         python teleop_bringup.py -server_port 9240
 
+        ... social  9250
+
+
 Send commands to bringup servers
+
+        echo 'montreal;marrtino;1' | netcat -w 1 localhost 9235
+        echo '@stagekill' | netcat -w 1 localhost 9235
 
         echo '@robot' | netcat -w 1 localhost 9236
         echo '@robotkill' | netcat -w 1 localhost 9236
@@ -74,4 +84,12 @@ Send commands to bringup servers
         echo '@joystick' | netcat -w 1 localhost 9240
         echo '@joystick4wd' | netcat -w 1 localhost 9240
         echo '@joystickkill' | netcat -w 1 localhost 9240
+
+        echo '@social' | netcat -w 1 localhost 9250
+        echo '@socialkill' | netcat -w 1 localhost 9250
+        echo '@robot_social' | netcat -w 1 localhost 9250
+        echo '@robot_socialkill' | netcat -w 1 localhost 9250
+        echo '@tracker' | netcat -w 1 localhost 9250
+        echo '@trackerkill' | netcat -w 1 localhost 9250
+
 
