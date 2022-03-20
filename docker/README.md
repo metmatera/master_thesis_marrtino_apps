@@ -100,6 +100,9 @@ To use MARRtino social functionalities:
 
 1) download  ```marrtino_social``` repository (https://github.com/artigianitecnologici/marrtino_social) and set environment variable ```MARRTINO_SOCIAL``` to the ```marrtino_social``` folder
 
+        export MARRTINO_SOCIAL=<path_to>/marrtino_social
+
+
 2) enable social functionlity in ```system_config.yaml```
 
         social: on
