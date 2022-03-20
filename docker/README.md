@@ -94,3 +94,17 @@ To interact with docker containers, see
         ./docker_push.bash
 
 
+## MARRtino social
+
+To use MARRtino social functionalities:
+
+1) download  ```marrtino_social``` repository (https://github.com/artigianitecnologici/marrtino_social) and set environment variable ```MARRTINO_SOCIAL``` to the ```marrtino_social``` folder
+
+2) enable social functionlity in ```system_config.yaml```
+
+        social: on
+
+3) start docker containers
+
+        ./start_docker.bash
+
