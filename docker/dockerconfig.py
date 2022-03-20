@@ -103,6 +103,11 @@ def writeout(config, arch):
         if config['functions']['speech']:
             addservice(f,'speech')
 
+        if config['functions']['social']:
+            os.system('touch /tmp/marrtinosocialon')
+        else:
+            os.system('rm -f /tmp/marrtinosocialon')
+
 
 
 if __name__=='__main__':
