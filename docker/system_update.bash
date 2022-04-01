@@ -26,7 +26,8 @@ fi
 docker container prune -f
 docker image prune -f
 
-date > ~/log/last_systemupdate
+touch ~/log/last_systemupdate.log
+date >> ~/log/last_systemupdate.log
 
 source $MARRTINO_APPS_HOME/docker/start_docker.bash
 
