@@ -31,3 +31,4 @@ date > ~/log/last_systemupdate
 source $MARRTINO_APPS_HOME/docker/start_docker.bash
 
 echo "System update completed"
+

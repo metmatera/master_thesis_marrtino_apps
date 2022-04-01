@@ -36,6 +36,13 @@
     Add these commands in `~/.bashrc` to make them permanent
 
 
+* Set log files
+
+        touch ~/log/last_systemupdate
+        touch ~/log/wsconfig.log
+        touch ~/log/wsbringup.log
+
+
 ## Images available
 
 * orazio

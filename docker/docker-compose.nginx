@@ -5,3 +5,6 @@
     volumes:
     - $MARRTINO_APPS_HOME/www:/usr/share/nginx/html
 
+#    ports:
+#      - "8000:80"
+
