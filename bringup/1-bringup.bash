@@ -20,7 +20,7 @@ source $HOME/ros/catkin_ws/devel/setup.bash
 
 mkdir -p $HOME/log
 
-SESSION=bringup
+SESSION=init
 
 # check if session already exists
 tmux has-session -t $SESSION 2>/dev/null
