@@ -9,7 +9,6 @@
     volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
     - $HOME/.Xauthority:/home/robot/.Xauthority
-    - $HOME/src/stage_environments:/home/robot/src/stage_environments
     entrypoint:
     - bash
     - -ci

@@ -17,13 +17,23 @@
 * Install [docker-compose](https://docs.docker.com/compose/install/) (tested on v. 1.28.2)
 
 
-* Set the environment variable `MARRTINO_APPS_HOME` to the folder where you downloaded this repository.
+* Set environment variable `MARRTINO_APPS_HOME` to the folder where you downloaded this repository.
 
     Example:
 
         export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps
 
-    Add this command in `~/.bashrc` to make this setting permanent
+    Add this command in `~/.bashrc` to make it permanent
+
+
+* Set environment variables `ROS_IP`, `ROBOT_TYPE` according to your setup.
+
+    Example for local setup with simulator:
+
+        export ROS_IP=127.0.0.1
+        export ROBOT_TYPE=stage
+
+    Add these commands in `~/.bashrc` to make them permanent
 
 
 ## Images available

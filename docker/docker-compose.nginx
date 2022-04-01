@@ -3,5 +3,5 @@
     container_name: nginx
     network_mode: "host"
     volumes:
-    - $HOME/src/marrtino_apps/www:/usr/share/nginx/html
+    - $MARRTINO_APPS_HOME/www:/usr/share/nginx/html
 
