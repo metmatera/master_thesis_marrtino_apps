@@ -33,11 +33,11 @@ if [ $? != 0 ]; then
   tmux new-window -t $SESSION:2 -n 'roscore'
 fi
 
-tmux send-keys -t $SESSION:0 "cd \$MARRTINO_APPS_HOME/bringup" C-m
-tmux send-keys -t $SESSION:0 "python wsbringup.py" C-m
+tmux send-keys -t $SESSION:0 "cd \$MARRTINO_APPS_HOME/config" C-m
+tmux send-keys -t $SESSION:0 "python wsconfig.py" C-m
 
-tmux send-keys -t $SESSION:1 "cd \$MARRTINO_APPS_HOME/config" C-m
-tmux send-keys -t $SESSION:1 "python wsconfig.py" C-m
+tmux send-keys -t $SESSION:1 "cd \$MARRTINO_APPS_HOME/bringup" C-m
+tmux send-keys -t $SESSION:1 "python wsbringup.py" C-m
 
 tmux send-keys -t $SESSION:2 "roscore" C-m
 
