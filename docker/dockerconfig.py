@@ -104,7 +104,8 @@ def writeout(config, arch):
             addservice(f,'speech')
 
         if config['functions']['social']:
-            os.system('touch /tmp/marrtinosocialon')
+            os.system('touch /tmp/marrtinosocialon') 
+            # used by start_docker.bash / system_update.bash
         else:
             os.system('rm -f /tmp/marrtinosocialon')
 
@@ -112,7 +113,12 @@ def writeout(config, arch):
 
 if __name__=='__main__':
 
-    yamlfile = os.getenv('HOME')+"/system_config.yaml"
+    yamlfile = os.getenv('MARRTINO_APPS_HOME')+"/system_config.yaml"
+    if not os.path.isfile(yamlfile):
+        yamlfile = os.getenv('HOME')+"/system_config.yaml"
+    if not os.path.isfile(yamlfile):
+        print("File system_config.yaml not found!!!")
+        sys.exit(1)    
 
     config = readconfig(yamlfile)
     print("Config: "+str(config))
