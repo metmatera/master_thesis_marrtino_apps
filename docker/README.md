@@ -39,8 +39,8 @@
 
 Copy and edit `system_config.yaml`
 
-        cd ~
-        cp $MARRTINO_APPS_HOME/docker/system_config_template.yaml system_config.yaml
+        cd $MARRTINO_APPS_HOME
+        cp docker/system_config_template.yaml system_config.yaml
         nano system_config.yaml
 
             system:
