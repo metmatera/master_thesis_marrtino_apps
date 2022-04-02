@@ -8,7 +8,13 @@ SESSION=compose
 tmux has-session -t $SESSION 2>/dev/null
 
 if [ $? != 0 ]; then
-  # Set up your session
+
+  # Default value for DISPLAY
+  if [ "$DISPLAY" == "" ];
+    export DISPLAY=:0
+  fi
+
+  # Launch and set up session
   tmux -2 new-session -d -s $SESSION
   tmux rename-window -t $SESSION:0 'marrtino up'
   tmux new-window -t $SESSION:1 -n 'marrtino down'
