@@ -10,7 +10,7 @@ tmux has-session -t $SESSION 2>/dev/null
 if [ $? != 0 ]; then
 
   # Default value for DISPLAY
-  if [ "$DISPLAY" == "" ];
+  if [ "$DISPLAY" == "" ]; then
     export DISPLAY=:0
   fi
 
