@@ -1,8 +1,13 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import os, sys
-import yaml
-
+try:
+    import yaml
+except Exception as e:
+    print(e)
+    print("Try install yaml with    sudo apt-get install python3-yaml")
+    sys.exit(1)
 
 def readconfig(yamlfile):
     info = {}

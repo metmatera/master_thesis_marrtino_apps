@@ -5,6 +5,7 @@
     tty: true
     environment:
     - DISPLAY=:0
+    - QT_X11_NO_MITSHM=1
     - ROS_IP=$ROS_IP
     volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
