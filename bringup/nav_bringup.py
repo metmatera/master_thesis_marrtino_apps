@@ -24,7 +24,7 @@ def run_server(port):
     sock.listen(1)
     print("MARRtino navigation server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['loc','nav','laser'])
+    tmux = TmuxSend('bringup', ['loc','nav','obst','laser'])
 
     connected = False
     dorun = True
@@ -77,17 +77,25 @@ def run_server(port):
                     tmux.Cc(0)
                 elif data=='@movebase':
                     tmux.cmd(1,'cd %s' %nfolder)
+                    tmux.cmd(1,'roslaunch move_base.launch')
+                elif data=='@movebasegbn':
+                    tmux.cmd(1,'cd %s' %nfolder)
                     tmux.cmd(1,'roslaunch move_base_gbn.launch')
                 elif data=='@movebasekill':
                     tmux.Cc(1)
-                elif data=='@hokuyo':
-                    tmux.cmd(2,'cd %s' %lfolder)
-                    tmux.cmd(2,'roslaunch hokuyo.launch')
-                elif data=='@rplidar':
-                    tmux.cmd(2,'cd %s' %lfolder)
-                    tmux.cmd(2,'roslaunch rplidar.launch')
-                elif data=='@laserkill':
+                elif data=='@gbn':
+                    tmux.cmd(2,'cd %s' %nfolder)
+                    tmux.cmd(2,'roslaunch obstacle_avoidance.launch')
+                elif data=='@gbnkill':
                     tmux.Cc(2)
+                elif data=='@hokuyo':
+                    tmux.cmd(3,'cd %s' %lfolder)
+                    tmux.cmd(3,'roslaunch hokuyo.launch')
+                elif data=='@rplidar':
+                    tmux.cmd(3,'cd %s' %lfolder)
+                    tmux.cmd(3,'roslaunch rplidar.launch')
+                elif data=='@laserkill':
+                    tmux.Cc(3)
                 else:
                     print('Unknown command %s')
 

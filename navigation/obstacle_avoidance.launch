@@ -1,6 +1,6 @@
 <launch>
 <arg name="lasertopic" default="/scan" />
-<arg name="enabled" default="true" />
+<arg name="enabled" default="false" />
 <arg name="gui" default="false" />
 
 <arg name="paramsdir" default="$(env MARRTINO_APPS_HOME)/navigation/config/$(env ROBOT_TYPE)" />
@@ -12,7 +12,7 @@
     <rosparam file="$(arg paramsdir)/gradient_based_navigation.yaml" command="load" />
 
     <param name="GUI" value="$(arg gui)" />
-    <param name="gbnEnabled" value="false" />  <!-- disabled, use rosparam set /gradientBasedNavigation/gbnEnabled true to enable -->
+    <param name="gbnEnabled" value="$(arg enabled)" />  <!-- disabled, use rosparam set /gradientBasedNavigation/gbnEnabled true to enable -->
     <remap from="base_scan" to="$(arg lasertopic)" />
 
     <remap from="cmd_vel" to="cmd_vel_mux/input/navi" if="$(eval env('ROBOT_TYPE') == 'turtlebot')"  />  <!-- Turtlebot -->

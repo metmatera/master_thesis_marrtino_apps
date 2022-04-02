@@ -3,7 +3,7 @@
 
 # docker build -t marrtino:navigation -f Dockerfile.navigation .
 
-FROM marrtino:base
+FROM marrtino:system
 
 ARG MACHTYPE=default
 
@@ -23,12 +23,13 @@ RUN apt-get update && \
 USER robot
 
 RUN mkdir -p $HOME/src &&  cd $HOME/src && \
-    git clone https://github.com/Imperoli/gradient_based_navigation.git && \
     git clone https://github.com/ros-drivers/urg_c.git && \
     git clone https://github.com/ros-drivers/urg_node.git && \
     git clone https://github.com/Slamtec/rplidar_ros.git && \
     git clone https://github.com/ros-perception/laser_proc.git
 
+RUN cd $HOME/src && \
+    git clone https://github.com/Imperoli/gradient_based_navigation.git
 
 # Set and compile ROS packages
 
@@ -47,9 +48,17 @@ RUN if [ "$MACHTYPE" = "aarch64" ]; then \
        /bin/bash -ci "cd $HOME/ros/catkin_ws; catkin_make" ; \
     fi
 
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
+# marrtino_apps
+
+RUN cd $HOME/src && \
+    git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
 
 WORKDIR /home/robot
 
 CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python nav_bringup.py" ]
-#CMD [ "/usr/bin/tmux" ]
+
 

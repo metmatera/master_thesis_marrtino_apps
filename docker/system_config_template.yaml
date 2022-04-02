@@ -10,7 +10,8 @@ robot:
   joystick: off
   laser: off        # hokuyo | rplidar
   camera: off       # usbcam | astra | xtion
-  
+  camera_resolution: (640, 480)   # (width, height)
+
 functions:
   navigation: off
   vision: off

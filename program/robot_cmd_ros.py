@@ -269,18 +269,18 @@ def get_robot_vel():
 
 
 
-def obstacleDistance(direction=0):
-    return obstacle_distance(direction=0)
+def obstacleDistance(dir_deg=0):
+    return obstacle_distance(dir_deg)
 
-def obstacle_distance(direction=0):
+def obstacle_distance(dir_deg=0):
     global laser_center_dist, laser_left_dist, laser_right_dist, laser_back_dist
-    if (direction==0): #front
+    if (dir_deg==0): #front
         return laser_center_dist
-    elif (direction==90): #left
+    elif (dir_deg==90): #left
         return laser_left_dist
-    elif (direction==-90 or direction==270): # right
+    elif (dir_deg==-90 or dir_deg==270): # right
         return laser_right_dist
-    elif (abs(direction)==180): # back
+    elif (abs(dir_deg)==180): # back
         return laser_back_dist
 
 

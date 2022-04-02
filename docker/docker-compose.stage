@@ -4,13 +4,12 @@
     network_mode: "host"
     tty: true
     environment:
-    - DISPLAY=:0
     - QT_X11_NO_MITSHM=1
+    - DISPLAY=$DISPLAY
     - ROS_IP=$ROS_IP
     volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
     - $HOME/.Xauthority:/home/robot/.Xauthority
-    - $HOME/src/stage_environments:/home/robot/src/stage_environments
     entrypoint:
     - bash
     - -ci

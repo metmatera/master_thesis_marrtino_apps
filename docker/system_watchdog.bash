@@ -4,8 +4,43 @@ date
 
 rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart
 
-sleep 10
+
+# add tmux session to .bashrc
+grep logincompleted ~/.bashrc
+
+if [ $? != 0 ]; then
+  echo "# check if session already exists" >> ~/.bashrc
+  echo "tmux has-session -t compose 2>/dev/null" >> ~/.bashrc
+  echo "" >> ~/.bashrc
+  echo "if [ \$? != 0 ]; then" >> ~/.bashrc
+  echo "  tmux -2 new-session -d -s compose" >> ~/.bashrc
+  echo "  touch ~/log/logincompleted" >> ~/.bashrc
+  echo "fi" >> ~/.bashrc
+  echo "" >> ~/.bashrc
+  echo "" >> ~/.bashrc
+  touch ~/log/logincompleted
+  sleep 10
+fi
+
+# Only for VM
+# add `touch ~/log/logincompleted` at the end of .bashrc
+if [ -f ~/.marrtino_vm ] || [ "$HOSTNAME" == "marrtino-VM" ]; then
+  echo "Waiting for login ..."
+
+  XORG=`ps ax | grep -c Xorg`
+  while [ ! -f ~/log/logincompleted ] && [ ! "$XORG" == "2" ]; do
+    sleep 2.5
+    XORG=`ps ax | grep -c Xorg`
+  done
+else
+  sleep 10
+fi
+rm -f ~/log/logincompleted
+
+echo "Starting docker ..."
+
 cd /home/marrtino/bin && source start_docker.bash
+
 sleep 30
 
 

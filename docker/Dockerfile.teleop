@@ -3,7 +3,7 @@
 
 # docker build -t marrtino:teleop -f Dockerfile.teleop .
 
-FROM marrtino:base
+FROM marrtino:system
 
 ARG MACHTYPE=default
 
@@ -20,8 +20,6 @@ RUN apt-get update && \
 
 USER robot
 
-USER robot
-
 RUN mkdir -p $HOME/src &&  cd $HOME/src && \
     git clone https://github.com/Imperoli/gradient_based_navigation.git
 
@@ -30,8 +28,17 @@ RUN cd $HOME/ros/catkin_ws/src && \
 
 RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
 
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
+# marrtino_apps
+
+RUN cd $HOME/src && \
+    git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
+
 WORKDIR /home/robot
 
 CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python teleop_bringup.py" ]
-#CMD [ "/usr/bin/tmux" ]
+
 

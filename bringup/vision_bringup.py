@@ -11,6 +11,14 @@ import sys, time, os, glob, shutil, math, datetime
 
 from tmuxsend import TmuxSend
 
+def getCameraResolution():
+    width=640
+    height=480
+    camres = os.getenv("CAMRES")
+    print(camres)
+    if camres!=None and camres!='' and camres!='None':
+        (width, height) = eval(camres)
+    return (width, height)
 
 def run_server(port):
 
@@ -25,7 +33,7 @@ def run_server(port):
 
     print("Vision server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['camera','vidserver','april','cmd'])
+    tmux = TmuxSend('bringup', ['camera','vidserver','april','takephoto','cmd'])
 
     connected = False
     dorun = True
@@ -72,8 +80,18 @@ def run_server(port):
                 cfolder = "~/src/marrtino_apps/camera"
                 mfolder = "~/src/marrtino_apps/marker"
                 if data=='@usbcam':
+                    r = getCameraResolution()
+                    imsz = ''
+                    if r != None:
+                        imsz = 'image_width:=%d image_height:=%d' %(r[0],r[1])
+                        print("Camera resolution: %s" %(str(r)))
                     tmux.cmd(0,'cd %s' %cfolder)
-                    tmux.cmd(0,'roslaunch usbcam.launch')
+                    tmux.cmd(0,'roslaunch usbcam.launch '+imsz)
+                elif data[0:8]=='@usbcam_':  # @usbcam_<width>_<height>
+                    v = data.split("_")
+                    tmux.cmd(0,'cd %s' %cfolder)
+                    tmux.cmd(0,'roslaunch usbcam.launch '+
+                        'image_width:=%d image_height:=%d' %(int(v[1]),int(v[2])))
                 elif data=='@astra':
                     tmux.cmd(0,'cd %s' %cfolder)
                     tmux.cmd(0,'roslaunch astra.launch')
@@ -92,8 +110,13 @@ def run_server(port):
                     tmux.cmd(2,'roslaunch tags.launch')
                 elif data=='@apriltagskill':
                     tmux.Cc(2)
+                elif data=='@takephoto':
+                    tmux.cmd(3,'cd %s' %cfolder)
+                    tmux.cmd(3,'python takephoto.py')
+                elif data=='@takephotokill':
+                    tmux.Cc(3)
                 else:
-                    print('Unknown command %s')
+                    print('Unknown command %s' %data)
 
 
 

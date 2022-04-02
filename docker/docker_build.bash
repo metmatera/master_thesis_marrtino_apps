@@ -11,6 +11,7 @@ else
   docker tag orazio iocchi/orazio:arm64 && \
   docker build -t iocchi/orazio:2018-arm64 -f Dockerfile.orazio2018 .
 fi && \
+docker build -t marrtino:system -f Dockerfile.system . && \
 docker build -t marrtino:base -f Dockerfile.base . && \
 docker build -t marrtino:teleop -f Dockerfile.teleop . && \
 docker build -t marrtino:navigation -f Dockerfile.navigation . && \

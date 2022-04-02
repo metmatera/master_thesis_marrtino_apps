@@ -24,6 +24,9 @@ def run_server(port):
     sock.listen(1)
 
     print("Speech server started on port %d ..." %port)
+    print("Speech server commands available [@audio, @audiokill]")
+    print("Example: echo \"@audio\" | netcat -w 1 localhost %d" %port)
+    print("TTS command: echo \"TTS[en] hello!\" | netcat -w 1 localhost 9001")
 
     tmux = TmuxSend('bringup', ['audio server','cmd'])
 

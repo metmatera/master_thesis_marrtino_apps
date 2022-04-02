@@ -3,7 +3,7 @@
 
 # docker build -t marrtino:speech -f Dockerfile.speech .
 
-FROM marrtino:base
+FROM marrtino:system
 
 ARG MACHTYPE=default
 
@@ -25,10 +25,17 @@ USER robot
 
 RUN pip install --user sox==1.3.7 pyalsaaudio==0.8.4
 
-# Set working dir and container command
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
+# marrtino_apps
+
+RUN cd $HOME/src && \
+    git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
 
 WORKDIR /home/robot
 
 CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python speech_bringup.py" ]
-#CMD [ "/usr/bin/tmux" ]
+
 

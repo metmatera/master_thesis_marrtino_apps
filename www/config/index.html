@@ -118,15 +118,15 @@
 
 <h3>System update (version 4.x)</h3>
 
-<h4>Web interface</h4>
+<!-- h4>Web interface</h4>
 <button id="docker_restart_btn" onclick="send_cmd('updatesystem')" class="btn waves-effect waves-light blue" style="margin-right:10px">System update</button>
 
-<button id="docker_restart_btn" onclick="send_cmd('docker_restart')" class="btn waves-effect waves-light blue" style="margin-right:10px">Docker restart</button>
+<button id="docker_restart_btn" onclick="send_cmd('docker_restart')" class="btn waves-effect waves-light blue" style="margin-right:10px">Docker restart</button -->
 
 <h4>Shell interface</h4>
 
 <ol>
-<li> Access through
+<li> Open a terminal or access through
 <script>
 document.write("<a target=\"_blank\" href=\"http://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
 document.write("ssh " + window.location.hostname)
@@ -139,23 +139,25 @@ Username: marrtino
 Password: marrtino
 </pre>
 
-<li> Update
+<li> Start the update from the terminal
 <pre style="font-size:140%;">
-cd bin
-./system_update.bash
+cd ~/src/marrtino_apps && git pull
+system_update.bash
 </pre>
+
+Note: this procedure can take many minutes, up to an hour.
+
+<li> Reload this page and re-connect after the update
 
 </ol>
 
-<p style="font-size:140%;">
-<b>Note:</b> after system update or docker restart, you have to reload this page and re-connect.
-</p>
+
 
 
 <h3>System update (version 3.x)</h3>
 
 <ol>
-<li> Access through
+<li> Open a terminal or access through
 <script>
 document.write("<a target=\"_blank\" href=\"http://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
 document.write("ssh " + window.location.hostname)
@@ -202,6 +204,33 @@ Confirm and enter password (<tt style="font-size:120%;">marrtino</tt>) when aske
 </p>
 
 <br>
+
+<hr>
+
+<h2>System restart (version 4.x)</h2>
+
+<ol>
+<li> Open a terminal or access through
+<script>
+document.write("<a target=\"_blank\" href=\"http://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
+document.write("ssh " + window.location.hostname)
+document.write("</a>")
+</script>
+
+<li> Login
+<pre style="font-size:140%;">
+Username: marrtino
+Password: marrtino
+</pre>
+
+<li> Restart the system (docker containers)
+<pre style="font-size:140%;">
+restart_docker.bash
+</pre>
+
+<li> Reload this page and re-connect after a few minutes.
+
+</ol>
 
 <hr>
 

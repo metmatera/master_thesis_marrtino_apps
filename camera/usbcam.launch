@@ -4,6 +4,8 @@
   <arg name="videoserver" default="false" />
   <arg name="device" default="/dev/video0" />
   <arg name="format" default="yuyv" />  <!-- yuyv, mjpeg -->
+  <arg name="image_width" default="640" />
+  <arg name="image_height" default="480" />
 
   <node pkg="usb_cam" type="usb_cam_node" name="usbcam" output="log" >
     <rosparam file="config/usbcam.yaml" command="load" />
@@ -11,6 +13,8 @@
     <param name="video_device" value="$(arg device)" />
     <param name="camera_frame_id" value="$(arg rgbcameraframe)" />
     <param name="pixel_format" value="$(arg format)" />
+    <param name="image_width" value="$(arg image_width)" />
+    <param name="image_height" value="$(arg image_height)" />
 
     <remap from="/usbcam/image_raw" to="/rgb/image_raw" />
     <remap from="/usbcam/camera_info" to="/rgb/camera_info" />

@@ -23,6 +23,27 @@ def machinearch():
         info = f.readline().strip()
     return info
 
+def robottype(config):
+    rtype = None
+    if config['simulator']['stage']:
+        rtype = "stage"
+    elif config['robot']['motorboard']!=False:
+        rtype = "marrtino"
+
+    os.system("echo \"%s\" > /tmp/robottype" %rtype)
+
+    return rtype
+
+def cameraresolution(config):
+    camres = None
+    if 'camera_resolution' in config['robot']:
+        camres = config['robot']['camera_resolution']
+    os.system("echo '%s' > /tmp/cameraresolution" %camres)
+    os.system("cat /tmp/cameraresolution")
+
+    return camres
+
+
 def addservice(f, service, version=None):
     print(" - "+service)
     with open("docker-compose.%s" %service, 'r') as r:
@@ -31,6 +52,7 @@ def addservice(f, service, version=None):
                 f.write(l[0:-1]+"%s\n" %version)
             else:
                 f.write(l)
+
 
 def writeout(config, arch):
     nfile = "docker-compose.yml"
@@ -46,6 +68,7 @@ def writeout(config, arch):
 
         if config['simulator']['stage']:
             addservice(f,'stage')
+            
 
         # robot
         # motorboard: marrtino2019|pka03|ln298|arduino
@@ -63,7 +86,6 @@ def writeout(config, arch):
             orazioversion=":2018-arm64"
         if orazioversion != None:
             addservice(f,'orazio',orazioversion)
-
 
         if config['robot']['4wd']=='':
             pass
@@ -86,16 +108,34 @@ def writeout(config, arch):
         if config['functions']['speech']:
             addservice(f,'speech')
 
+        if config['functions']['social']:
+            os.system('touch /tmp/marrtinosocialon') 
+            # used by start_docker.bash / system_update.bash
+        else:
+            os.system('rm -f /tmp/marrtinosocialon')
+
+
 
 if __name__=='__main__':
 
-    yamlfile = os.getenv('HOME')+"/system_config.yaml"
+    yamlfile = os.getenv('MARRTINO_APPS_HOME')+"/system_config.yaml"
+    if not os.path.isfile(yamlfile):
+        yamlfile = os.getenv('HOME')+"/system_config.yaml"
+    if not os.path.isfile(yamlfile):
+        print("File system_config.yaml not found!!!")
+        sys.exit(1)    
 
     config = readconfig(yamlfile)
     print("Config: "+str(config))
 
     arch = machinearch()
     print("Arch: %s" %arch)
+
+    rtype = robottype(config)
+    print("Robot: %s" %rtype)
+
+    camres = cameraresolution(config)
+    print("Camera resolution: %s" %(camres))
 
     writeout(config, arch)
 
