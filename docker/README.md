@@ -2,13 +2,40 @@
 
 ## Pre requisites
 
-To use dockerized version of marrtino_apps you need on your OS
+* Install `python` and `tmux`
 
-* docker (tested on v. 19.03)
-* docker-compose (tested on v. 1.28.2)
-* python
+        sudo apt install python tmux
 
-Set the environment variable `MARRTINO_APPS_HOME`to the folder where you downloaded your repository.
+
+* Install [docker](http://www.docker.com) (tested on v. 19.03, 20.10) 
+
+    See also 
+    [Post-installation steps for Linux](https://docs.docker.com/install/linux/linux-postinstall/).
+    In particular, add your user to the `docker` group and log out and in again, before proceeding.
+
+
+* Install [docker-compose](https://docs.docker.com/compose/install/) (tested on v. 1.28.2)
+
+
+* Set environment variable `MARRTINO_APPS_HOME` to the folder where you downloaded this repository.
+
+    Example:
+
+        export MARRTINO_APPS_HOME=$HOME/src/marrtino_apps
+
+    Add this command in `~/.bashrc` to make it permanent
+
+
+* Set environment variables `ROS_IP`, `ROBOT_TYPE` according to your setup.
+
+    Example for local setup with simulator:
+
+        export ROS_IP=127.0.0.1
+        export ROBOT_TYPE=stage
+
+    Add these commands in `~/.bashrc` to make them permanent
+
+
 
 ## Images available
 
@@ -23,8 +50,8 @@ Set the environment variable `MARRTINO_APPS_HOME`to the folder where you downloa
 
 Copy and edit `system_config.yaml`
 
-        cd ~
-        cp <...>/marrtino_apps/docker/system_config_template.yaml system_config.yaml
+        cd $MARRTINO_APPS_HOME
+        cp docker/system_config_template.yaml system_config.yaml
         nano system_config.yaml
 
             system:
@@ -51,17 +78,17 @@ Copy and edit `system_config.yaml`
 
 ## Update and build
 
-        cd <...>/marrtino_apps/docker
+        cd $MARRTINO_APPS_HOME/docker
         ./system_update.bash
 
 ## Run
 
-        cd <...>/marrtino_apps/docker
+        cd $MARRTINO_APPS_HOME/docker
         ./start_docker.bash
 
 ## Quit
 
-        cd <...>/marrtino_apps/docker
+        cd $MARRTINO_APPS_HOME/docker
         ./stop_docker.bash
 
 
@@ -98,12 +125,14 @@ To interact with docker containers, see
 
 To use MARRtino social functionalities:
 
-1) download  ```marrtino_social``` repository (https://github.com/artigianitecnologici/marrtino_social) and set environment variable ```MARRTINO_SOCIAL``` to the ```marrtino_social``` folder
+1) download  [`marrtino_social` repository](https://github.com/artigianitecnologici/marrtino_social) and set environment variable `MARRTINO_SOCIAL` to the folder
 
-        export MARRTINO_SOCIAL=<path_to>/marrtino_social
+    Example:
+
+        export MARRTINO_SOCIAL=$HOME/src/marrtino_social
 
 
-2) enable social functionlity in ```system_config.yaml```
+2) enable social functionlity in `system_config.yaml`
 
         social: on
 

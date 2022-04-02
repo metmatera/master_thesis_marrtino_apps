@@ -19,6 +19,6 @@ RUN cd $HOME/src && \
 
 WORKDIR /home/robot
 
-CMD [ "/bin/bash", "-ci", "/home/robot/src/marrtino_apps/bringup/1-bringup.bash", "-docker" ]
+CMD [ "/bin/bash", "-ci", "/home/robot/src/marrtino_apps/bringup/1-bringup.bash" ]
 
 
