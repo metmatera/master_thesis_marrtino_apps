@@ -140,3 +140,13 @@ To use MARRtino social functionalities:
 
         ./start_docker.bash
 
+
+## Issues
+
+* Error when stopping the containers
+
+    If you get errors in stopping the containers, try the following command and then stop che contaimners again.
+
+        sudo aa-remove-unknown
+
+
