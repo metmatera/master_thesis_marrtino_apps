@@ -58,7 +58,7 @@ Copy and edit `system_config.yaml`
               nginx: off
 
             simulator:
-              stage: off
+              stage: off   # off|on|x11|vnc
 
             robot:
               motorboard: off  # arduino|ln298|pka03|marrtino2019
@@ -85,6 +85,8 @@ Copy and edit `system_config.yaml`
 
         cd $MARRTINO_APPS_HOME/docker
         ./start_docker.bash
+
+    Note: for VNC option in stage, GUI is accessible through a browser at `http://localhost:3000`
 
 ## Quit
 
