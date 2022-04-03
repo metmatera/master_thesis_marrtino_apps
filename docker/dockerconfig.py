@@ -66,7 +66,11 @@ def writeout(config, arch):
         if config['system']['nginx']:
             addservice(f,'nginx')
 
-        if config['simulator']['stage']:
+        #  stage: [off|on|x11|vnc]
+        cstage = config['simulator']['stage']
+        if cstage == "vnc":
+            addservice(f,'stage-vnc')
+        elif cstage == True or cstage == "on" or cstage == "x11":
             addservice(f,'stage')
             
 

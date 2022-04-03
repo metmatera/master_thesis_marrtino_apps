@@ -2,7 +2,7 @@ system:
   nginx: off
 
 simulator:
-  stage: off
+  stage: off        # off|on|x11|vnc
 
 robot:
   motorboard: off   # arduino|ln298|pka03|marrtino2019
