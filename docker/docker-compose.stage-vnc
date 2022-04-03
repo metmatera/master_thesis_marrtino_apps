@@ -1,5 +1,3 @@
-
-
   xserver:
     image: devrt/xserver
     container_name: xserver

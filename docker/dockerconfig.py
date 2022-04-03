@@ -43,13 +43,16 @@ def cameraresolution(config):
 
     return camres
 
-
-def addservice(f, service, version=None):
+# replacemap = { 'from': 'to', ... }
+def addservice(f, service, version=None, replacemap={}):
     print(" - "+service)
     with open("docker-compose.%s" %service, 'r') as r:
         for l in r:
-            if (l.strip()[0:6]=='image:' and version is not None):
+            k = l.strip()
+            if (k[0:6]=='image:' and version is not None):
                 f.write(l[0:-1]+"%s\n" %version)
+            elif k in replacemap.keys():
+                f.write(replacemap[k]+"\n")
             else:
                 f.write(l)
 
@@ -64,12 +67,24 @@ def writeout(config, arch):
         addservice(f,'base')
 
         if config['system']['nginx']:
-            addservice(f,'nginx')
+            nginx_port = None
+            if 'nginx_port' in config['system']: 
+                nginx_port = config['system']['nginx_port']
+            replacemap = {}
+            if nginx_port is not None:
+                replacemap['- "80:80"'] = '      - "%s:80"' %nginx_port
+            addservice(f,'nginx',None,replacemap)
 
         #  stage: [off|on|x11|vnc]
         cstage = config['simulator']['stage']
         if cstage == "vnc":
-            addservice(f,'stage-vnc')
+            vnc_port = None
+            if 'vnc_port' in config['simulator']: 
+                vnc_port = config['simulator']['vnc_port']
+            replacemap = {}
+            if vnc_port is not None:
+                replacemap['- "3000:80"'] = '      - "%s:80"' %vnc_port
+            addservice(f,'stage-vnc',None,replacemap)
         elif cstage == True or cstage == "on" or cstage == "x11":
             addservice(f,'stage')
             
