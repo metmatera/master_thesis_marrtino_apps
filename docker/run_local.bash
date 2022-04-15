@@ -12,6 +12,8 @@ docker run -it \
     -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
     -v $HOME/.Xauthority:/home/robot/.Xauthority:rw \
     -e DISPLAY=$DISPLAY \
+    -e ROS_IP=$ROS_IP \
+    -e ROS_MASTER_URI=http://$ROS_IP:11311 \
     --privileged \
     --net=host \
     -v $MARRTINO_PLAYGROUND:/home/robot/playground \
