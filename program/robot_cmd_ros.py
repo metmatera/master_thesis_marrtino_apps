@@ -402,6 +402,7 @@ def sonar_cb(data):
 
 def odom_cb(data):
     global odom_robot_pose, odom_robot_vel
+    # print("!!! odom cb !!!")
     if (odom_robot_pose is None):
         odom_robot_pose = [0,0,0]
     odom_robot_pose[0] = data.pose.pose.position.x
@@ -528,6 +529,8 @@ def begin(nodename='robot_cmd', init_node=True):
     # does not throw exception
     if init_node:
         rospy.init_node(nodename,  disable_signals=True)
+        rospy.sleep(1)
+        print("ROS node %s initialized." %nodename)
 
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
@@ -553,12 +556,12 @@ def begin(nodename='robot_cmd', init_node=True):
         stage_setpose_pub = rospy.Publisher(TOPIC_SETPOSE, Pose, queue_size=1, latch=True)
         stage_say_pub = rospy.Publisher(TOPIC_STAGESAY, String, queue_size=1,   latch=True)
 
-        print("Waiting for robot pose... (5 seconds)")
+        timeout = 10 #seconds
+        print("Waiting for robot pose on topic %s... (%d seconds)" %(TOPIC_odom,timeout))
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
         try:
             rate.sleep()
-            timeout = 5 #seconds
             while (odom_robot_pose is None and timeout>0):
                 rate.sleep()
                 timeout -= delay

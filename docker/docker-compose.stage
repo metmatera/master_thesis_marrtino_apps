@@ -7,9 +7,11 @@
     - QT_X11_NO_MITSHM=1
     - DISPLAY=$DISPLAY
     - ROS_IP=$ROS_IP
+    - MAPSDIR=/home/robot/src/stage_environments/maps:/opt/maps
     volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
     - $HOME/.Xauthority:/home/robot/.Xauthority
+    - $MARRTINO_APPS_HOME/mapping/maps:/opt/maps
     entrypoint:
     - bash
     - -ci
