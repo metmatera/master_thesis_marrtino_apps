@@ -4,6 +4,6 @@ origin: [-15.000000, -24.450001, 0.000000]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196
-# simulation
-boxes: ['pose [ 4.0 -2.0 0 0 ] color "red"', 'pose [ 4.0 -7.0 0 0 ] color "green"' ]
 
+box1: { type: 'box', pose: [ 4.0, -2.0, 0, 0 ], color: "red" }
+box2: { type: 'box', pose: [ 4.0, -7.0, 0, 0 ], color: "green" }

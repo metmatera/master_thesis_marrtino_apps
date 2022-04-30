@@ -6,6 +6,14 @@ define box model
   gui_nose 0
 )
 
+define tag circle
+(
+  size [0.1 0.1 0.01]
+  gui_nose 0
+  obstacle_return 0
+  ranger_return 0
+)
+
 
 define door model
 (
@@ -31,7 +39,7 @@ define circle model
   )
   
   obstacle_return 1
-  ranger_return 1.0
+  ranger_return 1
   gui_outline 1
   gui_nose 0
 )

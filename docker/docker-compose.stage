@@ -17,3 +17,10 @@
     - -ci
     - "rosrun stage_environments start_simulation.py --server -server_port 9235"
 
+#  Command-line interaction for loading maps
+#       echo 'montreal;marrtino' | netcat -w 1 localhost 9235
+#       echo '@stagekill' | netcat -w 1 localhost 9235
+
+#  For development mount this volume:
+#    - $HOME/src/stage_environments:/home/robot/src/stage_environments
+
