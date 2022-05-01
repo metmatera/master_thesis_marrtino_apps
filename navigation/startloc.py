@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 
-import sys, os, time
+import sys, os, time, math
 import rospy
 import rosnode
 import tf
@@ -28,7 +28,7 @@ gt_robot_pose = None
 
 def groundtruth_cb(data):
     global gt_robot_pose
-    if (gt_robot_pose is None):
+    if gt_robot_pose is None:
         gt_robot_pose = [0,0,0]
     gt_robot_pose[0] = data.pose.pose.position.x
     gt_robot_pose[1] = data.pose.pose.position.y
@@ -41,7 +41,7 @@ def groundtruth_cb(data):
 
 ### main ###
 
-def main():
+def main(argv):
 
     rospy.init_node('autostart_localizer')
 
@@ -55,10 +55,13 @@ def main():
 
     # get map name
     mapname = 'map' # default map name
-    try:
-        mapname = rospy.get_param('/mapname')
-    except:
-        pass
+    if len(argv)>1:
+        mapname = argv[1] # map name
+    else:
+        try:
+            mapname = rospy.get_param('/mapname')
+        except:
+            pass
     print('map name: %s' %mapname)
 
     if not msrun:
@@ -75,6 +78,9 @@ def main():
 
     gt_sub.unregister()
 
+    if gt_robot_pose is None and len(argv)>4:
+        gt_robot_pose = [ float(argv[2]), float(argv[3]), float(argv[4])/180.0*math.pi ]
+
     print("Current robot pose: %r" %(gt_robot_pose))
 
     #start localizer
@@ -83,13 +89,16 @@ def main():
     else:
         rstr = "roslaunch amcl.launch map_name:=%s " %mapname
 
-    rstr += " initial_pose_x:=%.1f initial_pose_y:=%.1f  initial_pose_a:=%.3f" \
-        %(gt_robot_pose[0], gt_robot_pose[1], gt_robot_pose[2])
+    if gt_robot_pose is not None:
+        rstr += " initial_pose_x:=%.1f initial_pose_y:=%.1f  initial_pose_a:=%.3f" \
+            %(gt_robot_pose[0], gt_robot_pose[1], gt_robot_pose[2])
 
     print(rstr)
     os.system(rstr)
 
 
+# Use startloc.py [<mapname>] [<x> <y> <th_deg>]
+
 if __name__=='__main__':
-    main()
+    main(sys.argv)
 

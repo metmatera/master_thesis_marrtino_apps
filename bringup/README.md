@@ -44,6 +44,7 @@ Run the bringup servers
         python nav_bringup.py -server_port 9238
         python speech_bringup.py -server_port 9239
         python teleop_bringup.py -server_port 9240
+        python map_bringup.py -server_port 9241
 
         ... social  9250
 
@@ -77,6 +78,15 @@ Send commands to bringup servers
         echo '@lockill' | netcat -w 1 localhost 9238
         echo '@movebase' | netcat -w 1 localhost 9238
         echo '@movebasekill' | netcat -w 1 localhost 9238
+        echo '@rviz' | netcat -w 1 localhost 9238
+        echo '@rvizkill' | netcat -w 1 localhost 9238
+
+        echo '@gmapping' | netcat -w 1 localhost 9241
+        echo '@gmappingkill' | netcat -w 1 localhost 9241
+        echo '@srrgmapper' | netcat -w 1 localhost 9241
+        echo '@srrgmapperkill' | netcat -w 1 localhost 9241
+        echo '@rviz' | netcat -w 1 localhost 9241
+        echo '@rvizkill' | netcat -w 1 localhost 9241
 
         echo '@audio' | netcat -w 1 localhost 9239
         echo '@audiokill' | netcat -w 1 localhost 9239

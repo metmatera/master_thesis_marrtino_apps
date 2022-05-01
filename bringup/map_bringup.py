@@ -24,7 +24,7 @@ def run_server(port):
     sock.listen(1)
     print("MARRtino navigation server started on port %d ..." %port)
 
-    tmux = TmuxSend('bringup', ['loc','nav','obst','laser','rviz'])
+    tmux = TmuxSend('bringup', ['cmd','mapper','rviz','savemap'])
 
     connected = False
     dorun = True
@@ -68,48 +68,31 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                nfolder = "~/src/marrtino_apps/navigation"
-                lfolder = "~/src/marrtino_apps/laser"
-                if data=='@loc':
-                    tmux.cmd(0,'cd %s' %nfolder)
-                    tmux.cmd(0,'python startloc.py')
-                elif data=='@lockill':
-                    tmux.Cc(0)
-                elif data=='@movebase':
-                    tmux.cmd(1,'cd %s' %nfolder)
-                    tmux.cmd(1,'roslaunch move_base.launch')
-                elif data=='@movebasegbn':
-                    tmux.cmd(1,'cd %s' %nfolder)
-                    tmux.cmd(1,'roslaunch move_base_gbn.launch')
-                elif data=='@movebasekill':
+                mfolder = "~/src/marrtino_apps/mapping"
+                if data=='@gmapping':
+                    tmux.cmd(1,'cd %s' %mfolder)
+                    tmux.cmd(1,'roslaunch gmapping.launch')
+                elif data=='@gmappingkill':
                     tmux.Cc(1)
-                elif data=='@gbn':
-                    tmux.cmd(2,'cd %s' %nfolder)
-                    tmux.cmd(2,'roslaunch obstacle_avoidance.launch')
-                elif data=='@gbnkill':
-                    tmux.Cc(2)
-                elif data=='@hokuyo':
-                    tmux.cmd(3,'cd %s' %lfolder)
-                    tmux.cmd(3,'roslaunch hokuyo.launch')
-                elif data=='@rplidar':
-                    tmux.cmd(3,'cd %s' %lfolder)
-                    tmux.cmd(3,'roslaunch rplidar.launch')
-                elif data=='@laserkill':
-                    tmux.Cc(3)
+                elif data=='@srrgmapper':
+                    tmux.cmd(1,'cd %s' %mfolder)
+                    tmux.cmd(1,'roslaunch srrg_mapper.launch')
+                elif data=='@srrgmapperkill':
+                    tmux.Cc(1)
                 elif data=='@rviz':
-                    tmux.cmd(4,'cd %s' %mfolder)
-                    tmux.cmd(4,'rosrun rviz rviz -d nav.rviz')
+                    tmux.cmd(2,'cd %s' %mfolder)
+                    tmux.cmd(2,'rosrun rviz rviz -d mapping.rviz')
                 elif data=='@rvizkill':
-                    tmux.Cc(4)
+                    tmux.Cc(2)
                 else:
                     print('Unknown command %s')
 
 
 if __name__ == '__main__':
 
-    default_port = 9238
+    default_port = 9241
 
-    parser = argparse.ArgumentParser(description='navigation bringup')
+    parser = argparse.ArgumentParser(description='mapping bringup')
     parser.add_argument('-server_port', type=int, default=default_port, help='server port')
 
     args = parser.parse_args()

@@ -1,9 +1,9 @@
-  navigation:
-    image: marrtino:navigation
+  mapping:
+    image: marrtino:mapping
     build:
       context: $MARRTINO_APPS_HOME/docker
-      dockerfile: Dockerfile.navigation
-    container_name: navigation
+      dockerfile: Dockerfile.mapping
+    container_name: mapping
     dns: 8.8.8.8
     network_mode: "host"
     tty: true

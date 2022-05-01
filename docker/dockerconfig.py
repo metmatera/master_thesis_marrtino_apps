@@ -127,6 +127,9 @@ def writeout(config, arch):
         if config['functions']['speech']:
             addservice(f,'speech')
 
+        if config['functions']['mapping']:
+            addservice(f,'mapping')
+
         if config['functions']['social']:
             os.system('touch /tmp/marrtinosocialon') 
             # used by start_docker.bash / system_update.bash
