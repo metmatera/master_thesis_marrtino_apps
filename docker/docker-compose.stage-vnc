@@ -17,13 +17,14 @@
     environment:
     - DISPLAY=:9
     - ROS_IP=$ROS_IP
-    - MAPSDIR=/home/robot/src/stage_environments/maps:/opt/maps
+    - MAPSDIR=/home/robot/src/stage_environments/maps:/opt/maps1:/opt/maps2
     volumes_from:
-      - xserver
+    - xserver
     volumes:
-      - $MARRTINO_APPS_HOME/mapping/maps:/opt/maps
+    - $MARRTINO_APPS_HOME/mapping/maps:/opt/maps
+    - $HOME/playground/maps:/opt/maps2
     depends_on:
-      - xserver
+    - xserver
     entrypoint:
     - bash
     - -ci

@@ -16,5 +16,6 @@ docker build -t marrtino:base -f Dockerfile.base . && \
 docker build -t marrtino:teleop -f Dockerfile.teleop . && \
 docker build -t marrtino:navigation -f Dockerfile.navigation . && \
 docker build -t marrtino:vision -f Dockerfile.vision . && \
-docker build -t marrtino:speech -f Dockerfile.speech . 
+docker build -t marrtino:speech -f Dockerfile.speech . && \
+docker build -t marrtino:mapping -f Dockerfile.mapping .
 
