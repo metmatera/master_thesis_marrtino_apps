@@ -68,4 +68,14 @@ Note: change file names in the .script files if needed.
         orazio> store sonar_params
         orazio> quit
 
+# udev configuration
+
+Copy file `80-marrtino.rules` in `/etc/udev/rules.d/`
+
+Check Vendor and Product IDs of your devices with command `lsusb`
+
+Edit  `/etc/udev/rules.d/80-marrtino.rules` if needed
+
+Restart the system and enjoy!
+
 
