@@ -2,7 +2,7 @@
 
 date
 
-rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/systemupdate ~/log/dockerrestart
+rm -f ~/log/shutdownrequest ~/log/rebootrequest ~/log/quitrequest ~/log/systemupdate ~/log/dockerrestart
 
 
 # add tmux session to .bashrc
@@ -43,7 +43,7 @@ cd /home/marrtino/bin && source start_docker.bash
 sleep 30
 
 
-while [ ! -f ~/log/shutdownrequest ] && [ ! -f  ~/log/rebootrequest ]; do
+while [ ! -f ~/log/shutdownrequest ] && [ ! -f  ~/log/rebootrequest ] && [ ! -f  ~/log/quitrequest ]; do
 
     sleep 5
 
@@ -71,5 +71,10 @@ if [ -f  ~/log/rebootrequest ]; then
   rm -f ~/log/rebootrequest
   echo "Reboot..."
   sudo reboot
+fi
+
+if [ -f  ~/log/quitrequest ]; then
+  rm -f ~/log/quitrequest
+  echo "System watchdog quit..."
 fi
 

@@ -78,4 +78,12 @@ Edit  `/etc/udev/rules.d/80-marrtino.rules` if needed
 
 Restart the system and enjoy!
 
+# system_watchdog configuration
+
+To start docker containers at boot, copy file `system_watchdog` in
+`/etc/init.d`
+
+Edit `/etc/init.d/system_watchdog` if needed (`user` and `dir` info)
+
+Restart the system and enjoy!
 
