@@ -95,7 +95,7 @@ def run_server(port):
                 elif data=='@astra':
                     tmux.cmd(0,'cd %s' %cfolder)
                     tmux.cmd(0,'roslaunch astra.launch')
-                elif data=='@astra':
+                elif data=='@xtion':
                     tmux.cmd(0,'cd %s' %cfolder)
                     tmux.cmd(0,'roslaunch xtion2.launch')
                 elif data=='@camerakill':

@@ -1,3 +1,41 @@
+# docker configuration
+
+Follow instructions in [docker folder](https://bitbucket.org/iocchi/marrtino_apps/src/master/docker/)
+
+
+
+# udev configuration
+
+Copy file `80-marrtino.rules` in `/etc/udev/rules.d/`
+
+Check Vendor and Product IDs of your devices with command `lsusb`
+
+Edit  `/etc/udev/rules.d/80-marrtino.rules` if needed
+
+Restart the system and enjoy!
+
+# system_watchdog configuration
+
+To start docker containers at boot, copy file `system_watchdog` in
+`/etc/init.d`
+
+Edit `/etc/init.d/system_watchdog` if needed (`user` and `dir` info)
+
+Enable the service
+
+    sudo systemctl enable system_watchdog
+
+Start the service
+
+    sudo systemctl start system_watchdog
+
+Restart the system and enjoy!
+
+# orazio configuration
+
+
+
+
 # MARRtino firmware parameters configuration #
 
 NOTE: Instructions have been updated for 2018 firmware. 
@@ -67,23 +105,4 @@ Note: change file names in the .script files if needed.
         orazio> store drive_params
         orazio> store sonar_params
         orazio> quit
-
-# udev configuration
-
-Copy file `80-marrtino.rules` in `/etc/udev/rules.d/`
-
-Check Vendor and Product IDs of your devices with command `lsusb`
-
-Edit  `/etc/udev/rules.d/80-marrtino.rules` if needed
-
-Restart the system and enjoy!
-
-# system_watchdog configuration
-
-To start docker containers at boot, copy file `system_watchdog` in
-`/etc/init.d`
-
-Edit `/etc/init.d/system_watchdog` if needed (`user` and `dir` info)
-
-Restart the system and enjoy!
 

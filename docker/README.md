@@ -46,6 +46,21 @@
 * vision
 * speech
 
+Build all images
+
+    ./docker_build.bash
+
+Note: in some cases, it may be needed to recompile the orazio ROS nodes
+
+    docker exec -it orazio tmux a
+    cd ~/ros/catkin_ws
+    catkin-make clean
+    catkin-make
+
+and commit the docker image.
+
+
+
 ## Configuration
 
 Copy and edit `system_config.yaml`

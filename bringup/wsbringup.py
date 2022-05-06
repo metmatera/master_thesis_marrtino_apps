@@ -302,14 +302,20 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # astra
         elif (message=='astra_start'):
-            self.tmux.roslaunch(self.wcamera,'camera','astra')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@astra' | netcat -w 1 localhost 9237")
+            else:
+                self.tmux.roslaunch(self.wcamera,'camera','astra')
             self.waitfor('rgb_camera',5)
             self.waitfor('depth_camera',1)
             #time.sleep(5)
             #self.checkStatus('camera')
         elif (message=='astra_kill'):
-            self.tmux.roskill('astra')
-            self.tmux.roskill('state_pub_astra')
+            if usenetcat:
+                self.tmux.cmd(self.wnet,"echo '@camerakill' | netcat -w 1 localhost 9237")
+            else:
+                self.tmux.roskill('astra')
+                self.tmux.roskill('state_pub_astra')
             time.sleep(2)
             self.tmux.killall(self.wcamera)
             time.sleep(2)

@@ -16,8 +16,11 @@ KERNEL=="ttyUSB*", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE="0777
 # Orbec Astra
 
 SUBSYSTEM=="usb", ATTR{idVendor}=="2bc5", ATTR{idProduct}=="040[0-9]", MODE="0666", OWNER="root", GROUP="video", SIMLINK+="astra"
-SUBSYSTEM=="usb", ATTR{idVendor}=="2bc5", ATTR{idProduct}=="040a", MODE="0666", OWNER="root", GROUP="video", SIMLINK+="astra"
+SUBSYSTEM=="usb", ATTR{idVendor}=="2bc5", ATTR{idProduct}=="040[a-f]", MODE="0666", OWNER="root", GROUP="video", SIMLINK+="astra"
 SUBSYSTEM=="usb", ATTR{idVendor}=="2bc5", ATTR{idProduct}=="050[0-9]", MODE="0666", OWNER="root", GROUP="video", SIMLINK+="astra"
+SUBSYSTEM=="usb", ATTR{idVendor}=="2bc5", ATTR{idProduct}=="050[a-f]", MODE="0666", OWNER="root", GROUP="video", SIMLINK+="astra"
+SUBSYSTEM=="usb", ATTR{idVendor}=="2bc5", ATTR{idProduct}=="060[0-9]", MODE="0666", OWNER="root", GROUP="video", SIMLINK+="astra"
+SUBSYSTEM=="usb", ATTR{idVendor}=="2bc5", ATTR{idProduct}=="060[a-f]", MODE="0666", OWNER="root", GROUP="video", SIMLINK+="astra"
 
 
 # Xtion
