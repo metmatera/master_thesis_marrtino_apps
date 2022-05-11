@@ -23,6 +23,18 @@ def machinearch():
         info = f.readline().strip()
     return info
 
+def machinecpu():
+    nfile = "/tmp/machcpu"
+    info = '???'
+    os.system("cat /proc/cpuinfo | grep \"model name\" | head -1 > %s" %nfile)
+    line = ''
+    with open(nfile, 'r') as f:
+        line = f.readline().strip()
+    v = line.split(':')
+    if (len(v)>1):
+        info = v[1].strip()
+    return info
+
 def robottype(config):
     rtype = None
     if config['simulator']['stage']:
@@ -39,7 +51,7 @@ def cameraresolution(config):
     if 'camera_resolution' in config['robot']:
         camres = config['robot']['camera_resolution']
     os.system("echo '%s' > /tmp/cameraresolution" %camres)
-    os.system("cat /tmp/cameraresolution")
+    #os.system("cat /tmp/cameraresolution")
 
     return camres
 
@@ -152,6 +164,9 @@ if __name__=='__main__':
 
     arch = machinearch()
     print("Arch: %s" %arch)
+
+    cpu = machinecpu()
+    print("CPU: %s" %cpu)
 
     rtype = robottype(config)
     print("Robot: %s" %rtype)

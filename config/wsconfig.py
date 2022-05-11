@@ -85,45 +85,73 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
     def getSystemInfo(self):
-        v = 'NA'
+
+        # system model
+        v1 = None
         print('Checking system info from /proc/cpuinfo ...')
         try:
             self.tmux.cmd(3,'cat /proc/cpuinfo | grep Model > /tmp/.system_model', blocking=True)
-            time.sleep(1)
+            time.sleep(0.1)
             f = open('/tmp/.system_model', 'r')
             vv = f.readline().split(':')
             f.close()
             if len(vv)>1:
-                v = vv[1].strip()
-
-            self.tmux.cmd(3,'cat /proc/meminfo | grep MemTotal > /tmp/.system_memory', blocking=True)
-            time.sleep(1)
-            f = open('/tmp/.system_memory', 'r')
-            vv = f.readline().split(':')
-            f.close()
-            if len(vv)>1:
-                vstr = vv[1].strip().split(" ")
-                v = v + " %.1f GB"  %(float(vstr[0])/1000000)
-
-            self.tmux.cmd(3,'cat /proc/meminfo | grep SwapTotal > /tmp/.system_memory', blocking=True)
-            time.sleep(1)
-            f = open('/tmp/.system_memory', 'r')
-            vv = f.readline().split(':')
-            f.close()
-            if len(vv)>1:
-                vstr = vv[1].strip().split(" ")
-                v = v + " + %.1f GB swap"  %(float(vstr[0])/1000000)
-
+                v1 = vv[1].strip()
         except Exception as e:
             print(e)
 
-        print('System info %s' %(v))
+        # CPU
+        v2 = 'CPU ???'
+        try:
+            nfile = "/tmp/.machcpu"
+            self.tmux.cmd(3,'cat /proc/cpuinfo | grep model | grep name | head -1 > %s' %nfile, blocking=True)
+            time.sleep(0.1)
+            line = ''
+            with open(nfile, 'r') as f:
+                line = f.readline().strip()
+            vv = line.split(':')
+            if (len(vv)>1):
+                v2 = vv[1].strip()
+        except Exception as e:
+            print(e)
 
-        return v
+
+        # memory
+        v3 = ''
+        try:
+            self.tmux.cmd(3,'cat /proc/meminfo | grep MemTotal > /tmp/.system_memory', blocking=True)
+            time.sleep(0.1)
+            f = open('/tmp/.system_memory', 'r')
+            vv = f.readline().split(':')
+            f.close()
+            if len(vv)>1:
+                vstr = vv[1].strip().split(" ")
+                v3 = v3 + " %.1f GB"  %(float(vstr[0])/1000000)
+
+            self.tmux.cmd(3,'cat /proc/meminfo | grep SwapTotal > /tmp/.system_memory', blocking=True)
+            time.sleep(0.1)
+            f = open('/tmp/.system_memory', 'r')
+            vv = f.readline().split(':')
+            f.close()
+            if len(vv)>1:
+                vstr = vv[1].strip().split(" ")
+                v3 = v3 + " + %.1f GB swap"  %(float(vstr[0])/1000000)
+        except Exception as e:
+            print(e)
+
+        if v1 is not None:
+            info = "%s - %s - %s" %(v1,v2,v3)
+        else:
+            info = "%s - %s" %(v2,v3)
+
+        print('System info %s' %(info))
+
+        return info
+
 
 
     def getMARRtinoHWInfo(self):
-        print('Checking MARRtino HW info from $HOME/.marrtino_motorbord files ...')
+        print('Checking MARRtino HW info from $HOME/.marrtino_motorboard files ...')
         try:
             f = open('%s/.marrtino_machine' %self.home, 'r')
             v1 = f.readline().strip()
@@ -157,7 +185,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         print('Checking MARRtino OS ...')
         try:
             self.tmux.cmd(3,'lsb_release -ds > /tmp/.marrtino_os', blocking=True)
-            time.sleep(1)
+            time.sleep(0.1)
             f = open('/tmp/.marrtino_os', 'r')
             v = f.readline().strip()
             f.close()
@@ -208,7 +236,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
         print('Checking MARRtino Apps version from git log ...')
         self.tmux.cmd(3,'cd %s' %self.mahome)
         self.tmux.cmd(3,'git log | head -n 4 | grep Date > /tmp/.marrtinoapp_version', blocking=True)
-        time.sleep(1)
+        time.sleep(0.1)
         try:
             f = open('/tmp/.marrtinoapp_version','r')
             v = f.readline().strip()
@@ -222,6 +250,8 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             print(e)
 
         return v
+
+
 
 
     def on_message(self, message):
@@ -246,7 +276,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.setStatus('Updating...')
             self.tmux.cmd(4,'cd %s' %self.mahome)
             self.tmux.cmd(4,'git pull', blocking=True)
-            time.sleep(3)
+            time.sleep(1)
             self.checkStatus()
 
         elif (message=='updatemodim'):
@@ -254,7 +284,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.setStatus('Updating...')
             self.tmux.cmd(4,'cd %s/src/modim' %self.home)
             self.tmux.cmd(4,'git pull', blocking=True)
-            time.sleep(3)
+            time.sleep(1)
             self.checkStatus()
 
         elif (message=='updaterchome'):
@@ -262,7 +292,7 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
             self.setStatus('Updating...')
             self.tmux.cmd(4,'cd %s/src/rc-home-edu-learn-ros' %self.home)
             self.tmux.cmd(4,'git pull', blocking=True)
-            time.sleep(3)
+            time.sleep(1)
             self.checkStatus()
 
         elif (message=='shutdown'):
