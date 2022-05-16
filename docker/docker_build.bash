@@ -2,6 +2,8 @@
 
 MACHTYPE=`uname -m`
 
+UPAR="--build-arg UID=`id -u` --build-arg GID=`id -g`"
+
 if [ "$MACHTYPE" = "x86_64" ]; then
   docker pull iocchi/orazio
   #docker build -t orazio -f Dockerfile.orazio . && \
@@ -20,4 +22,6 @@ docker build -t marrtino:navigation -f Dockerfile.navigation . && \
 docker build -t marrtino:vision -f Dockerfile.vision . && \
 docker build -t marrtino:speech -f Dockerfile.speech . && \
 docker build -t marrtino:mapping -f Dockerfile.mapping .
+
+#docker build $UPAR -t marrtino:objrec -f Dockerfile.objrec .
 
