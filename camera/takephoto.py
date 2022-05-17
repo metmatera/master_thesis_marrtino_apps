@@ -32,6 +32,7 @@ import numpy
 ROS_NODE_NAME = 'takephoto'
 TAKEPHOTO_TOPIC = '/takephoto'
 PARAM_takephoto_image_folder = '%s/imagefolder' %ROS_NODE_NAME
+PARAM_result = '%s/imageresult' %ROS_NODE_NAME
 
 # select topic of type sensor_msgs/Image
 def autoImageTopic():
@@ -114,25 +115,28 @@ class TakePhoto:
             rospy.loginfo("No images received")
             return False
 
-    def send_image(self):
+    def send_image(self, width, height):
         if self.image_received:
             
             sendimage = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+            sendimage = cv2.resize(sendimage, (width,height))
 
             data = numpy.array(sendimage)
             stringData = data.tostring()
 
             try:
-                sock = socket.socket()   # stagepersondetection
+                rospy.set_param(PARAM_result, '')
+                sock = socket.socket()   # connection to server
                 sock.connect((self.sendimage_server, self.sendimage_port))
-                (h,w,c) = self.image.shape
+                (h,w,c) = sendimage.shape
                 print("Sending %dx%d image " %(w,h))
                 sock.sendall("RGB %d %d\n\r" %(w,h))
                 rospy.sleep(0.2)
                 sock.sendall(stringData);
                 data = sock.recv(256)
                 data = data.strip().decode('UTF-8')
-                print(data)    
+                print(data)
+                rospy.set_param(PARAM_result, data)
                 sock.close()
             except Exception as e:
                 print(e)
@@ -153,8 +157,13 @@ class TakePhoto:
             if (len(v)>=3):
                 self.sendimage_server = v[1]
                 self.sendimage_port = int(v[2])
+            w=224
+            h=224
+            if (len(v)>=5):
+                w = int(v[3])
+                h = int(v[4])
             # Take a photo
-            self.send_image()
+            self.send_image(w,h)
 
     def waitForImage(self):
         time.sleep(0.5)
@@ -213,6 +222,8 @@ if __name__ == '__main__':
     else:
         print("Set ROS param %s to set image save folder" %PARAM_takephoto_image_folder)
         print("Send String message with data 'get' to topic %s to take a photo" %takephoto_topic)
+        print("Send String message with data 'send server port' to topic %s to send image to remote server" %takephoto_topic)
+        print("Read param %s for results of server image processing" %PARAM_result)
         print("Running (CTRL-C to quit)")
 
         rospy.spin()

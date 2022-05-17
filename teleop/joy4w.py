@@ -7,7 +7,7 @@ begin()
 
 print('Joy4wd started.')
 
-vel = 0.01
+vel = 0.1
 dt = 0.1
 run = True
 
@@ -23,10 +23,10 @@ while (run):
         vr = -1
         vl = +1
 
-    fl = -vel * v[0]  * vl
+    fl =  vel * v[0]  * vl
     fr =  vel * v[0]  * vr
     bl =  vel * v[0]  * vl
-    br = -vel * v[0]  * vr
+    br =  vel * v[0]  * vr
 
     try:
         setSpeed4W(fl,fr,bl,br,dt)
@@ -39,3 +39,4 @@ setSpeed4W(0,0,0,0,dt)
 print('Joy4wd stopped.')
 
 end()
+

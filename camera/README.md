@@ -44,4 +44,9 @@ If using videoserver
 
 Note: To visualize images from another PC, export ROS_MASTER_URI. This feature may be very slow specially if using a wireless network.
 
+## Sending images to classification servers 
+
+    rostopic pub  /takephoto ...  "send <server> <port> [<width> <height>]"
+
+
 
