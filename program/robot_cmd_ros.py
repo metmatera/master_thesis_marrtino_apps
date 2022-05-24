@@ -755,15 +755,14 @@ def set_speed(lx,az,tm,stopend=False):
     if (stop_request and (lx!=0.0 or az!=0.0)):
         raise Exception("setSpeed called in stop_request mode")
 
-    delay = 0.1 # sec
+    delay = 0.05 # sec
     rate = rospy.Rate(1/delay) # Hz
     cnt = 0.0
     msg = Twist()
     msg.linear.x = lx
     msg.angular.z = az
     msg.linear.y = msg.linear.z = msg.angular.x = msg.angular.y =  0
-    while not rospy.is_shutdown() and cnt<=tm and not stop_request:
-
+    while not rospy.is_shutdown() and cnt<tm and not stop_request:
         if (use_desired_cmd_vel):
             des_cmd_pub.publish(msg)
         else:

@@ -42,6 +42,7 @@ def groundtruth_cb(data):
 ### main ###
 
 def main(argv):
+    global gt_robot_pose
 
     rospy.init_node('autostart_localizer')
 
