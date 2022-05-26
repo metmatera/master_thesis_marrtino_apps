@@ -10,7 +10,9 @@
     privileged: true
     environment:
     - ROS_IP=$ROS_IP
+    - PULSE_SERVER=unix:/run/user/1000/pulse/native
     volumes:
     - /dev:/dev
+    - /run/user/1000/pulse/native:/run/user/1000/pulse/native
     - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
 
