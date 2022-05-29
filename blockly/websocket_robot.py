@@ -1,6 +1,8 @@
 # http://www.html.it/pag/53419/websocket-server-con-python/
 # sudo -H pip install tornado
 
+from __future__ import division
+
 import sys, os, socket, time, random
 from datetime import datetime
 import thread2

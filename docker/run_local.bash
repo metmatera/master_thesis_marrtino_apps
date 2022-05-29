@@ -4,6 +4,10 @@ IMAGENAME=iocchi/marrtino:base
 
 # change setings here if needed
 
+if [ "$ROBOT_IP" == "" ]; then
+  echo "Set ROBOT_IP env var to IP of robot running roscore"
+  exit 1
+fi
 
 echo "Running image $IMAGENAME ..."
 

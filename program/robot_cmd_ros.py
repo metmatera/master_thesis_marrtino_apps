@@ -64,13 +64,13 @@ TOPIC_joints = 'cmd_joints_jog'
 TOPIC_joy = 'joy'
 
 ACTION_move_base = 'move_base'
-TOPIC_sonar_0 = '/sonar_0' 
-TOPIC_sonar_1 = '/sonar_1'
-TOPIC_sonar_2 = '/sonar_2'
-TOPIC_sonar_3 = '/sonar_3'
-TOPIC_GROUND_TRUTH = '/base_pose_ground_truth'
-TOPIC_SETPOSE = '/setpose'
-TOPIC_STAGESAY = '/stage_say'
+TOPIC_sonar_0 = 'sonar_0' 
+TOPIC_sonar_1 = 'sonar_1'
+TOPIC_sonar_2 = 'sonar_2'
+TOPIC_sonar_3 = 'sonar_3'
+TOPIC_GROUND_TRUTH = 'base_pose_ground_truth'
+TOPIC_SETPOSE = 'setpose'
+TOPIC_STAGESAY = 'stage_say'
 
 # Android sensors
 TOPIC_IMU = '/android/imu'
@@ -153,7 +153,8 @@ def setMaxSpeed(x,r):
 def setRobotNamePrefix(prefix):
     global TOPIC_tag_detections,TOPIC_scan,TOPIC_amcl_pose,TOPIC_cmd_vel,TOPIC_desired_cmd_vel, \
            TOPIC_odom,TOPIC_joy,TOPIC_joints,ACTION_move_base, \
-           TOPIC_sonar_0,TOPIC_sonar_1,TOPIC_sonar_2,TOPIC_sonar_3
+           TOPIC_sonar_0,TOPIC_sonar_1,TOPIC_sonar_2,TOPIC_sonar_3, \
+           TOPIC_GROUND_TRUTH, TOPIC_SETPOSE, TOPIC_STAGESAY
 
     TOPIC_tag_detections = prefix+'/' + TOPIC_tag_detections
     TOPIC_scan = prefix+'/'+TOPIC_scan
@@ -267,7 +268,8 @@ def get_robot_vel():
     global odom_robot_vel
     return list(odom_robot_vel)
 
-
+def getSpeed():
+    return get_robot_vel()
 
 def obstacleDistance(dir_deg=0):
     return obstacle_distance(dir_deg)
@@ -1168,7 +1170,7 @@ def exec_move_REL(tx, frame='odom'):
         tv_nom *= -1
         tx *= -1
     dx = abs(distance(start_pose,robot_pose) - tx)
-    while (dx>0.1):
+    while (dx>0.01):
         tv = tv_nom
         if (dx<0.5):
             tv = tv_nom*dx/0.5
