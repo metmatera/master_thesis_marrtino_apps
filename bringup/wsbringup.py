@@ -687,9 +687,9 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
     def wsrobot(self):
-        self.tmux.python(self.wwsrobot,'blockly','websocket_robot.py')
-        time.sleep(3)
-
+        #self.tmux.python(self.wwsrobot,'blockly','websocket_robot.py')
+        #time.sleep(3)
+        pass
 
 
 # Main loop (asynchrounous thread)

@@ -43,6 +43,12 @@ cd /home/marrtino/bin && source start_docker.bash
 sleep 30
 
 
+if [ -f ~/bin/autostart.bash ]; then
+  source ~/bin/autostart.bash
+fi
+
+sleep 10
+
 while [ ! -f ~/log/shutdownrequest ] && [ ! -f  ~/log/rebootrequest ] && [ ! -f  ~/log/quitrequest ]; do
 
     sleep 5
