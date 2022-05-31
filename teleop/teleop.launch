@@ -11,11 +11,11 @@
 		</node>
 	</group>
 
-	<!-- joystick -->
-	<group if="$(arg use_joystick)">
+    <!-- joystick -->
+    <group if="$(arg use_joystick)">
 	    <node pkg="joy" type="joy_node" name="joy" output="screen">
 		  <param name="dev" type="string" value="/dev/input/js0" />
-		  <param name="deadzone" value="0.12" />		  
+		  <param name="deadzone" value="0.12" />
 	    </node>
 
       <group unless="$(arg use_4wd)">

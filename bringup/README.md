@@ -77,7 +77,10 @@ Send commands to bringup servers
         echo '@loc' | netcat -w 1 localhost 9238
         echo '@lockill' | netcat -w 1 localhost 9238
         echo '@movebase' | netcat -w 1 localhost 9238
+        echo '@movebasegbn' | netcat -w 1 localhost 9238
         echo '@movebasekill' | netcat -w 1 localhost 9238
+        echo '@gbn' | netcat -w 1 localhost 9238
+        echo '@gbnkill' | netcat -w 1 localhost 9238
         echo '@rviz' | netcat -w 1 localhost 9238
         echo '@rvizkill' | netcat -w 1 localhost 9238
 
