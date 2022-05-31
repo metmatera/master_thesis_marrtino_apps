@@ -9,6 +9,7 @@ from threading import Thread
 from datetime import datetime
 
 import rospy
+import rosnode
 import tf
 import actionlib
 
@@ -505,6 +506,15 @@ def audio_connect_thread():
             timeout -= 1
     run_audio_connect = False
 
+
+def get_ROS_nodes():
+    try:
+        nodenames = rosnode.get_node_names()
+    except Exception as e:
+        #print e
+        return None
+    return nodenames
+
 # Begin/end
 
 def begin(nodename='robot_cmd', init_node=True):
@@ -523,6 +533,15 @@ def begin(nodename='robot_cmd', init_node=True):
         t = Thread(target=audio_connect_thread, args=())
         t.start()
         time.sleep(0.5)
+
+    # if gbn node running, enable obstacle avoidance
+
+    nn = get_ROS_nodes()
+    #print(nn)
+    obstav = '/gradientBasedNavigation' in nn
+    enableObstacleAvoidance(obstav)
+    if obstav:
+      print("gbn detected: obstacle avoidance automatically enabled")
 
     if (robot_initialized):
         return
