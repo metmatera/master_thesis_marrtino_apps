@@ -85,10 +85,10 @@ def main(argv):
     print("Current robot pose: %r" %(gt_robot_pose))
 
     #start localizer
-    if (msrun):
+    if (msrun and stagerun):
         rstr = "roslaunch amcl.launch use_mapserver:=false "
     else:
-        rstr = "roslaunch amcl.launch map_name:=%s " %mapname
+        rstr = "roslaunch amcl.launch map_name:=%s use_mapserver:=true " %mapname
 
     if gt_robot_pose is not None:
         rstr += " initial_pose_x:=%.1f initial_pose_y:=%.1f  initial_pose_a:=%.3f" \
