@@ -56,7 +56,9 @@ class ASRServer(threading.Thread):
                         data = "***"
                     except:
                         data = None
-                    
+
+                    self.connection.send('ACK\n\r')
+
                     if (data!=None and data !="" and data!="***" and data[0]!='$' and data!='KEEP_AWAKE'):
                         if data!='REQ':
                             print 'ASR Received %s' % data
