@@ -14,6 +14,7 @@ import tf
 import actionlib
 
 import cv2
+import numpy
 
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist, Quaternion, Pose, PoseWithCovarianceStamped
@@ -51,7 +52,13 @@ use_audio = True
 robot_initialized = False
 stop_request = False
 
-logdir = os.getenv('HOME')+'/log/'  # dir for writing log files (programs, images,... )
+# dir for writing log files (programs, images,... )
+logdir = os.getenv('HOME')+'/playground/log/'
+if not os.path.isdir(logdir):
+  logdir = os.getenv('HOME')+'log/'
+if not os.path.isdir(logdir):
+  logdir = '/tmp/'
+
 
 # Topic names
 
@@ -468,6 +475,7 @@ def image_cb(data):
         if cvbridge is None:
             cvbridge = CvBridge()
         cvimage = cvbridge.imgmsg_to_cv2(data, "bgr8")
+        #print('image')
     except CvBridgeError as e:
         print(e)
 
@@ -504,6 +512,7 @@ def audio_connect_thread():
             print("Cannot connect to audio server %s:%d" %(AUDIO_SERVER_IP, AUDIO_SERVER_PORT))
             time.sleep(1)
             timeout -= 1
+            assock = None
     run_audio_connect = False
 
 
@@ -609,7 +618,7 @@ def end():
         global run_audio_connect, audio_connected
         run_audio_connect = False
         global assock
-        if assock != None:
+        if assock is not None:
             assock.close()
             assock=None
             audio_connected = False
@@ -646,7 +655,7 @@ def stopCameraGrabber():
 
 
 def getImage(tmsleep=3):
-    get_image(tmsleep)
+    return get_image(tmsleep)
 
 def get_image(tmsleep=3):
     global cvimage
@@ -657,10 +666,11 @@ def get_image(tmsleep=3):
     timestampStr = dateTimeObj.strftime("%Y%m%d-%H%M%S")
     cv2.imwrite(os.getenv('MARRTINO_APPS_HOME')+'/www/viewer/img/lastimage.jpg', cvimage)
     cv2.imwrite('%s/%s.jpg' %(logdir,timestampStr), cvimage)
+    #print('cvimage',cvimage)
     return cvimage
 
 def getWebImage(objcat=None):
-    get_web_image(objcat)
+    return get_web_image(objcat)
 
 def get_web_image(objcat=None):
     rchomelearnros_import()
@@ -680,7 +690,7 @@ def findCascadeModel():
 faceCascade = None
 
 def faceDetection(img):
-    face_detection(img)
+    return face_detection(img)
 
 def face_detection(img):
     global faceCascade
@@ -689,6 +699,9 @@ def face_detection(img):
         if faceCascade is None:
             print("ERROR Cannot find Haar cascade model")
             return -1
+    if img is None:
+        print("ERROR No image")
+        return -1
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # Detect faces in the image
     faces = faceCascade.detectMultiScale(gray,
@@ -698,6 +711,11 @@ def face_detection(img):
     )
     return len(faces)
 
+
+
+# Object recognition with mobilenet
+
+# REQUIRES tensorflow 2.x !!!
 
 # rc-home-learn-ros import
 rchomelearnros_imported = False
@@ -730,7 +748,7 @@ def rchomelearnros_import():
         print('Cannot import mobilenet_objrec, webimages modules')
 
 
-# Object recognition with mobilenet
+# local instance of mobilenet_objrec
 
 monet = None
 
@@ -749,6 +767,51 @@ def mobilenet_objrec(img):
     
     r = monet.evalCVImage(img)
     return r
+
+
+# Object recognition with mobilenet server
+
+# DOES NOT REQUIRE tensorflow on the client side !!!
+
+def send_image(image, width, height, server, port):
+    if image is not None:
+        sendimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        sendimage = cv2.resize(sendimage, (width,height))
+
+        sdata = numpy.array(sendimage)
+        stringData = sdata.tostring()
+
+        try:  
+            sock = socket.socket()   # connection to server
+            sock.connect((server, port))
+            (h,w,c) = sendimage.shape
+            print("Sending %dx%d image " %(w,h))
+            sock.sendall("RGB %d %d\n\r" %(w,h))
+            rospy.sleep(0.2)
+            sock.sendall(stringData);
+            rdata = sock.recv(256)
+            rdata = rdata.strip().decode('UTF-8')
+            print("Received: %s" %rdata)
+            sock.close()
+        except Exception as e:
+            print(e)
+            print("Cannot send image to %s:%d" %(server, port))
+            rdata = None
+        return rdata
+
+def mobilenetObjrecClient(img, server='localhost', port=9300):
+    # send image to sever
+    print("Sending image to server %s:%s" %(server,port))
+    w = 224
+    h = 224
+    res = send_image(img, w, h, server, port)
+
+    print("result: %s" %res)
+
+    return res
+
+
+
 
 
 def ready():
