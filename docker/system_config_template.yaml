@@ -19,5 +19,6 @@ functions:
   vision: off
   speech: off
   mapping: off
+  objrec: off
   social: off
 

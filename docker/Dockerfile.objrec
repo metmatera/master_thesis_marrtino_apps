@@ -1,7 +1,14 @@
 # Docker file for object recognition
+# Build with docker_build_objrec.bash
 
-FROM tensorflow/tensorflow
+#FROM tensorflow/tensorflow
 #FROM tensorflow/tensorflow:2.3.2-gpu
+
+# NUC
+#FROM aperture147/tensorflow-non-avx:bionic-slim
+# tensorflow 1.15.0
+
+FROM iocchi/tensorflow:2.3-x86_64-noavx
 
 #
 # USER root
@@ -13,6 +20,9 @@ ARG UID=1000
 ARG GID=1000
 ARG DEBIAN_FRONTEND=noninteractive
 
+# NUC
+#RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+
 RUN apt update && \
     apt install -y -qq --no-install-recommends \
         tmux sudo nano htop wget less \
@@ -21,6 +31,8 @@ RUN apt update && \
         python3-dev python3-pip python3-tk python3-opencv && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+#   libgl1-mesa-glx
 
 
 # Create user: robot (password: robot) with sudo power
@@ -31,9 +43,14 @@ RUN usermod -u $UID robot && groupmod -g $GID robot
 
 # Python modules
 
-RUN pip install \
-    numpy pandas scipy matplotlib sklearn keras \
-    jupyter notebook opencv-python
+RUN pip3 install --upgrade pip
+
+RUN pip3 install numpy opencv-python-headless
+
+# pandas scipy matplotlib sklearn keras   
+# jupyter notebook
+# opencv-python / opencv-python-headless
+
 
 #
 # USER robot
@@ -45,15 +62,20 @@ USER robot
 
 RUN echo "set -g mouse on" > $HOME/.tmux.conf 
 
-RUN echo "2022-05-06" > /tmp/dockerbuild
+RUN touch $HOME/.sudo_as_admin_successful
+
+RUN echo "2022-06-05" > /tmp/dockerbuild
 
 RUN mkdir -p $HOME/src && cd $HOME/src && \
-    git clone --depth 1 https://github.com/robocupathomeedu/rc-home-edu-learn-ros.git
+    git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
 
-RUN cd $HOME/src/rc-home-edu-learn-ros/rchomeedu_vision/scripts && \
-    python mobilenet_objrec.py  --init
+RUN cd $HOME/src/marrtino_apps/vision && \
+    python3 mobilenet_objrec.py  --init
 
-WORKDIR /home/robot/src/rc-home-edu-learn-ros
 
-CMD ["/usr/bin/tmux" ]
+WORKDIR /home/robot/src/marrtino_apps/vision
+
+#  python3 mobilenet_objrec.py --server
+
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python objrec_bringup.py -server_port 9242" ]
 

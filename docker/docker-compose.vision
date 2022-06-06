@@ -10,9 +10,12 @@
     privileged: true
     environment:
     - DISPLAY=:0
+    - QT_X11_NO_MITSHM=1
     - ROS_IP=$ROS_IP
     - CAMRES=$CAMRES
     volumes:
     - /dev:/dev
     - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
+    - $HOME/playground:/home/robot/playground
+    - $HOME/log:/home/robot/log
 
