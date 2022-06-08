@@ -25,7 +25,7 @@ USER robot
 
 RUN mkdir -p $HOME/lib && \
     cd $HOME/lib && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/lib/g2o-marrtino-src.tgz && \
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/lib/g2o-marrtino-src.tgz && \
     tar xzvf g2o-marrtino-src.tgz && \
     cd g2o && \
     mkdir -p build && \
@@ -61,24 +61,24 @@ RUN cd $HOME/src/srrg/srrg_cmake_modules  && \
     cd $HOME/src/srrg/srrg_core  && \ 
     git checkout 3d3310c70da18077c90ecc61256fa7ea34029517  && \
     cd src && rm CMakeLists.txt  && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_core/src/CMakeLists.txt  && \
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/patches/srrg_core/src/CMakeLists.txt  && \
     cd $HOME/src/srrg/srrg_core_ros  && \ 
     git checkout 9ccfdad65d1e453b905a1fe9b4467ed3c4e89251  && \
     cd src && rm CMakeLists.txt  && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_core_ros/src/CMakeLists.txt  && \
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/patches/srrg_core_ros/src/CMakeLists.txt  && \
     cd $HOME/src/srrg/srrg_mapper2d_ros  && \
     rm CMakeLists.txt package.xml   && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/CMakeLists.txt  && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/package.xml   && \
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/patches/srrg_mapper2d_ros/CMakeLists.txt  && \
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/patches/srrg_mapper2d_ros/package.xml   && \
     cd src   && \
     rm srrg_mapper2d_node.cpp   && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/srrg_mapper2d_node.cpp  && \
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/patches/srrg_mapper2d_ros/srrg_mapper2d_node.cpp  && \
     rm message_handler.cpp  && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/message_handler.cpp  && \
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/patches/srrg_mapper2d_ros/message_handler.cpp  && \
     cd $HOME/src/srrg/srrg_scan_matcher   && \
     cd src   && \
     rm laser_message_tracker.cpp   && \
-    wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_scan_matcher/laser_message_tracker.cpp
+    wget http://www.diag.uniroma1.it/publiciocchi/marrtino/patches/srrg_scan_matcher/laser_message_tracker.cpp
 
 
 # Link
