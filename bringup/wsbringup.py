@@ -603,48 +603,41 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
 
         # ************************
-        # S O C I A L 
+        #    S O C I A L 
         # ************************
 
-
-        # social_robot_start
+        # social robot
         elif (message=='social_robot_start'):
-            if usenetcat:
-                self.tmux.cmd(self.wnet,"echo '@robot' | netcat -w 1 localhost 9236")
-            else:
-                self.tmux.roslaunch(self.wrobot,'robot','robot')
-            self.waitfor('robot',5)
-            self.waitfor('odom',1)
-            self.waitfor('sonar',1)
-            #
             self.tmux.cmd(self.wnet,"echo '@robotsocial' | netcat -w 1 localhost 9250")
-            #self.waitfor('social',5)
             time.sleep(1)
-
         elif (message=='social_robot_kill'):
             self.tmux.cmd(self.wnet,"echo '@robotsocialkill' | netcat -w 1 localhost 9250")
-        
- 
-        # social ns (no servo)
+
+        # social  (no tracker)
+        elif (message=='socialnt_start'):
+            self.tmux.cmd(self.wnet,"echo '@socialnotracker' | netcat -w 1 localhost 9250")
+            time.sleep(1)
+        elif (message=='socialnt_kill'):
+            self.tmux.cmd(self.wnet,"echo '@socialnotrackerkill' | netcat -w 1 localhost 9250")
+
+        # social no servo (dynamixel) demo
         elif (message=='socialns_start'):
-            self.tmux.cmd(self.wnet,"echo '@social' | netcat -w 1 localhost 9250")
-            #self.waitfor('social',5)
+            self.tmux.cmd(self.wnet,"echo '@socialnoservo' | netcat -w 1 localhost 9250")
             time.sleep(1)
         elif (message=='socialns_kill'):
-            self.tmux.cmd(self.wnet,"echo '@socialkill' | netcat -w 1 localhost 9250")
-            #self.waitfor('social',5)
-            time.sleep(1)
+            self.tmux.cmd(self.wnet,"echo '@socialnoservokill' | netcat -w 1 localhost 9250")
 
-        # tracker 
-        elif (message=='tracker_start'):
-            self.tmux.cmd(self.wnet,"echo '@tracker' | netcat -w 1 localhost 9250")
-            #self.waitfor('social',5)
+        # speech  script/speech.py
+        elif (message=='speech_start'):
+            self.tmux.cmd(self.wnet,"echo '@speech' | netcat -w 1 localhost 9250")
             time.sleep(1)
-        elif (message=='tracker_kill'):
-            self.tmux.cmd(self.wnet,"echo '@trackerkill' | netcat -w 1 localhost 9250")
-            #self.waitfor('social',5)
-            time.sleep(1)
+        elif (message=='speech_kill'):
+            self.tmux.cmd(self.wnet,"echo '@speechkill' | netcat -w 1 localhost 9250")
 
+
+        # ***************************
+        #    S O C I A L  -  E N D
+        # ***************************
 
 
 
