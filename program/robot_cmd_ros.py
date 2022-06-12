@@ -13,8 +13,15 @@ import rosnode
 import tf
 import actionlib
 
-import cv2
-import numpy
+try:
+  import cv2
+except:
+  print("Cannot import OpenCV")
+
+try:
+  import numpy
+except:
+  print("Cannot import numpy")
 
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist, Quaternion, Pose, PoseWithCovarianceStamped
