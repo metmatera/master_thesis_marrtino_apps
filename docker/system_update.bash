@@ -14,9 +14,10 @@ docker build -t marrtino:system -f Dockerfile.system .
 docker-compose build
 cd -
 
-if [ -f /tmp/marrtinosocialon ] && [ "$MARRTINO_SOCIAL" != "" ]; then
+if [ -f /tmp/marrtinosocialon ] && [ "$MARRTINO_SOCIAL" != "" ] && [ -d $MARRTINO_SOCIAL/docker ]; then
   
   cd $MARRTINO_SOCIAL/docker
+  git pull
   docker-compose pull
   ./build_docker.bash
   cd -
