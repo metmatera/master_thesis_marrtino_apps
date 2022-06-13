@@ -190,7 +190,16 @@ ROS topics:
 <tr height=40>
 <td>Simrobot</td> 
 <td width=80 align='center'><span id="simrobot_status" style="color: red;">OFF</span></td>
-<td><button id="simrobot_start_btn" onclick="send_cmd('simrobot_start')" class="btn waves-effect waves-light blue">Simrobot start</button>
+<td><button id="simrobot_start_btn" onclick="send_cmd('simrobot_start;'+document.getElementById('mapname').value)" class="btn waves-effect waves-light blue">Simrobot start</button>
+&nbsp;
+<label for="mapname" style="color:blue;font-size:18" >Map</label>
+<select name="maps" id="mapname" style="display:table-cell;max-width:33%;">
+  <option value="montreal">montreal</option>
+  <option value="teaching">teaching</option>
+</select>
+
+
+
 <!-- TODO - does not work with simulated camera  &nbsp;&nbsp;&nbsp; > 
 <!--button id="simrobot_start_nogui_btn" onclick="send_cmd('simrobot_start_nogui')" class="btn waves-effect waves-light blue">Simrobot start (no GUI)</button -->
 </td>
@@ -733,6 +742,7 @@ rosrun rococo_navigation follow_person_node -client none stop
     }
 
     function send_cmd(action) {
+        console.log("send_cmd: "+action)
         wsrobot_send(action);
     }
 

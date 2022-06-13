@@ -232,13 +232,19 @@ class MyWebSocketServer(tornado.websocket.WebSocketHandler):
 
         # simrobot start/stop
         elif (message[0:14]=='simrobot_start'):
-            if (message=='simrobot_start'):
+            v = message.split(";")
+            print(v)
+            if (v[0]=='simrobot_start'):
+                if len(v)<2:
+                    mapname = 'montreal'
+                else:
+                    mapname = v[1]    
                 if usenetcat:
-                    stagestr = "montreal;marrtino;1"
+                    stagestr = "%s;marrtino;1"  %mapname
                     self.tmux.cmd(self.wnet,"echo '%s' | netcat -w 1 localhost 9235" %stagestr)
                 else:
                     self.tmux.roslaunch(self.wrobot,'stage','simrobot')
-            elif (message=='simrobot_start_nogui'):  # launch stage without GUI
+            elif (v[0]=='simrobot_start_nogui'):  # launch stage without GUI
                 self.tmux.roslaunch(self.wrobot,'stage','simrobot','stageros_args:=\"-g\"')
                 # TODO does not work with simulated camera!!! Need dummyX11
             self.waitfor('simrobot',5)
