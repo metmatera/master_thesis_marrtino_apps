@@ -25,9 +25,11 @@ import wave
 import argparse
 
 import rospy
+import std_msgs.msg
 
 use_sound_play = False
 use_alsaaudio = True
+
 
 try:
     from sound_play.msg import SoundRequest
@@ -62,9 +64,18 @@ from asr_server import ASRServer
 SOUNDS_DIR = "sounds/"  # dir with sounds
 soundfile = None        # sound file
 
+SPEECH_TOPIC = "/speech/to_speak"
 
 tts_server = None
 asr_server = None
+
+
+
+def speak_callback(data):
+    global tts_server
+    if tts_server is not None:
+        rospy.loginfo(rospy.get_caller_id() + "%s %s" %(SPEECH_TOPIC,data.data))
+        tts_server.say(data.data, 'it')
 
 
 def TTS_callback(in_data, frame_count, time_info, status):
@@ -96,12 +107,12 @@ class TTSServer(threading.Thread):
         if (use_sound_play):
             os.system('roslaunch sound_play.launch &')
             time.sleep(5)
-            rospy.init_node('sound_client', disable_signals=True)
+            #rospy.init_node('sound_client', disable_signals=True)
             use_alsaaudio = False
         elif (use_alsaaudio):
             self.init_alsaaudio()
         else:
-            print('Cannot initializa audio interface')
+            print('Cannot initialize audio interface')
 
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -111,7 +122,7 @@ class TTSServer(threading.Thread):
         server_address = ('', port)
         self.sock.bind(server_address)
         self.sock.listen(1)
-        print "TTS Server running on port ", port, " ..."
+        print("TTS Server running on port %d ..." %port)
         
         self.dorun = True
         self.connection = None
@@ -178,14 +189,14 @@ class TTSServer(threading.Thread):
         connected = False
         while (self.dorun and not connected):
             try:
-                # print 'Waiting for a connection ...'
+                # print('Waiting for a connection ...')
                 # Wait for a connection
-                self.connection, client_address = self.sock.accept()
+                self.connection, client_address = self.sock.accept()  # blocking
                 self.connection.settimeout(3) # timeout when listening (exit with CTRL+C)
                 connected = True
-                print 'TTS Server Connection from ', client_address
+                print('TTS Server Connection from %r' %client_address)
             except:
-                pass #print "Listen again ..."    
+                pass #print("Listen again ...")
 
 
     def reply(self,mstr):
@@ -200,6 +211,57 @@ class TTSServer(threading.Thread):
     def setVolume(self,volperc): # volume in percentag [0-100]
         cmdstr = 'amixer set PCM %d%%' %volperc
         os.system(cmdstr)
+
+    def connection_run(self):
+        self.connect()  # blocking
+        try:
+            # Receive the data in small chunks
+            while (self.dorun):
+                try:
+                    data = self.connection.recv(320)
+                    data = data.strip()
+                except socket.timeout:
+                    data = "***"
+                except:
+                    data = None
+
+                if (data!=None and data !="" and data!="***"):
+                    if data!="ASR":
+                        print 'TTS Received [%s]' % data
+                    if (data.startswith('TTS')):
+                        lang = 'en-US' # default language
+                        strsay = data[4:]
+                        if (data[3]=='['):
+                            vd = re.split('\[|\]',data)
+                            lang = vd[1]
+                            strsay = vd[2]
+                        self.say(strsay,lang)
+                        self.reply('OK')
+
+                    elif (data=="ASR"):
+                        #print('asr request')
+                        bh = asr_server.get_asr()
+                        self.reply(bh)
+                        if bh!='':
+                            print('ASR sent [%s]' %bh)
+
+                    elif (data.startswith('SOUND')):
+                        self.play(data[6:]) # play this sound
+                        self.reply('OK')
+                    #print 'sending data back to the client'
+                    #self.connection.sendall("OK")
+                    else:
+                        print('Message not understood: %s' %data)
+                        self.reply('ERR')
+                elif (data == None or data==""):
+                    break
+        finally:
+            print 'TTS Server Connection closed.'
+            # Clean up the connection
+            if (self.connection != None):
+                self.connection.close()
+                self.connection = None
+
 
     def run(self):
         global asr_server
@@ -219,54 +281,7 @@ class TTSServer(threading.Thread):
         time.sleep(3)
 
         while (self.dorun):
-            self.connect()
-            try:
-                # Receive the data in small chunks 
-                while (self.dorun):
-                    try:
-                        data = self.connection.recv(320)
-                        data = data.strip()
-                    except socket.timeout:
-                        data = "***"
-                    except:
-                        data = None
-                    
-                    if (data!=None and data !="" and data!="***"):
-                        if data!="ASR":
-                            print 'TTS Received [%s]' % data
-                        if (data.startswith('TTS')):
-                            lang = 'en-US' # default language
-                            strsay = data[4:]
-                            if (data[3]=='['):
-                                vd = re.split('\[|\]',data)
-                                lang = vd[1]
-                                strsay = vd[2]
-                            self.say(strsay,lang)
-                            self.reply('OK')
-
-                        elif (data=="ASR"):
-                            #print('asr request')
-                            bh = asr_server.get_asr()
-                            self.reply(bh)
-                            if bh!='':
-                                print('ASR sent [%s]' %bh)
-
-                        elif (data.startswith('SOUND')):
-                            self.play(data[6:]) # play this sound
-                            self.reply('OK')
-                        #print 'sending data back to the client'
-                        #self.connection.sendall("OK")
-                        else:
-                            print('Message not understood: %s' %data)
-                            self.reply('ERR')
-                    elif (data == None or data==""):
-                        break
-            finally:
-                print 'TTS Server Connection closed.'
-                # Clean up the connection
-                if (self.connection != None):
-                    self.connection.close()
-                    self.connection = None
+            self.connection_run()
 
         self.say('Audio server has been closed.', 'en')
         time.sleep(2)
@@ -274,7 +289,7 @@ class TTSServer(threading.Thread):
 
 
     def say(self, data, lang):
-        print 'Say ',data
+        print('Say %r' %data)
 
         if (use_sound_play):
             voice = 'voice_kal_diphone'
@@ -299,7 +314,7 @@ class TTSServer(threading.Thread):
                 lang = lang+'-'+lang.upper()
             time.sleep(0.2)
             cmd = 'pico2wave -l "%s" -w %s " , %s"' %(lang,tmpfile, data)
-            print cmd
+            print(cmd)
             os.system(cmd)
             time.sleep(0.2)
 
@@ -381,10 +396,15 @@ if __name__ == "__main__":
     time.sleep(1)
     asr_server.start()
 
+    # ROS node with speech topic subscriber
+    rospy.init_node('audioserver') #, disable_signals=True)
+    rospy.Subscriber(SPEECH_TOPIC,std_msgs.msg.String,speak_callback)
+    print("audioserver listening to topic %s" %SPEECH_TOPIC)
+
     run = True
-    while (run):
+    while (run and not rospy.is_shutdown()):
         try:
-            time.sleep(3)
+            rospy.sleep(3)
             #if (not tts_server.streaming):
             #    cmd = 'play -n --no-show-progress -r 44100 -c1 synth 0.1 sine 50 vol 0.01' # keep sound alive
             #    os.system(cmd)

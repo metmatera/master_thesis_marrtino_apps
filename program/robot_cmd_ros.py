@@ -1088,7 +1088,6 @@ def say(text, language='en'):
     stage_say("")
     
 
-
 def stage_say(text, language='en'):
     global stage_say_pub
     s = String()
@@ -1258,7 +1257,7 @@ def exec_move_REL(tx, frame='odom'):
     if (tx < 0):
         tv_nom *= -1
         tx *= -1
-    dx = abs(distance(start_pose,robot_pose) - tx)
+    dx = tx - distance(start_pose,robot_pose)  
     while (dx>0.01):
         tv = tv_nom
         if (dx<0.5):
@@ -1268,7 +1267,7 @@ def exec_move_REL(tx, frame='odom'):
         rv = 0.0
         if setSpeed(tv, rv, 0.1, False):
             robot_pose = get_robot_pose(frame)
-            dx = abs(distance(start_pose, robot_pose) - tx)
+            dx = tx - distance(start_pose, robot_pose)
         else:
             print("move action canceled by user")
             r = False
