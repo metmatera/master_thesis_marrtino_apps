@@ -165,7 +165,7 @@ show_text(value, which='default')
 img = getImage()
 img = getWebImage(objcat=None)
 n = faceDetection(img)
-label,conf = mobilenetObjrec(img)
+(label,conf) = mobilenetObjrecClient(img[,server,port])
 b = tagTrigger()  # boolean
 id = tagID()      # id
 d = tagDistance() # [m]

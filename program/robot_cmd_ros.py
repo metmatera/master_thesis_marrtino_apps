@@ -507,7 +507,7 @@ def audio_connect_thread():
     global run_audio_connect, assock
     print("Audio enabled, Connecting...")
     run_audio_connect = True
-    timeout = 5
+    timeout = 1
     while run_audio_connect and timeout>0:
         assock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -593,7 +593,7 @@ def begin(nodename='robot_cmd', init_node=True):
         stage_setpose_pub = rospy.Publisher(TOPIC_SETPOSE, Pose, queue_size=1, latch=True)
         stage_say_pub = rospy.Publisher(TOPIC_STAGESAY, String, queue_size=1,   latch=True)
 
-        timeout = 10 #seconds
+        timeout = 3 #seconds
         print("Waiting for robot pose on topic %s... (%d seconds)" %(TOPIC_odom,timeout))
         delay = 0.25 # sec
         rate = rospy.Rate(1/delay) # Hz
@@ -800,24 +800,26 @@ def send_image(image, width, height, server, port):
             rdata = rdata.strip().decode('UTF-8')
             print("Received: %s" %rdata)
             sock.close()
+            vdata = rdata.split(" ")
+            rval = (vdata[0], float(vdata[1]))
         except Exception as e:
             print(e)
             print("Cannot send image to %s:%d" %(server, port))
-            rdata = None
-        return rdata
+            rval = ("send-error", 0.0)
+
+        return rval
+
 
 def mobilenetObjrecClient(img, server='localhost', port=9300):
     # send image to sever
     print("Sending image to server %s:%s" %(server,port))
     w = 224
     h = 224
-    res = send_image(img, w, h, server, port)
+    (label,conf) = send_image(img, w, h, server, port)
 
-    print("result: %s" %res)
+    print("result: %s %.2f" %(label,conf))
 
-    return res
-
-
+    return (label,conf)
 
 
 

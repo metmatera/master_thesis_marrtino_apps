@@ -124,16 +124,13 @@ def writeout(config, arch):
         if config['robot']['joystick']:
             addservice(f,'teleop')
 
-        if config['robot']['camera']=='':
-            pass
-
         if config['robot']['4wd']=='':
             pass
 
-        if config['robot']['laser']!=False or config['functions']['navigation']:
+        if config['robot']['laser'] != False or config['functions']['navigation']:
             addservice(f,'navigation')
 
-        if config['functions']['vision']:
+        if config['robot']['camera'] != False or config['functions']['vision']:
             addservice(f,'vision')
 
         if config['functions']['speech']:
