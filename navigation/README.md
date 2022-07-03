@@ -3,20 +3,12 @@
 
 ## Install ##
 
-ROS navigation packages
+Using ROS package `gradient_based_navigation`
 
 
-    sudo apt-get install ros-kinetic-navigation
+    https://github.com/Imperoli/gradient_based_navigation
 
 
-
-ROS package: `gradient_based_navigation`
-
-
-    git clone https://github.com/Imperoli/gradient_based_navigation
-
-
-add to catkin workspace and compile.
 
 
 ## Run ##
@@ -32,19 +24,39 @@ Example:
     roslaunch simrobot.launch
 
 
-### 2. Start navigation ###
+### 2. Start localization ###
 
 To launch navigation modules, use the script 
 
-    python runnav.py <MAP_NAME> <X> <Y> <TH_DEG>
+    python startloc.py <MAP_NAME> <X> <Y> <TH_DEG>
 
 
-(X,Y,TH) is the initial pose of the robot in map coordinates.
+(X,Y,TH_DEG) is the initial pose of the robot in map coordinates.
 
 
 Example:
 
     python runnav.py map 0 0 0
+
+
+### 3. Start navigation ###
+
+Option 1: gradient_based_navigation
+
+    cd navigation
+    roslaunch obstacle_avoidance.launch
+
+Option 2: move_base
+
+    cd navigation
+    roslaunch move_base.launch
+
+
+Opione 3: move_base and gradient_based_navigation
+
+    cd navigation
+    roslaunch move_base_gbn.launch
+
 
 
 #### Alternative manual launch
