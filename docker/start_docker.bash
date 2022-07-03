@@ -20,6 +20,7 @@ if [ $? != 0 ]; then
   tmux new-window -t $SESSION:1 -n 'marrtino down'
   tmux new-window -t $SESSION:2 -n 'social up'
   tmux new-window -t $SESSION:3 -n 'social down'
+  tmux new-window -t $SESSION:4 -n 'autostart'
 fi
 
 
@@ -39,4 +40,10 @@ if [ -f /tmp/marrtinosocialon ] && [ "$MARRTINO_SOCIAL" != "" ]; then
   tmux send-keys -t $SESSION:2 "docker-compose up" C-m
 
 fi
+
+sleep 5
+
+tmux send-keys -t $SESSION:4 "cd \$MARRTINO_APPS_HOME/docker" C-m
+tmux send-keys -t $SESSION:4 "python3 autostart.py " C-m
+
 

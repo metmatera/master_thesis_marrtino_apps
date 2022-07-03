@@ -118,6 +118,40 @@ To interact with docker containers, see
 
         docker exec -it <container_name> tmux a
 
+## Autostart
+
+To start devices and functionalities at boot automatically
+
+1. Copy `autostart.yaml` file from template
+
+        cd $MARRTINO_APPS_HOME
+        cp docker/autostart_template.yaml ./autostart.yaml
+
+2. Edit `autostart.yaml` and choose the configuration you want to run
+
+3. Start (or restart) docker
+
+        cd $MARRTINO_APPS_HOME/docker
+        ./start_docker.bash
+
+This autostart will work also at robot boot.
+
+
+## Manual start
+
+Manual start `autostart.yaml`
+
+        cd $MARRTINO_APPS_HOME/docker
+        python autostart.py
+
+Manual quit
+
+        cd $MARRTINO_APPS_HOME/docker
+        python autostart.py --kill
+
+
+
+
 ## Docker push
 
     Edit `Dockerfile.<component>` setting last docker build date
