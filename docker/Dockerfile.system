@@ -9,6 +9,8 @@ FROM ros:melodic-ros-base-bionic
 ARG MARRTINO_SYSTEM_VERSION=4.2.2
 
 ARG MACHTYPE=default
+ARG UID=1000
+ARG GID=1000
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -32,6 +34,8 @@ RUN apt-get update && \
 # User: robot (password: robot) with sudo power
 
 RUN useradd -ms /bin/bash robot && echo "robot:robot" | chpasswd && adduser robot sudo
+
+RUN usermod -u $UID robot && groupmod -g $GID robot
 
 RUN adduser robot audio
 RUN adduser robot video
