@@ -1,24 +1,29 @@
-system:
-  nginx: off
-  nginx_port: 80    # nginx server port
-
 simulator:
-  stage: off        # off|on|x11|vnc
-  vnc_port: 3000    # vnc server port
+  stage: off
+  mapname: map
+  mapdir: default
+  robottype: marrtino
+  nrobots: 1
 
-robot:
-  motorboard: off   # arduino|ln298|pka03|marrtino2019
-  4wd: off
-  joystick: off
-  laser: off        # hokuyo | rplidar
-  camera: off       # usbcam | astra | xtion
-  camera_resolution: (640, 480)   # (width, height)
+devices:
+  robot: off
+  joystick: off         # off | 2wd | 4wd
+  laser: off            # off | hokuyo | rplidar
+  camera: off           # off | usbcam | astra | xtion
+
 
 functions:
-  navigation: off
-  vision: off
-  speech: off
-  mapping: off
+  localization: on
+  mapname: map
+  mapdir: default
+  initpose: 0 0 0       # x y th_deg
+  navigation: off       # off | gbn | move_base | move_base_gbn
+  navigation_rviz: on
+  mapping: off          # off | gmapping | srrg_mapper
+  mapping_rviz: off
+  audioserver: off
+  videoserver: off
+  apriltags: off
   objrec: off
   social: off
 
