@@ -1,6 +1,9 @@
-# Teleop #
+# Teleop
 
-## Install ##
+## Install
+
+Note: installation is not necessary when using dockerized components.
+
 
 Download the following packages in your catkin workspace and compile them with catkin_make:
 
@@ -17,7 +20,7 @@ For joystick control, you also need the ROS node joy.
 For obstacle avoidance, you also need a laser device (see [laser](https://bitbucket.org/iocchi/marrtino_apps/src/master/laser/) section)
 
 
-## Run ##
+## Run
 
 * Joystick/keyboard control
 
@@ -34,8 +37,6 @@ For obstacle avoidance, you also need a laser device (see [laser](https://bitbuc
 
         cd teleop
         roslaunch teleop.launch cmd_vel:=joystick_cmd_vel [use_joystick:=false]
-
-
 
 
 * Visualizing sensor data

@@ -4,6 +4,8 @@ MARRtino Python AudioServer program to play sounds saved as uncompressed PCM 16 
 
 ## Install ##
 
+Note: installation is not necessary when using dockerized components.
+
 * Requires pyglet
 
 ```

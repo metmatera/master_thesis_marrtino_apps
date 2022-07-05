@@ -1,11 +1,15 @@
-# Using stage simulator for MARRtino #
+# Using stage simulator for MARRtino
+
+## Install
+
+Note: installation is not necessary when using dockerized components.
 
 * Using ROS package `stage_environments`
 
     https://bitbucket.org/iocchi/stage_environments.git
 
 
-## simrobot.launch ##
+## Run
 
 Launch simulator and map server
 
@@ -55,7 +59,7 @@ Topics services and frames used by the simulator
     - laser_frame
 
 
-## Testing ##
+## Test
 
 Use teleop app to drive the robot in the environment.
 

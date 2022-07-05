@@ -1,19 +1,17 @@
-# Navigation #
+# Navigation
 
 
-## Install ##
+## Install
+
+Note: installation is not necessary when using dockerized components.
 
 Using ROS package `gradient_based_navigation`
 
-
     https://github.com/Imperoli/gradient_based_navigation
 
+## Run
 
-
-
-## Run ##
-
-### 1. Start a robot ###
+### 1. Start a robot
 
 See [robot](https://bitbucket.org/iocchi/marrtino_apps/src/master/robot/) or 
 [stage](https://bitbucket.org/iocchi/marrtino_apps/src/master/stage/) sections.
@@ -24,7 +22,7 @@ Example:
     roslaunch simrobot.launch
 
 
-### 2. Start localization ###
+### 2. Start localization
 
 To launch navigation modules, use the script 
 
@@ -39,7 +37,7 @@ Example:
     python runnav.py map 0 0 0
 
 
-### 3. Start navigation ###
+### 3. Start navigation
 
 Option 1: gradient_based_navigation
 
@@ -67,7 +65,7 @@ To start localizer and navigation modules manually
     roslaunch move_base.launch
 
 
-### 3. Recovery
+### 4. Recovery
 
 Launch the navigation recovery procedure
 
@@ -78,7 +76,7 @@ and add other recovery behaviors.
 
 
 
-### 4. Send target goals
+### 5. Send target goals
 
 
 To send target goals to the robot, use the script
@@ -97,7 +95,7 @@ Example:
 
 
 
-### 5. Execute a navigation path
+### 6. Execute a navigation path
 
 Write a navigation file containing a sequence of navigation commands
 
@@ -119,7 +117,7 @@ Example:
 
 ## Other functionalities
 
-### Obstacle avoidance behavior only ###
+### Obstacle avoidance behavior only 
 
 To launch only the obstacle avoidance behavior:
 
@@ -131,7 +129,7 @@ You need a controller (e.g., joystick teleop) to drive the robot.
 Note: Controllers must publish on /desired_cmd_vel instead of /cmd_vel
 
 
-### Visualization ###
+### Visualization 
 
 From remote host (e.g., MARRtino VM)
     
@@ -141,7 +139,7 @@ From remote host (e.g., MARRtino VM)
     rosrun rviz rviz -d nav.rviz
 
 
-### Quit ###
+### Quit 
 
     rosnode kill -a
 

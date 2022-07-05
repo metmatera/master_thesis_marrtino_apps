@@ -3,6 +3,8 @@
 
 ## Install ##
 
+Note: installation is not necessary when using dockerized components.
+
 * [gmapping](http://wiki.ros.org/gmapping)
 
 

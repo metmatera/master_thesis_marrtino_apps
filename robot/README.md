@@ -1,6 +1,9 @@
 # Robot #
 
+
 ## Install ##
+
+Note: installation is not necessary when using dockerized components.
 
 Download the following packages in your catkin workspace and compile them with catkin_make:
 

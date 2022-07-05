@@ -4,6 +4,8 @@ Laser launchers (Hokuyo, RPlidar, RGBD depth2laser)
 
 ## Install
 
+Note: installation is not necessary when using dockerized components.
+
 * `ros-[kinetic/melodic]-urg-node`
 * `ros-[kinetic/melodic]-laser-filters`
 * `https://github.com/Slamtec/rplidar_ros.git`
