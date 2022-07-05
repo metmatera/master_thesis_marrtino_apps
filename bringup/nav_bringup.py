@@ -68,8 +68,8 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                nfolder = "~/src/marrtino_apps/navigation"
-                lfolder = "~/src/marrtino_apps/laser"
+                nfolder = os.getenv('MARRTINO_APPS_HOME')+"/navigation"
+                lfolder = os.getenv('MARRTINO_APPS_HOME')+"/laser"
                 if data=='@loc':
                     tmux.cmd(0,'cd %s' %nfolder)
                     tmux.cmd(0,'python startloc.py')
@@ -97,7 +97,7 @@ def run_server(port):
                 elif data=='@laserkill':
                     tmux.Cc(3)
                 elif data=='@rviz':
-                    tmux.cmd(4,'cd %s' %mfolder)
+                    tmux.cmd(4,'cd %s' %nfolder)
                     tmux.cmd(4,'rosrun rviz rviz -d nav.rviz')
                 elif data=='@rvizkill':
                     tmux.Cc(4)

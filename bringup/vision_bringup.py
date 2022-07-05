@@ -77,8 +77,8 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                cfolder = "~/src/marrtino_apps/camera"
-                mfolder = "~/src/marrtino_apps/marker"
+                cfolder = os.getenv('MARRTINO_APPS_HOME')+"/camera"
+                mfolder = os.getenv('MARRTINO_APPS_HOME')+"/marker"
                 if data=='@usbcam':
                     r = getCameraResolution()
                     imsz = ''

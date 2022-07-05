@@ -22,18 +22,30 @@ def systemcmd(cmdkey, port):
     print("  "+cmd)
     os.system(cmd)
 
+def getconfig(section,key):
+    try:
+        r = config[section][key]
+    except:
+        #print("No value for %s:%s" %(section,key))
+        r = None
+    return r
 
 def autostart(config, dostart):
     print("auto start:")
 
     #  simulator
-    if config['simulator']['stage']:
-        mapname = config['simulator']['mapname']
-        mapdir = config['simulator']['mapdir']
-        robottype = config['simulator']['robottype']
-        nrobots = config['simulator']['nrobots']
+    if getconfig('simulator','stage'):
+        mapname = getconfig('simulator','mapname')
+        mapdir = getconfig('simulator','mapdir')
+        robottype = getconfig('simulator','robottype')
+        nrobots = getconfig('simulator','nrobots')
         if mapdir!='default':
             print("TODO: set mapdir to %s !!!" %mapdir)
+        simtime = 'rosparam set /use_sim_time '
+        simtimeval = 'true' if dostart else 'false'
+        simtime = simtime + simtimeval
+        cmd = 'docker exec -it base bash -ci "%s"' %simtime
+        os.system(cmd)
         cmd = "%s;%s;%d" %(mapname,robottype,nrobots) if dostart else "@stagekill"
         systemcmd(cmd,9235)
 
@@ -70,12 +82,19 @@ def autostart(config, dostart):
     elif config['functions']['navigation'] == 'move_base_gbn':
         cmd = '@movebasegbn' if dostart else '@movebasekill'
         systemcmd(cmd,9238)
+    if getconfig('functions','navigation_rviz'):
+        cmd = '@rviz' if dostart else '@rvizkill'
+        systemcmd(cmd,9238)
     if config['functions']['mapping'] == 'gmapping':
         cmd = '@gmapping' if dostart else '@gmappingkill'
         systemcmd(cmd,9241)
     elif config['functions']['mapping'] == 'srrg_mapper':
         cmd = '@srrgmapper' if dostart else '@srrgmapperkill'
         systemcmd(cmd,9241)
+    if getconfig('functions','mapping_rviz'):
+        cmd = '@rviz' if dostart else '@rvizkill'
+        systemcmd(cmd,9241)
+
     if config['functions']['videoserver']:
         cmd = '@videoserver' if dostart else '@videoserverkill'
         systemcmd(cmd,9237)
@@ -94,16 +113,23 @@ def autostart(config, dostart):
 
 
 
-
+# Use python autostart.py [start.yaml file] [--kill]
 
 if __name__=='__main__':
 
-    dostart = True
-    if len(sys.argv)>1 and sys.argv[1]=='--kill':
-        dostart = False
-
     autostartfile = "autostart.yaml"
     yamlfile = os.getenv('MARRTINO_APPS_HOME')+"/"+autostartfile
+    dostart = True
+
+    if len(sys.argv)>1 and sys.argv[1]=='--kill':
+        dostart = False
+    if len(sys.argv)>2 and sys.argv[2]=='--kill':
+        dostart = False
+    if len(sys.argv)>1 and sys.argv[1][0]!='-':
+        yamlfile = sys.argv[1]
+
+
+    
     if not os.path.isfile(yamlfile):
         yamlfile = os.getenv('HOME')+"/"+autostartfile
     if not os.path.isfile(yamlfile):

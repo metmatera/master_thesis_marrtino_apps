@@ -68,8 +68,8 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                rfolder = "~/src/marrtino_apps/robot"
-                cfolder = "~/src/marrtino_apps/config"
+                rfolder = os.getenv('MARRTINO_APPS_HOME')+"/robot"
+                cfolder = os.getenv('MARRTINO_APPS_HOME')+"/config"
                 if data=='@robot':
                     tmux.cmd(0,'cd %s' %rfolder)
                     tmux.cmd(0,'roslaunch robot.launch')

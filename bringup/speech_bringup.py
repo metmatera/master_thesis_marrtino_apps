@@ -72,7 +72,7 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                folder = "~/src/marrtino_apps/audio"
+                folder = os.getenv('MARRTINO_APPS_HOME')+"/audio"
                 if data=='@audio':
                     tmux.cmd(0,'cd %s' %folder)
                     tmux.cmd(0,'python audio_server.py')

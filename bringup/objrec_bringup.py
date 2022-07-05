@@ -73,7 +73,7 @@ def run_server(port):
             else:
                 data = data.decode('utf-8')
                 print(data)
-                vfolder = "~/src/marrtino_apps/vision"
+                vfolder = os.getenv('MARRTINO_APPS_HOME')+"/vision"
                 if data=='@objrec':
                     tmux.cmd(0,'cd %s' %vfolder)
                     tmux.cmd(0,'python mobilenet_objrec.py --server')

@@ -68,7 +68,7 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                jfolder = "~/src/marrtino_apps/teleop"
+                jfolder = os.getenv('MARRTINO_APPS_HOME')+"/teleop"
                 if data=='@joystick':
                     tmux.cmd(0,'cd %s' %jfolder)
                     tmux.cmd(0,'roslaunch teleop.launch')

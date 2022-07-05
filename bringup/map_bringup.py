@@ -68,7 +68,7 @@ def run_server(port):
                 connected = False
             else:
                 print(data)
-                mfolder = "~/src/marrtino_apps/mapping"
+                mfolder = os.getenv('MARRTINO_APPS_HOME')+"/mapping"
                 if data=='@gmapping':
                     tmux.cmd(1,'cd %s' %mfolder)
                     tmux.cmd(1,'roslaunch gmapping.launch')
