@@ -1,5 +1,11 @@
   stage:
-    image: iocchi/stage_environments
+    image: iocchi/stage_environments:melodic
+    build:
+      context: $HOME/src/stage_environments/docker
+      dockerfile: Dockerfile.melodic
+      args:
+      - UID=$UID
+      - GID=$GID
     container_name: stage
     network_mode: "host"
     tty: true

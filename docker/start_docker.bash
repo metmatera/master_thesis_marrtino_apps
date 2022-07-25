@@ -44,6 +44,6 @@ fi
 sleep 5
 
 tmux send-keys -t $SESSION:4 "cd \$MARRTINO_APPS_HOME/docker" C-m
-tmux send-keys -t $SESSION:4 "python3 autostart.py " C-m
+#tmux send-keys -t $SESSION:4 "python3 autostart.py " C-m
 
 

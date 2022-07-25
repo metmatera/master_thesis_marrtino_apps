@@ -4,7 +4,7 @@
 
 * Install `python` and `tmux`
 
-        sudo apt install python tmux
+        sudo apt install python tmux python3-yaml
 
 
 * Install [docker](http://www.docker.com) (tested on v. 19.03, 20.10) 
@@ -35,6 +35,17 @@
 
     Add these commands in `~/.bashrc` to make them permanent
 
+* Set user and group ID
+
+    Add these commands in `~/.bashrc` to make them permanent
+
+        export UID=$(id -u)
+        export GID=$(id -g)
+
+
+* Set X11 server to accept clients (from docker containers)
+
+        xhost +
 
 
 ## Images available
