@@ -38,12 +38,7 @@ rm -f ~/log/logincompleted
 
 sleep 10
 
-if [ -f $HOME/bin/autostart.bash ]; then
-  echo "Autostart docker ..."
-  source start_docker.bash
-  sleep 60
-  source ~/bin/autostart.bash
-fi
+source start_docker.bash
 
 sleep 10
 
