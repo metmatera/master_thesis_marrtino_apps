@@ -28,7 +28,7 @@ if [ -f ~/.marrtino_vm ] || [ "$HOSTNAME" == "marrtino-VM" ]; then
 
   XORG=`ps ax | grep -c Xorg`
   while [ ! -f ~/log/logincompleted ] && [ ! "$XORG" == "2" ]; do
-    sleep 2.5
+    sleep 3
     XORG=`ps ax | grep -c Xorg`
   done
 else
@@ -36,14 +36,12 @@ else
 fi
 rm -f ~/log/logincompleted
 
-echo "Starting docker ..."
+sleep 10
 
-cd /home/marrtino/bin && source start_docker.bash
-
-sleep 30
-
-
-if [ -f ~/bin/autostart.bash ]; then
+if [ -f $HOME/bin/autostart.bash ]; then
+  echo "Autostart docker ..."
+  source start_docker.bash
+  sleep 60
   source ~/bin/autostart.bash
 fi
 

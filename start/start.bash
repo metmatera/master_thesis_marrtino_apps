@@ -23,26 +23,6 @@ if [ $? != 0 ]; then
   tmux new-window -t $SESSION:4 -n 'autostart'
 fi
 
-
-tmux send-keys -t $SESSION:0 "cd \$MARRTINO_APPS_HOME/docker" C-m
-
-tmux send-keys -t $SESSION:0 "python3 dockerconfig.py " C-m
-sleep 1 # needed to complete writing /tmp/* files
-
-tmux send-keys -t $SESSION:0 "export ROBOT_TYPE=`cat /tmp/robottype` " C-m
-tmux send-keys -t $SESSION:0 "export CAMRES='`cat /tmp/cameraresolution`'" C-m
-
-tmux send-keys -t $SESSION:0 "docker-compose up" C-m
-
-if [ -f /tmp/marrtinosocialon ] && [ "$MARRTINO_SOCIAL" != "" ]; then
-  
-  tmux send-keys -t $SESSION:2 "cd \$MARRTINO_SOCIAL/docker" C-m
-  tmux send-keys -t $SESSION:2 "docker-compose up" C-m
-
-fi
-
-sleep 5
-
 tmux send-keys -t $SESSION:4 "cd \$MARRTINO_APPS_HOME/start" C-m
 tmux send-keys -t $SESSION:4 "python3 autostart.py " C-m
 
