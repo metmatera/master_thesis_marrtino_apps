@@ -2,9 +2,12 @@
 
 Camera launchers: usbcam/xtion/astra sensor
 
+Important: plug cameras in direct USB ports (not to hubs).
+
 ## Install ##
 
 Note: installation is not necessary when using dockerized components.
+
 
 Download the following packages in your catkin workspace and compile them with catkin_make:
 
