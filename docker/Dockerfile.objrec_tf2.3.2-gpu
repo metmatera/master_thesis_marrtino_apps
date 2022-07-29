@@ -2,13 +2,11 @@
 # Build with docker_build_objrec.bash
 
 #FROM tensorflow/tensorflow
-#FROM tensorflow/tensorflow:2.3.2-gpu
+FROM tensorflow/tensorflow:2.3.2-gpu
 
 # NUC
-#FROM aperture147/tensorflow-non-avx:bionic-slim
-# tensorflow 1.15.0
 
-FROM iocchi/tensorflow:2.3-x86_64-noavx
+#FROM iocchi/tensorflow:2.3-x86_64-noavx
 
 #
 # USER root

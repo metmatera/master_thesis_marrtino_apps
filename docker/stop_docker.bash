@@ -6,7 +6,7 @@ SESSION=compose
 tmux send-keys -t $SESSION:4 "cd \$MARRTINO_APPS_HOME/start" C-m
 tmux send-keys -t $SESSION:4 "python3 autostart.py --kill" C-m
 
-sleep 5
+sleep 10
 
 tmux send-keys -t $SESSION:1 "cd \$MARRTINO_APPS_HOME/docker && docker-compose down" C-m
 

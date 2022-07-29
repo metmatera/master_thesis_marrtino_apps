@@ -13,12 +13,12 @@ devices:
 
 
 functions:
-  localization: on
+  localization: off
   mapname: map
   mapdir: default
   initpose: 0 0 0       # x y th_deg
   navigation: off       # off | gbn | move_base | move_base_gbn
-  navigation_rviz: on
+  navigation_rviz: off
   mapping: off          # off | gmapping | srrg_mapper
   mapping_rviz: off
   audioserver: off

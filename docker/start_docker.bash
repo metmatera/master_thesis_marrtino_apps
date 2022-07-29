@@ -41,9 +41,10 @@ if [ -f /tmp/marrtinosocialon ] && [ "$MARRTINO_SOCIAL" != "" ]; then
 
 fi
 
-sleep 5
+sleep 25
 
 tmux send-keys -t $SESSION:4 "cd \$MARRTINO_APPS_HOME/start" C-m
 tmux send-keys -t $SESSION:4 "python3 autostart.py " C-m
 
+sleep 5
 
