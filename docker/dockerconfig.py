@@ -35,6 +35,19 @@ def machinecpu():
         info = v[1].strip()
     return info
 
+def machinegpu():
+    nfile = "/tmp/machgpu"
+    info = None
+    os.system("nvidia-smi -L > %s" %nfile)
+    line = ''
+    with open(nfile, 'r') as f:
+        line = f.readline().strip()
+    v = line.split(':')
+    if (len(v)>1):
+        info = v[1].strip()
+    return info
+
+
 def robottype(config):
     rtype = None
     if config['simulator']['stage']:
@@ -69,7 +82,7 @@ def addservice(f, service, version=None, replacemap={}):
                 f.write(l)
 
 
-def writeout(config, arch):
+def writeout(config, arch, gpu):
     nfile = "docker-compose.yml"
     print("\nservices:")
     with open(nfile, 'w') as f:
@@ -98,11 +111,17 @@ def writeout(config, arch):
                 replacemap['- "3000:80"'] = '      - "%s:80"' %vnc_port
             addservice(f,'stage-vnc',None,replacemap)
         elif cstage == "dev":
-            addservice(f,'stage-dev')
+            replacemap = {}
+            if gpu!=None:
+                replacemap["runtime: runc"] = "    runtime: nvidia"               
+            addservice(f,'stage-dev',None,replacemap)
         elif cstage == "dev-vnc":
             addservice(f,'stage-dev-vnc')
         elif cstage == True or cstage == "on" or cstage == "x11":
-            addservice(f,'stage')
+            replacemap = {}
+            if gpu!=None:
+                replacemap["runtime: runc"] = "    runtime: nvidia"
+            addservice(f,'stage',None,replacemap)
             
 
         # robot
@@ -132,19 +151,31 @@ def writeout(config, arch):
             pass
 
         if config['robot']['laser'] != False or config['functions']['navigation']:
-            addservice(f,'navigation')
+            replacemap = {}
+            if gpu!=None:
+                replacemap["runtime: runc"] = "    runtime: nvidia"        
+            addservice(f,'navigation',None,replacemap)
 
         if config['robot']['camera'] != False or config['functions']['vision']:
-            addservice(f,'vision')
+            replacemap = {}
+            if gpu!=None:
+                replacemap["runtime: runc"] = "    runtime: nvidia"        
+            addservice(f,'vision',None,replacemap)
 
         if config['functions']['speech']:
             addservice(f,'speech')
 
         if config['functions']['mapping']:
-            addservice(f,'mapping')
+            replacemap = {}
+            if gpu!=None:
+                replacemap["runtime: runc"] = "    runtime: nvidia"
+            addservice(f,'mapping',None,replacemap)
 
         if config['functions']['objrec']:
-            addservice(f,'objrec')
+            replacemap = {}
+            if gpu!=None:
+                replacemap["runtime: runc"] = "    runtime: nvidia"
+            addservice(f,'objrec',None,replacemap)
 
         if config['functions']['social']:
             os.system('touch /tmp/marrtinosocialon') 
@@ -172,12 +203,15 @@ if __name__=='__main__':
     cpu = machinecpu()
     print("CPU: %s" %cpu)
 
+    gpu = machinegpu()
+    print("GPU: %s" %gpu)
+
     rtype = robottype(config)
     print("Robot: %s" %rtype)
 
     camres = cameraresolution(config)
     print("Camera resolution: %s" %(camres))
 
-    writeout(config, arch)
+    writeout(config, arch, gpu)
 
 

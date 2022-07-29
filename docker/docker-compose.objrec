@@ -1,5 +1,6 @@
   objrec:
     image: marrtino:objrec
+    runtime: runc
     container_name: objrec
     dns: 8.8.8.8
     network_mode: "host"

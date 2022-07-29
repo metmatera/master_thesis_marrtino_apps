@@ -7,11 +7,14 @@
       - UID=$UID
       - GID=$GID
     container_name: stage
+    runtime: runc
     network_mode: "host"
     tty: true
     environment:
-    - QT_X11_NO_MITSHM=1
     - DISPLAY=$DISPLAY
+    - QT_X11_NO_MITSHM=1
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=all
     - ROS_IP=$ROS_IP
     - MAPSDIR=/home/robot/src/stage_environments/maps:/opt/maps/1:/opt/maps/2
     volumes:
