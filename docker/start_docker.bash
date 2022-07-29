@@ -44,7 +44,7 @@ fi
 
 sleep 10
 
-echo "docker containers started: check with 'tmux a' or 'docker ps' ..."
+echo "docker containers started: check with 'tmux a -t :0' or 'docker ps' ..."
 
 
 echo "Autostart..."
