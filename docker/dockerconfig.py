@@ -97,6 +97,10 @@ def writeout(config, arch):
             if vnc_port is not None:
                 replacemap['- "3000:80"'] = '      - "%s:80"' %vnc_port
             addservice(f,'stage-vnc',None,replacemap)
+        elif cstage == "dev":
+            addservice(f,'stage-dev')
+        elif cstage == "dev-vnc":
+            addservice(f,'stage-dev-vnc')
         elif cstage == True or cstage == "on" or cstage == "x11":
             addservice(f,'stage')
             

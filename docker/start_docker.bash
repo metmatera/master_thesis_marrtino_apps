@@ -23,6 +23,7 @@ if [ $? != 0 ]; then
   tmux new-window -t $SESSION:4 -n 'autostart'
 fi
 
+echo "Starting all docker containers..."
 
 tmux send-keys -t $SESSION:0 "cd \$MARRTINO_APPS_HOME/docker" C-m
 
@@ -41,10 +42,17 @@ if [ -f /tmp/marrtinosocialon ] && [ "$MARRTINO_SOCIAL" != "" ]; then
 
 fi
 
-sleep 25
+echo "Wait 1 minute..."
+
+sleep 60
+
+echo "Autostart..."
 
 tmux send-keys -t $SESSION:4 "cd \$MARRTINO_APPS_HOME/start" C-m
 tmux send-keys -t $SESSION:4 "python3 autostart.py " C-m
 
 sleep 5
+
+echo "Done"
+
 

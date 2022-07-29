@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os, sys, time
 try:
     import yaml
 except Exception as e:
@@ -21,6 +21,8 @@ def systemcmd(cmdkey, port):
     cmd = "echo '%s' | netcat -w 1 localhost %d" %(cmdkey,port)
     print("  "+cmd)
     os.system(cmd)
+    time.sleep(3)
+    
 
 def getconfig(section,key):
     try:

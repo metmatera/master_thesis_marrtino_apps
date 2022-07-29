@@ -3,15 +3,15 @@ system:
   nginx_port: 80    # nginx server port
 
 simulator:
-  stage: off        # off|on|x11|vnc
+  stage: off        # off|on|x11|vnc|x11-nvidia-todo
   vnc_port: 3000    # vnc server port
 
 robot:
-  motorboard: off   # arduino|ln298|pka03|marrtino2019
+  motorboard: off   # off|arduino|ln298|pka03|marrtino2019
   4wd: off
   joystick: off
-  laser: off        # hokuyo | rplidar
-  camera: off       # usbcam | astra | xtion
+  laser: off        # off | hokuyo | rplidar
+  camera: off       # off | usbcam | astra | xtion
   camera_resolution: (640, 480)   # (width, height)
 
 functions:
