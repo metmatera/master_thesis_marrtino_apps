@@ -13,6 +13,10 @@
     
         sudo apt install docker.io
 
+    or install from binaries
+
+        https://docs.docker.com/engine/install/binaries/
+
     See also 
     [Post-installation steps for Linux](https://docs.docker.com/install/linux/linux-postinstall/).
     In particular, add your user to the `docker` group and log out and in again, before proceeding.
@@ -32,7 +36,9 @@
         sudo chmod a+x docker-compose
         docker-compose -v
 
+* For Nvidia drivers, install nvidia-docker2
 
+        https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
 
 
 * Set environment variable `MARRTINO_APPS_HOME` to the folder where you downloaded this repository.
