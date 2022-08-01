@@ -58,6 +58,9 @@ def autostart(config, dostart):
     if getconfig('devices','joystick') == '2wd':
         cmd = '@joystick' if dostart else '@joystickkill'
         systemcmd(cmd,9240)
+    if getconfig('devices','joystick') == 'keyboard':
+        cmd = '@keyboard' if dostart else '@joystickkill'
+        systemcmd(cmd,9240)
     elif getconfig('devices','joystick') == '4wd':
         cmd = '@joystick4wd' if dostart else '@joystickkill'
         systemcmd(cmd,9240)

@@ -7,7 +7,7 @@ simulator:
 
 devices:
   robot: off
-  joystick: off         # off | 2wd | 4wd
+  joystick: off         # off | 2wd | 4wd | keyboard
   laser: off            # off | hokuyo | rplidar
   camera: off           # off | usbcam | astra | xtion
 
