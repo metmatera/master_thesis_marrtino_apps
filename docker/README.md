@@ -38,7 +38,7 @@
 
 * For Nvidia drivers, install nvidia-docker2
 
-        https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+        [Nvidia docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
 
 * Set environment variable `MARRTINO_APPS_HOME` to the folder where you downloaded this repository.
@@ -74,12 +74,15 @@
 
 ## Images available
 
-* orazio
 * base
+* orazio
 * teleop
 * navigation
+* mapping
 * vision
 * speech
+* objrec
+
 
 Build all images
 
@@ -93,6 +96,11 @@ Note: in some cases, it may be needed to recompile the orazio ROS nodes
     catkin-make
 
 and commit the docker image.
+
+Build object recognition image (on machine with good computational resources, not on Raspberry)
+
+
+    ./docker_build_objrec.bash
 
 
 
@@ -122,6 +130,7 @@ Copy and edit `system_config.yaml`
               vision: off
               speech: off
               mapping: off
+              objrec: off
               social: off
 
 
