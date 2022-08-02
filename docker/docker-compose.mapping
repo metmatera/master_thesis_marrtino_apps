@@ -19,4 +19,6 @@
     volumes:
     - /dev:/dev
     - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
+    - $HOME/playground:/home/robot/playground/maps
+
 
