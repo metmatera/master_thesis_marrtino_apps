@@ -8,6 +8,7 @@ from robot_cmd_ros import *
 
 robot_cmd_ros.use_audio = False
 robot_cmd_ros.tv_good = 0.5
+robot_cmd_ros.setRobotNamePrefix('john')
 
 # main
 if __name__ == "__main__":
