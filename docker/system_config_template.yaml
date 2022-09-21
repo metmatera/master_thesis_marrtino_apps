@@ -15,7 +15,7 @@ robot:
   camera_resolution: (640, 480)   # (width, height)
 
 functions:
-  navigation: off
+  navigation: off   # off | on | cohan
   vision: off
   speech: off
   mapping: off

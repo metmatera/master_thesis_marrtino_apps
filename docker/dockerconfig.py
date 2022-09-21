@@ -150,7 +150,12 @@ def writeout(config, arch, gpu):
         if config['robot']['4wd']=='':
             pass
 
-        if config['robot']['laser'] != False or config['functions']['navigation']:
+        if config['functions']['navigation']=='cohan':
+            replacemap = {}
+            if gpu!=None:
+                replacemap["runtime: runc"] = "    runtime: nvidia"        
+            addservice(f,'navigation','-cohan',replacemap)
+        elif config['robot']['laser'] != False or config['functions']['navigation']:
             replacemap = {}
             if gpu!=None:
                 replacemap["runtime: runc"] = "    runtime: nvidia"        

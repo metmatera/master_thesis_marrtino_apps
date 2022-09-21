@@ -14,10 +14,10 @@ USER robot
 RUN pip install scipy
 
 # Clone the git repository
-RUN mkdir -p ~/ros/cohan_ws/src && \
-    cd 	~/ros/cohan_ws/src && \
+RUN cd 	~/src && \
     git clone https://github.com/sphanit/CoHAN_Planner.git -b master && \
     cd ..
+
 
 
 #  This package contains simulators, examples and a lot of stuff not really needed
@@ -27,8 +27,8 @@ RUN mkdir -p ~/ros/cohan_ws/src && \
 USER root
 
 # Install the dependencies using rosdep
-RUN cd 	/home/robot/ros/cohan_ws && \
-    rosdep install --from-paths src --ignore-src --rosdistro=melodic -y
+RUN cd 	/home/robot/src/CoHAN_Planner && \
+    rosdep install --from-paths . --ignore-src --rosdistro=melodic -y
 
 
 #    apt-get clean && \
@@ -36,8 +36,12 @@ RUN cd 	/home/robot/ros/cohan_ws && \
 
 USER robot
 
+# Link to workspace
+RUN cd 	~/ros/catkin_ws/src && \
+    ln -s ~/src/CoHAN_Planner .
+
 # Build
-RUN cd 	~/ros/cohan_ws && \
+RUN cd 	~/ros/catkin_ws && \
     bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j2"
 
 WORKDIR /home/robot
