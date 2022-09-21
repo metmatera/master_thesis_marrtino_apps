@@ -1,0 +1,46 @@
+# https://github.com/sphanit/CoHAN_Planner
+
+FROM marrtino:navigation
+
+USER root
+
+# Install the requirements
+
+RUN apt update && \
+    apt install -y python-pip python-catkin-tools
+
+USER robot
+
+RUN pip install scipy
+
+# Clone the git repository
+RUN mkdir -p ~/ros/cohan_ws/src && \
+    cd 	~/ros/cohan_ws/src && \
+    git clone https://github.com/sphanit/CoHAN_Planner.git -b master && \
+    cd ..
+
+
+#  This package contains simulators, examples and a lot of stuff not really needed
+#  Can be useful for testing, to be removed in the final deployment
+#    git clone https://github.com/sphanit/CoHAN_Navigation.git -b master 
+
+USER root
+
+# Install the dependencies using rosdep
+RUN cd 	/home/robot/ros/cohan_ws && \
+    rosdep install --from-paths src --ignore-src --rosdistro=melodic -y
+
+
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
+
+USER robot
+
+# Build
+RUN cd 	~/ros/cohan_ws && \
+    bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j2"
+
+WORKDIR /home/robot
+
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python nav_bringup.py" ]
+
