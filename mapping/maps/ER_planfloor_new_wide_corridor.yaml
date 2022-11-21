@@ -1,0 +1,42 @@
+image: ER_planfloor.png
+resolution: 0.05
+origin: [0, 0, .0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.2
+
+# Simulator info
+initposes: [ [46.14, 13.8, 180] ] # y = 13.4/13.8/14.3 - bottom/middle/top side of the corridor
+
+# Semantic map
+
+home: { gotopose: [ 19, 30, 180 ] }
+
+door1: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 38.3, 26.3, 0, 0 ], color: "grey" }
+door1in:  { gotopose: [ 38.3, 27.23, -90 ] }
+door1out: { gotopose: [ 38.3, 25.56, 90 ] }
+
+door2: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 42.64, 27.10, 0, -60 ], color: "grey" }
+door2in:  { gotopose: [ 44.08, 27.23, -90 ] }
+door2out: { gotopose: [ 44.08, 25.56, 90 ] }
+
+door3: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 49.04, 27.19, 0, 90 ], color: "grey" }
+door3in:  { gotopose: [ 50.04, 27.23, -90 ] }
+door3out: { gotopose: [ 50.04, 25.56, 90 ] }
+
+door4: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 55.49, 26.35, 0, 0 ], color: "grey" }
+door4in:  { gotopose: [ 55.49, 27.23, -90 ] }
+door4out: { gotopose: [ 55.49, 25.56, 90 ] }
+
+telecom: { gotopose: [ 32.84, 29.81, 180 ] }
+
+bed1: { type: 'box', size: [0.6, 1.33, 0.4], pose: [ 20.88, 13.0, 0, 90 ], color: "brown" }
+bed2: { type: 'box', size: [0.6, 1.33, 0.4], pose: [ 22.33, 16.66, 0, 180 ], color: "brown" }
+bed3: { type: 'box', size: [0.6, 1.33, 0.4], pose: [ 22.33, 21.57, 0, 180 ], color: "brown" }
+
+# wide corridor static human cases 2 and 3 and wide corridor successful avoidance: human aside
+#human1: { type: 'person', pose: [ 35.12, 13.47, 0, 0 ], body: { color: "green" } }
+# wide corridor static human case 1: human in the middle
+#human1: { type: 'person', pose: [ 38.68, 13.69, 0, 0 ], body: { color: "green" } }
+# pillar corridor and wide corridor successful aborting
+human1: { type: 'person', pose: [ 29.74, 13.8, 0, 0 ], body: { color: "green" } }

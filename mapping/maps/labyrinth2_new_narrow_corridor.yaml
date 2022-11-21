@@ -1,0 +1,13 @@
+image: labyrinth2_new.png
+resolution: 0.05
+origin: [0.0, 0.0, 0.0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.2
+
+# Simulator info
+initposes: [ [18, 16.96, 180] ]
+
+human1: { type: 'person', pose: [ 3.1, 16.96, 0, 0 ], body: { color: "green" } }
+# extra human to test /human_global_plans listener
+#human2: { type: 'person', pose: [ 18, 19, 0, 180 ], body: { color: "blue" } }

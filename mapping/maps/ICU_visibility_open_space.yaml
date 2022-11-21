@@ -1,0 +1,46 @@
+image: ICU.png
+resolution: 0.05
+origin: [0, 0, .0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.2
+
+# Simulator info
+initposes: [ [2, 13, 0] ]
+
+# Semantic map
+home: { gotopose: [ 22, 13, 180 ] }
+
+bed1: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 4.57, 21.79, 0, 180 ], color: "brown" }
+bed1by:  { gotopose: [ 3.38, 22.09, 0 ] }
+bed2: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 7.26, 21.79, 0, 180 ], color: "brown" }
+bed2by:  { gotopose: [ 6.07, 22.09, 0 ] }
+bed3: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 9.95, 21.79, 0, 180 ], color: "brown" }
+bed3by:  { gotopose: [ 8.76, 22.09, 0 ] }
+bed4: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 12.64, 21.79, 0, 180 ], color: "brown" }
+bed4by:  { gotopose: [ 11.45, 22.09, 0 ] }
+bed5: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 15.33, 21.79, 0, 180 ], color: "brown" }
+bed5by:  { gotopose: [ 14.14, 22.09, 0 ] }
+bed6: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 18.02, 21.79, 0, 180 ], color: "brown" }
+bed6by:  { gotopose: [ 16.83, 22.09, 0 ] }
+bed7: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 20.71, 21.79, 0, 180 ], color: "brown" }
+bed7by:  { gotopose: [ 19.52, 22.09, 0 ] }
+
+bed8: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 4.57, 4.26, 0, 180 ], color: "brown" }
+bed8by:  { gotopose: [ 3.38, 3.76, 0 ] }
+bed9: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 7.26, 4.26, 0, 180 ], color: "brown" }
+bed9by:  { gotopose: [ 6.07, 3.76, 0 ] }
+bed10: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 9.95, 4.26, 0, 180 ], color: "brown" }
+bed10by:  { gotopose: [ 8.76, 3.76, 0 ] }
+bed11: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 12.64, 4.26, 0, 180 ], color: "brown" }
+bed11by:  { gotopose: [ 11.45, 3.76, 0 ] }
+bed12: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 15.33, 4.26, 0, 180 ], color: "brown" }
+bed12by:  { gotopose: [ 14.14, 3.76, 0 ] }
+bed13: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 18.02, 4.26, 0, 180 ], color: "brown" }
+bed13by:  { gotopose: [ 16.83, 3.76, 0 ] }
+bed14: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 20.71, 4.26, 0, 180 ], color: "brown" }
+bed14by:  { gotopose: [ 19.52, 3.76, 0 ] }
+
+#human1: { type: 'person', pose: [ 6.49, 13, 0, -90 ], body: { color: "purple" } }
+human1: { type: 'person', pose: [ 6.49, 14.35, 0, -90 ], body: { color: "purple" } }
+human2: { type: 'person', pose: [ 6.49, 11.65, 0, -90 ],  body: { color: "red" } }

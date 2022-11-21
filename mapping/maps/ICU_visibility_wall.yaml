@@ -1,0 +1,43 @@
+image: ICU2.png
+resolution: 0.05
+origin: [0, 0, .0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.2
+
+# Simulator info
+initposes: [ [2, 13, 0] ]
+
+# Semantic map
+home: { gotopose: [ 3.31, 15.90, 0 ] }
+
+bed1: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 4.94, 21.79, 0, 180 ], color: "brown" }
+bed1by:  { gotopose: [ 3.75, 22.09, 0 ] }
+bed2: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 8.06, 21.79, 0, 180 ], color: "brown" }
+bed2by:  { gotopose: [ 6.87, 22.09, 0 ] }
+bed3: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 11.18, 21.79, 0, 180 ], color: "brown" }
+bed3by:  { gotopose: [ 9.99, 22.09, 0 ] }
+bed4: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 14.3, 21.79, 0, 180 ], color: "brown" }
+bed4by:  { gotopose: [ 13.11, 22.09, 0 ] }
+bed5: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 17.42, 21.79, 0, 180 ], color: "brown" }
+bed5by:  { gotopose: [ 16.23, 22.09, 0 ] }
+bed6: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 20.54, 21.79, 0, 180 ], color: "brown" }
+bed6by:  { gotopose: [ 19.35, 22.09, 0 ] }
+
+bed15: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 4.94, 4.26, 0, 180 ], color: "brown" }
+bed15by:  { gotopose: [ 3.75, 3.76, 0 ] }
+bed16: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 8.06, 4.26, 0, 180 ], color: "brown" }
+bed16by:  { gotopose: [ 6.87, 3.76, 0 ] }
+bed17: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 11.18, 4.26, 0, 180 ], color: "brown" }
+bed17by:  { gotopose: [ 9.99, 3.76, 0 ] }
+bed18: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 14.3, 4.26, 0, 180 ], color: "brown" }
+bed18by:  { gotopose: [ 16.23, 3.76, 0 ] }
+bed19: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 17.42, 4.26, 0, 180 ], color: "brown" }
+bed19by:  { gotopose: [ 14.14, 3.76, 0 ] }
+bed20: { type: 'box', size: [0.9144, 2.2352, 0.4], pose: [ 20.54, 4.26, 0, 180 ], color: "brown" }
+bed20by:  { gotopose: [ 19.35, 3.76, 0 ] }
+
+
+human1: { type: 'person', pose: [ 7.47, 15.06, 0, 90 ], body: { color: "yellow" } }
+human2: { type: 'person', pose: [ 8.47, 10.41, 0, 90 ],  body: { color: "red" } }
+
