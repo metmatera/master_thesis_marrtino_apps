@@ -1,0 +1,10 @@
+planner_frequency: 8.0
+controller_frequency: 8.0
+planner_patience: 10.0 # 0.0
+controller_patience: 15.0
+recovery_behavior_enabled: true
+
+max_planning_retries: 3 # new
+
+oscillation_timeout: 15.0 # new
+oscillation_distance: 0.3 # new
