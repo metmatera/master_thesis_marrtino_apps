@@ -1,4 +1,6 @@
-# https://github.com/sphanit/CoHAN_Planner
+# CoHAN planner
+# new version  https://github.com/sphanit/cohan_planner_multi.git
+# old version  https://github.com/sphanit/CoHAN_Planner
 
 FROM marrtino:navigation
 
@@ -15,9 +17,9 @@ RUN pip install scipy
 
 # Clone the git repository
 RUN cd 	~/src && \
-    git clone https://github.com/sphanit/CoHAN_Planner.git -b master && \
-    cd ..
-
+    git clone https://github.com/sphanit/cohan_planner_multi.git -b model && \
+    cd cohan_planner_multi && \
+    git submodule update --init --recursive
 
 
 #  This package contains simulators, examples and a lot of stuff not really needed
@@ -25,24 +27,26 @@ RUN cd 	~/src && \
 #  and have different requirements with respect to MARRtino robot
 
 RUN cd 	~/src && \
-    git clone https://github.com/sphanit/CoHAN_Navigation.git -b master && \
+    git clone https://github.com/sphanit/CoHAN_Navigation.git -b multi && \
     cd ..
 
 USER root
 
+RUN apt update
+
 # Install the dependencies using rosdep
-RUN cd 	/home/robot/src/CoHAN_Planner && \
+RUN cd 	/home/robot/src/cohan_planner_multi && \
     rosdep install --from-paths . --ignore-src --rosdistro=melodic -y
 
-
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/*
+# Clean the installation folder
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 USER robot
 
 # Link to workspace
 RUN cd 	~/ros/catkin_ws/src && \
-    ln -s ~/src/CoHAN_Planner .
+    ln -s ~/src/cohan_planner_multi .
 
 # Build
 RUN cd 	~/ros/catkin_ws && \
