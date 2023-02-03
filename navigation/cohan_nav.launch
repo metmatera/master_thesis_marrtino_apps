@@ -1,0 +1,55 @@
+<launch>
+  <!-- Node start delay to avoid crashing of navigation node -->
+  <arg name="node_start_delay" default="4.0" />
+
+
+  <node pkg="tf" type="static_transform_publisher" name="base_tf" 
+    args="0 0 0 0 0 0 /base_frame /base_link 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="laser_tf" 
+    args="0 0 0 0 0 0 /laser_frame /base_laser_link 10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="footprint_tf" 
+    args="0 0 0 0 0 0 /base_footprint_frame /base_footprint 10"/>
+
+  <!-- human pose prediction, for the local-planning -->
+  <node pkg="human_path_prediction" type="human_path_prediction" name="human_path_prediction" output="screen" >
+    <remap from="~/" to="/human_path_predict"/>
+    <remap from="/human_path_predict/tracked_humans" to="/tracked_humans"/>
+    <remap from="/human_path_predict/external_human_paths" to="/humans_sim_node/MultiGoalPlanner/plans"/>
+    <remap from="/human_path_predict/external_human_trajs" to="/move_base_node/HATebLocalPlannerROS/human_local_trajs"/>
+
+    <param name="velobs_mul" value="1.0"/>
+    <param name="velscale_mul" value="2.0"/>
+  </node>
+  <node pkg="human_path_prediction" type="predict_goal.py" name="human_goal_predict" output="screen"/>
+
+  <!-- Filter the humans from laser scan -->
+  <node pkg="human_layers" type="human_filter.py" name="human_filter_laser" output="screen"> 
+    <remap from="base_scan" to="scan"/>
+  </node>
+  
+ 
+  <!-- move_base node with hateb -->
+  <node pkg="move_base" type="move_base" name="move_base" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' ">
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="base_local_planner" value="hateb_local_planner/HATebLocalPlannerROS" />
+
+    <rosparam file="config/stage_cohan/move_base_params.yaml" command="load" />
+    <rosparam file="config/stage_cohan/global_costmap_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="config/stage_cohan/local_costmap_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="config/stage_cohan/hateb_local_planner_params.yaml" command="load" ns="HATebLocalPlannerROS" />
+
+    <!-- Remapping topics properly (if necessary)-->
+    <!-- <remap from="~" to="move_base_node"/> -->
+
+    <!-- For human_layers -->
+    <!-- <remap from="/move_base_node/local_costmap/human_layers/humans_states" to="/move_base_node/HATebLocalPlannerROS/humans_states" />
+    <remap from="/move_base_node/global_costmap/human_layers_1/humans_states" to="/move_base_node/HATebLocalPlannerROS/humans_states" />
+    <remap from="/move_base_node/global_costmap/human_layers_2/humans_states" to="/move_base_node/HATebLocalPlannerROS/humans_states" /> -->
+    <!-- For Backoff recovery -->
+    <!-- <remap from="/move_base_node/HATebLocalPlannerROS/current_goal" to="/move_base_node/current_goal"/> -->
+  </node>
+
+</launch>
+

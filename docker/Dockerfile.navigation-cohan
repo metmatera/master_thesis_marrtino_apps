@@ -7,33 +7,28 @@ USER root
 # Install the requirements
 
 RUN apt update && \
-    apt install -y python-pip python-catkin-tools
+    apt install -y python-pip python-catkin-tools ros-melodic-mbf-msgs
 
 USER robot
 
 RUN pip install scipy
 
-# Clone the git repository
+# Clone the git repositories
 RUN cd 	~/src && \
     git clone https://github.com/sphanit/CoHAN_Planner.git -b master && \
+    git clone https://github.com/wg-perception/people.git -b melodic && \
     cd ..
-
-
 
 #  This package contains simulators, examples and a lot of stuff not really needed
-#  Can be useful for testing, not linked to ROS workspace as it uses different setups
-#  and have different requirements with respect to MARRtino robot
-
-RUN cd 	~/src && \
-    git clone https://github.com/sphanit/CoHAN_Navigation.git -b master && \
-    cd ..
+#  Can be useful for testing, to be removed in the final deployment
+#    git clone https://github.com/sphanit/CoHAN_Navigation.git -b master 
 
 USER root
 
 # Install the dependencies using rosdep
-RUN cd 	/home/robot/src/CoHAN_Planner && \
-    rosdep install --from-paths . --ignore-src --rosdistro=melodic -y
-
+RUN cd 	/home/robot/src && \
+    rosdep install --from-paths ./CoHAN_Planner --ignore-src --rosdistro=melodic -y && \
+    rosdep install --from-paths ./people --ignore-src --rosdistro=melodic -y
 
 #    apt-get clean && \
 #    rm -rf /var/lib/apt/lists/*
@@ -42,7 +37,8 @@ USER robot
 
 # Link to workspace
 RUN cd 	~/ros/catkin_ws/src && \
-    ln -s ~/src/CoHAN_Planner .
+    ln -s ~/src/CoHAN_Planner . && \
+    ln -s ~/src/people .
 
 # Build
 RUN cd 	~/ros/catkin_ws && \

@@ -550,6 +550,15 @@ def begin(nodename='robot_cmd', init_node=True):
         t.start()
         time.sleep(0.5)
 
+    # if gbn node running, enable obstacle avoidance
+
+    nn = get_ROS_nodes()
+    #print(nn)
+    obstav = '/gradientBasedNavigation' in nn
+    enableObstacleAvoidance(obstav)
+    if obstav:
+      print("gbn detected: obstacle avoidance automatically enabled")
+
     if (robot_initialized):
         return
 
@@ -559,15 +568,6 @@ def begin(nodename='robot_cmd', init_node=True):
         rospy.init_node(nodename,  disable_signals=True)
         rospy.sleep(1)
         print("ROS node %s initialized." %nodename)
-
-    # if gbn node running, enable obstacle avoidance
-
-    nn = get_ROS_nodes()
-    #print(nn)
-    obstav = '/gradientBasedNavigation' in nn
-    enableObstacleAvoidance(obstav)
-    if obstav:
-      print("gbn detected: obstacle avoidance automatically enabled")
 
     if AprilTagFound:
         tag_sub = rospy.Subscriber(TOPIC_tag_detections, AprilTagDetectionArray, tag_cb)
