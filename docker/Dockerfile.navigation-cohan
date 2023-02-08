@@ -1,4 +1,6 @@
-# https://github.com/sphanit/CoHAN_Planner
+# CoHAN planner + laser leg_detector and people tracking
+# new version  https://github.com/sphanit/cohan_planner_multi.git
+# old version  https://github.com/sphanit/CoHAN_Planner
 
 FROM marrtino:navigation
 
@@ -13,32 +15,41 @@ USER robot
 
 RUN pip install scipy
 
-# Clone the git repositories
+# Clone the git repository
 RUN cd 	~/src && \
-    git clone https://github.com/sphanit/CoHAN_Planner.git -b master && \
+    git clone https://github.com/sphanit/cohan_planner_multi.git -b model && \
+    cd cohan_planner_multi && \
+    git submodule update --init --recursive && \
+    cd 	~/src && \
     git clone https://github.com/wg-perception/people.git -b melodic && \
-    cd ..
+    git clone https://github.com/DLu/laser_filtering.git 
 
+
+
+#  https://github.com/sphanit/CoHAN_Navigation.git
 #  This package contains simulators, examples and a lot of stuff not really needed
-#  Can be useful for testing, to be removed in the final deployment
-#    git clone https://github.com/sphanit/CoHAN_Navigation.git -b master 
+#  Can be useful for testing, not linked to ROS workspace as it uses different setups
+#  and have different requirements with respect to MARRtino robot
+
 
 USER root
 
 # Install the dependencies using rosdep
-RUN cd 	/home/robot/src && \
-    rosdep install --from-paths ./CoHAN_Planner --ignore-src --rosdistro=melodic -y && \
+RUN cd 	/home/robot/src/ && \
+    rosdep install --from-paths ./cohan_planner_multi --ignore-src --rosdistro=melodic -y && \
     rosdep install --from-paths ./people --ignore-src --rosdistro=melodic -y
 
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/*
+# Clean the installation folder
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 USER robot
 
 # Link to workspace
 RUN cd 	~/ros/catkin_ws/src && \
-    ln -s ~/src/CoHAN_Planner . && \
-    ln -s ~/src/people .
+    ln -s ~/src/cohan_planner_multi . && \
+    ln -s ~/src/people . && \
+    ln -s ~/src/laser_filtering/map_laser .
 
 # Build
 RUN cd 	~/ros/catkin_ws && \
