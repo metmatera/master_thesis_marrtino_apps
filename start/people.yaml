@@ -1,0 +1,16 @@
+simulator:
+  stage: on
+  mapname: montreal
+  mapdir: default
+  robottype: marrtino
+  nrobots: 1
+
+functions:
+  localization: on
+  mapname:montreal
+  mapdir: default
+  initpose: 0 0 0             # x y th_deg
+  navigation: move_base       # off | gbn | move_base | move_base_gbn
+  navigation_rviz: on
+  people_tracking: on
+  
