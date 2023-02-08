@@ -7,7 +7,7 @@ simulator:
 
 functions:
   localization: on
-  mapname:montreal
+  mapname: montreal
   mapdir: default
   initpose: 0 0 0             # x y th_deg
   navigation: move_base       # off | gbn | move_base | move_base_gbn
