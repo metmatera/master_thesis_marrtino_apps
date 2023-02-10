@@ -1,5 +1,6 @@
 include "include/floorplan.inc"
 include "include/box.inc"
+include "include/person.inc"
 include "include/marrtino.inc" 
 
 
@@ -26,10 +27,14 @@ floorplan
 )
 
 # boxes
-box( pose [ 2.0 2.0 0 0 ] color "red")
-box( pose [ 8.0 2.0 0 0 ] color "red")
+# box( pose [ 2.0 2.0 0 0 ] color "red")
+# box( pose [ 8.0 2.0 0 0 ] color "red")
 
 # robot
 marrtino( pose [ 5.0 5.0 0 0 ] name "orazio" color "blue")
 
-
+# people
+person(pose [ 2 0 0 0 ] name "mary" body(color "green"))
+person(pose [ 1.5 -1 0 0 ] name "john" body(color "red"))
+person(pose [ -3 0 0 0 ] name "adam" body(color "blue"))
+person(pose [ 2 3 0 0 ] name "carl" body(color "yellow"))

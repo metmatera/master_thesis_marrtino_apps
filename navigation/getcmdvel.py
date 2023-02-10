@@ -3,7 +3,7 @@ import math, time
 import rospy
 from geometry_msgs.msg import Twist
 
-TOPIC_cmdvel = '/cmd_vel'
+TOPIC_cmdvel = '/mary/cmd_vel'
 
 def cmdvel_cb(data):
     print('%.3f;%.3f' %(data.linear.x, data.angular.z))

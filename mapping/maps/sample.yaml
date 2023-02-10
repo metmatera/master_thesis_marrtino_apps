@@ -5,3 +5,16 @@ negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196
 
+home: { gotopose: [ 0, 0, 0 ] }
+
+mary: { type: 'person', pose: [ 2, 0, 0, 0 ],  body: { color: "green" },
+    gotopose: [ 0, 0, 0 ] }
+
+john: { type: 'person', pose: [ 1.5, -1, 0, 0 ],  body: { color: "red" },
+    gotopose: [ 0, 0, 0 ] }
+    
+adam: { type: 'person', pose: [ -3, 0, 0, 0 ],  body: { color: "blue" },
+    gotopose: [ 0, 0, 0 ] }
+    
+carl: { type: 'person', pose: [ 2, 3, 0, 0 ],  body: { color: "yellow" },
+    gotopose: [ 0, 0, 0 ] }
