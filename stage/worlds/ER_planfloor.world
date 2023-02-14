@@ -1,0 +1,26 @@
+include "include/floorplan.inc"
+include "include/box.inc"
+include "include/person.inc"
+include "include/marrtino.inc"
+
+window (
+  size   [ 600 500 1 ]
+  rotate [ 0.000 0.000 ]  center [ 17.0 20.0 ]
+  scale 50
+  show_data 0
+)
+
+floorplan (
+	name "ER_planfloor"
+  size [60.000000 35.000000 2]
+  pose [30.000000 17.500000 0 0]
+  bitmap "ER_planfloor.png"
+)
+
+marrtino( pose [ 17.00 20.00 0 180.00 ] name "marrtino" color "DarkRed")
+
+door(  name "door2"  color "grey"  pose [42.3  27.2  0  -60]  size [1.7  0.2  1.0] )
+door(  name "door1"  color "grey"  pose [38.3  26.3  0  0]  size [1.7  0.2  1.0] )
+person(  name "john"  body (  color "green"  )  pose [6  8  0  0] )
+person(  name "mary"  body (  color "red"  )  pose [10  10  0  90] )
+

@@ -1,13 +1,13 @@
 simulator:
   stage: on
-  mapname: montreal
+  mapname: ER_planfloor
   mapdir: default
   robottype: marrtino
   nrobots: 1
 
 functions:
   localization: on
-  mapname: montreal
+  mapname: ER_planfloor
   mapdir: default
   initpose: 0 0 0             # x y th_deg
   navigation: move_base       # off | gbn | move_base | move_base_gbn

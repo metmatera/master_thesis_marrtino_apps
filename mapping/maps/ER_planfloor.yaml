@@ -1,0 +1,18 @@
+image: ER_planfloor.png
+resolution: 0.05
+origin: [0, 0, .0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.2
+
+# Simulator info
+initposes: [ [17, 20, 180] ]
+
+# Semantic map
+
+door1: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 38.3, 26.3, 0, 0 ], color: "grey" }
+door2: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 42.3, 27.2, 0, -60 ], color: "grey" }
+
+john: { type: 'person', pose: [ 6, 8, 0, 0 ], body: { color: "green" } }
+mary: { type: 'person', pose: [ 10, 10, 0, 90 ],  body: { color: "red" } }
+
