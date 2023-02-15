@@ -1,5 +1,6 @@
 <launch>
   <arg name="laser_topic" default="/scan" />
+  <arg name="use_map" default="true" />
 
   <arg name="paramsdir" default="$(env MARRTINO_APPS_HOME)/navigation/config/$(env ROBOT_TYPE)" />
 
@@ -11,14 +12,17 @@
     <remap from="scan" to="$(arg laser_topic)" />
   </node>
   
-  <node pkg="map_laser" type="filter.py" name="map_laser_filter" respawn="true" output="screen">
-    <remap from="base_scan_filter" to="$(arg laser_topic)_nomap" />
-  </node>
+  <group if="$(arg use_map)">
+    <node pkg="map_laser" type="filter.py" name="map_laser_filter" respawn="true" output="screen">
+      <remap from="base_scan_filter" to="$(arg laser_topic)_nomap" />
+    </node>
+  </group>
   
   <node pkg="leg_detector" type="leg_detector" name="leg_detector"
         args="$(find leg_detector)/config/trained_leg_detector.yaml" output="screen" >
-        
-        <remap from="scan" to="$(arg laser_topic)_nomap" />
+        <remap from="scan" to="$(arg laser_topic)_nomap" if="$(arg use_map)" />
+        <remap from="scan" to="scan_filtered" unless="$(arg use_map)" />
+        <remap from="visualization_marker" to="leg_marker" />
         <rosparam file="$(arg paramsdir)/leg_detector.yaml" command="load" />
   </node>
 

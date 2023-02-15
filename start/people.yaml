@@ -10,7 +10,7 @@ functions:
   mapname: ER_planfloor
   mapdir: default
   initpose: 0 0 0             # x y th_deg
-  navigation: move_base       # off | gbn | move_base | move_base_gbn
+  navigation: cohan_nav       # off | gbn | move_base | move_base_gbn
   navigation_rviz: on
   people_tracking: on
   
