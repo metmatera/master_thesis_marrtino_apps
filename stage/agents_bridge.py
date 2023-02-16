@@ -30,17 +30,18 @@ class StageAgents(object):
 			tracked_agent = TrackedAgent()
 			tracked_agent.track_id = agent.object_id
 			tracked_agent.segments.append(agent_segment)
-			tracked_agents.agents.append(agent)
+			tracked_agents.agents.append(tracked_agent)
+			
 		if (tracked_agents.agents):
 			tracked_agents.header.stamp = rospy.Time.now()
 			tracked_agents.header.frame_id = 'map'
 			self.tracked_agents_pub.publish(tracked_agents)
 			
 		# Debug print
-		self.n_agents = len(tracked_agents.agents)
-		if (self.n_agents != self.tmp_n_agents):
-			print "Number of tracked agents: " + str(self.n_agents)
-			self.tmp_n_agents = self.n_agents
+		#self.n_agents = len(tracked_agents.agents)
+		#if (self.n_agents != self.tmp_n_agents):
+		#	print "Number of tracked agents: " + str(self.n_agents)
+		#	self.tmp_n_agents = self.n_agents
 
 if __name__ == '__main__':
 	agents = StageAgents()
