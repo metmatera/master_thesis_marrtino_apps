@@ -81,12 +81,14 @@ class StageAgents(object):
 
 if __name__ == '__main__':
 	
+	flag = int(sys.argv[1])
+	
 	leg_detector = True
-	flag = sys.argv[1]
 	if (flag == 0):
 		leg_detector = False
-	elif (flag == 1):
-		leg_detector = True
+	elif (flag > 1):
+		sys.exit(0)
+
 	num_hum = int(sys.argv[2])
 	
 	agents = StageAgents(leg_detector=leg_detector, num_hum=num_hum)	
