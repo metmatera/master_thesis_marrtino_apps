@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Marker2
       Splitter Ratio: 0.5
     Tree Height: 558
   - Class: rviz/Selection
@@ -66,6 +67,60 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
+        human1/base_footprint_frame:
+          Value: true
+        human1/base_frame:
+          Value: true
+        human1/odom:
+          Value: true
+        human2/base_footprint_frame:
+          Value: true
+        human2/base_frame:
+          Value: true
+        human2/odom:
+          Value: true
+        human3/base_footprint_frame:
+          Value: true
+        human3/base_frame:
+          Value: true
+        human3/odom:
+          Value: true
+        human4/base_footprint_frame:
+          Value: true
+        human4/base_frame:
+          Value: true
+        human4/odom:
+          Value: true
+        human5/base_footprint_frame:
+          Value: true
+        human5/base_frame:
+          Value: true
+        human5/odom:
+          Value: true
+        human6/base_footprint_frame:
+          Value: true
+        human6/base_frame:
+          Value: true
+        human6/odom:
+          Value: true
+        human7/base_footprint_frame:
+          Value: true
+        human7/base_frame:
+          Value: true
+        human7/odom:
+          Value: true
+        human8/base_footprint_frame:
+          Value: true
+        human8/base_frame:
+          Value: true
+        human8/odom:
+          Value: true
+        human9/base_footprint_frame:
+          Value: true
+        human9/base_frame:
+          Value: true
+        human9/odom:
+          Value: true
         laser_frame:
           Value: true
         map:
@@ -80,9 +135,15 @@ Visualization Manager:
       Tree:
         map:
           odom:
-            base_frame:
-              laser_frame:
+            base_footprint_frame:
+              base_footprint:
                 {}
+              base_frame:
+                base_link:
+                  {}
+                laser_frame:
+                  base_laser_link:
+                    {}
       Update Interval: 0
       Value: true
     - Alpha: 0.8999999761581421
@@ -212,6 +273,14 @@ Visualization Manager:
         PEOPLE: true
       Queue Size: 100
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /move_base/HATebLocalPlannerROS/teb_markers
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -240,25 +309,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 12.283888816833496
+      Distance: 21.918628692626953
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -5.503445625305176
-        Y: 20.559572219848633
-        Z: -0.001071929931640625
+        X: 3.773347854614258
+        Y: 1.8819293975830078
+        Z: -0.0008864402770996094
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.41234999895095825
+      Pitch: 1.3198086023330688
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.6986620426177979
+      Yaw: 1.8712438344955444
     Saved: ~
 Window Geometry:
   Displays:
@@ -277,4 +346,4 @@ Window Geometry:
     collapsed: false
   Width: 1133
   X: 642
-  Y: 28
+  Y: 27
