@@ -81,12 +81,16 @@ class StageAgents(object):
 
 if __name__ == '__main__':
 	
+	if (len(sys.argv) != 3):
+		print("Missing parameters...\nleg_detector (int) 0|1:\n\t0 -> off\n\t1 -> on\nnum_hum (int) >=0:\n\tnumber of humans in the simulation")
+	
 	flag = int(sys.argv[1])
 	
 	leg_detector = True
 	if (flag == 0):
 		leg_detector = False
 	elif (flag > 1):
+		print("The value must be 0 or 1")
 		sys.exit(0)
 
 	num_hum = int(sys.argv[2])
