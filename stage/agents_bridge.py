@@ -4,73 +4,45 @@ from cohan_msgs.msg import TrackedAgents, TrackedAgent, TrackedSegmentType, Trac
 from people_msgs.msg import PositionMeasurement, PositionMeasurementArray
 from std_msgs.msg import Header
 from geometry_msgs.msg import Point
+from nav_msgs.msg import Odometry
 import message_filters
 
 
 class StageAgents(object):
 	
-	def __init__(self):
+	def __init__(self, leg_detector=True, num_hum=0):
 		self.tracked_agents_pub = []
 		self.Segment_Type = TrackedSegmentType.TORSO
 		self.Agent_State = TrackedAgent.MOVING
 		self.Agent_Type = AgentType.HUMAN
+		self.leg_detector = leg_detector
+		self.num_hum = num_hum
 	
 	def AgentsPub(self):
 		rospy.init_node('Stage_Agents', anonymous=True)
-		ptm_sub = rospy.Subscriber("/people_tracker_measurements", PositionMeasurementArray, self.AgentsCB)
-		'''
-		* std_msgs/Header
-		
-		uint32 	seq
-		time 	stamp
-		string 	frame_id
-		
-		* people_msgs/PositionMeasurementArray
-		
-		std_msgs/Header 			header
-		people_msgs/PositionMeasurement[] 	people
-		float32[] 				cooccurence
-		
-		* people_msgs/PositionMeasurement
-		
-		std_msgs/Header 	header
-		string 			name
-		geometry_msgs/Point 	pos
-		float64 		reliability
-		float64[9] 		covariance
-		byte 			initialization
-		'''
 		
 		self.tracked_agents_pub = rospy.Publisher("/tracked_agents", TrackedAgents, queue_size=1)
-		'''
-		* cohan_msgs/TrackedAgents
 		
-		std_msgs/Header 		header
-		cohan_msgs/TrackedAgent[] 	agents
+		if (self.leg_detector):
+			ptm_sub = rospy.Subscriber("/people_tracker_measurements", PositionMeasurementArray, self.AgentsCB)
 		
-		* cohan_msgs/TrackedAgent
-		
-		uint64 				track_id
-		int8 				state
-		int8 				type
-		string 				name
-		cohan_msgs/TrackedSegment[] 	segments
-		
-		* cohan_msgs/TrackedSegment
-		
-		int8 					type
-		geometry_msgs/PoseWithCovariance 	pose
-		geometry_msgs/TwistWithCovariance 	twist
-		geometry_msgs/AccelWithCovariance 	accel
-		'''
+		else:
+			hum_marker_sub = []
+			for human_id in range(1,self.num_hum+1):
+				name = 'human'+str(human_id)
+				hum_marker_sub.append(message_filters.Subscriber("/" + name + "/base_pose_ground_truth", Odometry))
+			pose_msg = message_filters.TimeSynchronizer(hum_marker_sub, 10)
+			pose_msg.registerCallback(self.HumansCB)
 		
 		rospy.spin()
 	
 	def AgentsCB(self, msg):
 		tracked_agents = TrackedAgents()
+		i = 1
 		for agent in msg.people:
-		
+			
 			tracked_agent = TrackedAgent()
+			tracked_agent.track_id = i
 			tracked_agent.state = self.Agent_State
 			tracked_agent.type = self.Agent_Type
 			tracked_agent.name = agent.name
@@ -80,13 +52,50 @@ class StageAgents(object):
 			tracked_agent.segments.append(agent_segment)
 			
 			tracked_agents.agents.append(tracked_agent)
+			i += 1
 			
 		if (tracked_agents.agents):
 			tracked_agents.header.stamp = rospy.Time.now()
 			tracked_agents.header.frame_id = 'map'
 			self.tracked_agents_pub.publish(tracked_agents)
 			
+	def HumansCB(self,*msg):
+		tracked_agents = TrackedAgents()
+		for human_id in range(1,self.num_hum+1):
+        	
+			tracked_agent = TrackedAgent()
+			tracked_agent.track_id = human_id
+
+			agent_segment = TrackedSegment()
+			agent_segment.type = self.Segment_Type
+			agent_segment.pose.pose = msg[human_id-1].pose.pose
+			agent_segment.twist.twist = msg[human_id-1].twist.twist
+
+			tracked_agent.segments.append(agent_segment)
+			tracked_agents.agents.append(tracked_agent)
+            
+		if (tracked_agents.agents):
+			tracked_agents.header.stamp = rospy.Time.now()
+			tracked_agents.header.frame_id = 'map'
+			self.tracked_agents_pub.publish(tracked_agents)
 
 if __name__ == '__main__':
-	agents = StageAgents()
+	
+	leg_detector = True
+	flag = sys.argv[1]
+	if (flag == 0):
+		leg_detector = False
+	elif (flag == 1):
+		leg_detector = True
+	num_hum = int(sys.argv[2])
+	
+	agents = StageAgents(leg_detector=leg_detector, num_hum=num_hum)	
 	agents.AgentsPub()
+	
+	
+	
+	
+	
+	
+	
+	
