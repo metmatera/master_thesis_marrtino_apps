@@ -83,7 +83,8 @@ if __name__ == '__main__':
 	
 	if (len(sys.argv) != 3):
 		print("Missing parameters...\nleg_detector (int) 0|1:\n\t0 -> off\n\t1 -> on\nnum_hum (int) >=0:\n\tnumber of humans in the simulation")
-	
+		sys.exit(0)
+		
 	flag = int(sys.argv[1])
 	
 	leg_detector = True
