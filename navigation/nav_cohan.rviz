@@ -73,54 +73,6 @@ Visualization Manager:
           Value: true
         human1/odom:
           Value: true
-        human2/base_footprint_frame:
-          Value: true
-        human2/base_frame:
-          Value: true
-        human2/odom:
-          Value: true
-        human3/base_footprint_frame:
-          Value: true
-        human3/base_frame:
-          Value: true
-        human3/odom:
-          Value: true
-        human4/base_footprint_frame:
-          Value: true
-        human4/base_frame:
-          Value: true
-        human4/odom:
-          Value: true
-        human5/base_footprint_frame:
-          Value: true
-        human5/base_frame:
-          Value: true
-        human5/odom:
-          Value: true
-        human6/base_footprint_frame:
-          Value: true
-        human6/base_frame:
-          Value: true
-        human6/odom:
-          Value: true
-        human7/base_footprint_frame:
-          Value: true
-        human7/base_frame:
-          Value: true
-        human7/odom:
-          Value: true
-        human8/base_footprint_frame:
-          Value: true
-        human8/base_frame:
-          Value: true
-        human8/odom:
-          Value: true
-        human9/base_footprint_frame:
-          Value: true
-        human9/base_frame:
-          Value: true
-        human9/odom:
-          Value: true
         laser_frame:
           Value: true
         map:
@@ -281,6 +233,14 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /move_base/HATebLocalPlannerROS/agent_marker
+      Name: MarkerArray
+      Namespaces:
+        body: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -309,25 +269,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 21.918628692626953
+      Distance: 19.201086044311523
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.773347854614258
-        Y: 1.8819293975830078
-        Z: -0.0008864402770996094
+        X: 1.4475812911987305
+        Y: 1.2703399658203125
+        Z: 0.0017642974853515625
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3198086023330688
+      Pitch: 0.7823047637939453
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.8712438344955444
+      Yaw: 1.5887737274169922
     Saved: ~
 Window Geometry:
   Displays:
