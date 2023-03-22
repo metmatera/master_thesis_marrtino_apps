@@ -37,6 +37,11 @@ for i in range(timesteps):
 avg_distance /= timesteps
 print(f"Average distance: {avg_distance}")
 
-plt.plot(t1_x, t1_y, 'r')
-plt.plot(t2_x, t2_y, 'g')
+plt.plot(t1_x, t1_y, 'g')
+plt.plot(t2_x, t2_y, 'r--')
+plt.title(f"Average distance between trajectories: {avg_distance:.3f}", fontsize=10)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend(['Human-controlled trajectory', 'CoHAN trajectory'], fontsize=10)
+plt.grid()
 plt.show()
