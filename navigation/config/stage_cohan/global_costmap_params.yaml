@@ -12,8 +12,8 @@ plugins:
   - {name: human_layer_visible, type: "cohan_layers::AgentVisibilityLayer"}
 
 obstacles:
-  observation_sources: base_scan_filtered
-  base_scan_filtered: {data_type: LaserScan, sensor_frame: base_laser_link, expected_update_rate: 0.3, marking: true, clearing: true}
+  observation_sources: scan_filtered
+  scan_filtered: {data_type: LaserScan, sensor_frame: base_laser_link, expected_update_rate: 0.3, marking: true, clearing: true}
   footprint_clearing_enabled: false
 inflater:
     inflation_radius: 0.4 #0.2
