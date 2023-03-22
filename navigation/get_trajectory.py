@@ -10,7 +10,7 @@ class Trajectory(object):
     def __init__(self, filename):
         self.trajectory = PointArray()
         self.traj_pub = rospy.Publisher("/trajectory", PointArray, queue_size=1)
-        self.file = open("trajs/"+filename, "w")
+        self.file = open("trajs/"+filename+".txt", "w")
         self.file.write("# "+filename + "\n")
         self.curr_x = 0.0
         self.curr_y = 0.0
@@ -26,10 +26,9 @@ class Trajectory(object):
     def TrajectoryCB(self, msg):
         self.trajectory.header = msg.header
         self.trajectory.points.append(msg.pose.pose.position)
-        #print "Position:\n" + str(msg.pose.pose.position) + "\n"
+
         x = msg.pose.pose.position.x
         y = msg.pose.pose.position.y
-
         if (x != self.curr_x or y != self.curr_y):
             self.file.write(str(x) + "," + str(y) + "\n")
             self.curr_x = x
@@ -40,6 +39,10 @@ class Trajectory(object):
 
 
 if __name__ == '__main__':
+
+    if (len(sys.argv) != 2):
+        print "Missing filename parameter (type it without extension)"
+        sys.exit(0)
 
     filename = sys.argv[1]
 
