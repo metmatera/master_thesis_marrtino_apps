@@ -1,5 +1,8 @@
 import sys
 import math
+
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -21,15 +24,17 @@ def dtw(t1, t2):
     return dtw
 
 def plot_trajectories(T1, T2, distance):
+    mpl.rcParams['legend.fontsize'] = 10
     fig = plt.figure(figsize=(7,7))
     ax = plt.axes(projection='3d')
-    plt.title(f"Distance between trajectories (DTW): {distance:.3f}", fontsize=10)
-    plt.xlabel('x')
-    plt.ylabel('y')
+    ax.set_title(f"Distance between trajectories (DTW): {distance:.3f}", fontsize=10)
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
     ax.set_zlabel('t')
-    plt.xlim((-20,20))
-    plt.ylim((-20,20))
-    plt.legend(['Human-controlled trajectory', 'CoHAN-planned trajectory'], fontsize=10)
+    ax.set_xlim((-20,20))
+    ax.set_ylim((-20,20))
+    ax.set_zlim((0,30))
+    ax.set_aspect('equal')
 
     x1, y1, t1 = [], [], []
     for elem in T1:
@@ -37,25 +42,25 @@ def plot_trajectories(T1, T2, distance):
         y1.append(elem[1])
         t1.append(elem[2])
 
+    ax.plot(x1,y1,t1,'red',label='CoHAN-planned trajectory')
+
     x2, y2, t2 = [], [], []
     for elem in T2:
         x2.append(elem[0])
         y2.append(elem[1])
         t2.append(elem[2])
 
-    ax.plot3D(x1,y1,t1,'red')
-    ax.plot3D(x2,y2,t2,'green')
+    ax.plot(x2,y2,t2,'green',label='Human-controlled trajectory')
 
-    ax.set_aspect('equal')
-
+    ax.legend()
     plt.show()
 
 
 fn1 = sys.argv[1]
 fn2 = sys.argv[2]
 
-f1 = open(fn1, "r")
-f2 = open(fn2, "r")
+f1 = open("trajs/"+fn1+".txt", "r")
+f2 = open("trajs/"+fn2+".txt", "r")
 
 # Trajectories (x,y)
 t1, t2 = [], []
@@ -86,5 +91,6 @@ t2 = np.array(t2)
 T2 = np.array(T2)
 
 dtw = dtw(t1,t2)
+print("DTW: " + str(dtw))
+print("\nPress CTRL+C to close the window...")
 plot_trajectories(T1,T2,dtw)
-print(dtw)
