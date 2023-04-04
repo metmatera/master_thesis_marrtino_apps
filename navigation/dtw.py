@@ -55,12 +55,14 @@ def plot_trajectories(T1, T2, distance):
     ax.legend()
     plt.show()
 
+# main
+if (len(sys.argv) != 2):
+	sys.exit(0)
+	
+filename = sys.argv[1]
 
-fn1 = sys.argv[1]
-fn2 = sys.argv[2]
-
-f1 = open("trajs/"+fn1+".txt", "r")
-f2 = open("trajs/"+fn2+".txt", "r")
+f1 = open("trajs/"+filename+".txt", "r")
+f2 = open("trajs/"+filename+"_cohan.txt", "r")
 
 # Trajectories (x,y)
 t1, t2 = [], []

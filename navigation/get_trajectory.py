@@ -1,21 +1,21 @@
 import rospy, time, sys
 
-from cohan_msgs.msg import PointArray
-from std_msgs.msg import Header
-from geometry_msgs.msg import Point
+#from cohan_msgs.msg import PointArray
+#from std_msgs.msg import Header
+#from geometry_msgs.msg import Point
 from nav_msgs.msg import Odometry
 
 class Trajectory(object):
 
     def __init__(self, filename):
-        self.trajectory = PointArray()
-        self.traj_pub = rospy.Publisher("/trajectory", PointArray, queue_size=1)
+        #self.trajectory = PointArray()
+        #self.traj_pub = rospy.Publisher("/trajectory", PointArray, queue_size=1)
         self.file = open("trajs/"+filename+".txt", "w")
         self.file.write("# "+filename + "\n")
         self.set_start_time = False
         self.start_time = 0.0
 
-    def TrajectoryPub(self):
+    def TrajectorySub(self):
         rospy.init_node('Trajectory')
         rospy.sleep(1)
 
@@ -24,8 +24,8 @@ class Trajectory(object):
         rospy.spin()
 
     def TrajectoryCB(self, msg):
-        self.trajectory.header = msg.header
-        self.trajectory.points.append(msg.pose.pose.position)
+        #self.trajectory.header = msg.header
+        #self.trajectory.points.append(msg.pose.pose.position)
 
         if (self.set_start_time == False):
             self.start_time = time.time()
@@ -36,8 +36,8 @@ class Trajectory(object):
         t = time.time() - self.start_time
         self.file.write(str(t) + "," + str(x) + "," + str(y) + "\n")
 
-        if (self.trajectory):
-            self.traj_pub.publish(self.trajectory)
+        #if (self.trajectory):
+            #self.traj_pub.publish(self.trajectory)
 
 
 if __name__ == '__main__':
@@ -49,4 +49,4 @@ if __name__ == '__main__':
     filename = sys.argv[1]
 
     trajectory = Trajectory(filename)
-    trajectory.TrajectoryPub()
+    trajectory.TrajectorySub()

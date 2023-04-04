@@ -112,13 +112,7 @@ if __name__ == '__main__':
 
     num_hum = int(sys.argv[2])
     
+    print("Running...")
+    
     agents = StageAgents(leg_detector=leg_detector, num_hum=num_hum)    
     agents.AgentsPub()
-    
-    
-    
-    
-    
-    
-    
-    
