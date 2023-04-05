@@ -14,7 +14,7 @@ class Trajectory(object):
     def TrajectorySub(self):
         rospy.init_node('Trajectory')
         #rospy.sleep(1)
-        odom_sub = rospy.Subscriber("/odom", Odometry, self.TrajectoryCB)
+        odom_sub = rospy.Subscriber("/base_pose_ground_truth", Odometry, self.TrajectoryCB)
         rospy.spin()
 
     def TrajectoryCB(self, msg):

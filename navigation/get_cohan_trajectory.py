@@ -22,7 +22,7 @@ class CohanTrajectory(object):
             x = p.pose.position.x
             y = p.pose.position.y
             self.file.write(str(t) + "," + str(x) + "," + str(y) + "\n")
-            t += 0.1
+            t += 0.0377
 
 if __name__ == '__main__':
 
