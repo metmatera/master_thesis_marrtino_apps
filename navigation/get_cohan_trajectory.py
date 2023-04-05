@@ -12,7 +12,7 @@ class CohanTrajectory(object):
 
     def getCohanTrajectory(self):
         rospy.init_node('CohanTrajectory')
-        rospy.sleep(1)
+        #rospy.sleep(1)
 
         plan_msg = rospy.wait_for_message("/move_base/GlobalPlanner/plan", Path, timeout=5)
 

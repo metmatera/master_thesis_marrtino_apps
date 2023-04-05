@@ -1,43 +1,36 @@
 import rospy, time, sys
 
-#from cohan_msgs.msg import PointArray
-#from std_msgs.msg import Header
-#from geometry_msgs.msg import Point
 from nav_msgs.msg import Odometry
 
 class Trajectory(object):
 
     def __init__(self, filename):
-        #self.trajectory = PointArray()
-        #self.traj_pub = rospy.Publisher("/trajectory", PointArray, queue_size=1)
         self.file = open("trajs/"+filename+".txt", "w")
         self.file.write("# "+filename + "\n")
-        self.set_start_time = False
-        self.start_time = 0.0
+        self.set_init_pose = False
+        self.init_pose = [0.0, 0.0]
+        self.t = 0.0
 
     def TrajectorySub(self):
         rospy.init_node('Trajectory')
-        rospy.sleep(1)
-
+        #rospy.sleep(1)
         odom_sub = rospy.Subscriber("/odom", Odometry, self.TrajectoryCB)
-
         rospy.spin()
 
     def TrajectoryCB(self, msg):
-        #self.trajectory.header = msg.header
-        #self.trajectory.points.append(msg.pose.pose.position)
-
-        if (self.set_start_time == False):
-            self.start_time = time.time()
-            self.set_start_time = True
 
         x = msg.pose.pose.position.x
         y = msg.pose.pose.position.y
-        t = time.time() - self.start_time
-        self.file.write(str(t) + "," + str(x) + "," + str(y) + "\n")
 
-        #if (self.trajectory):
-            #self.traj_pub.publish(self.trajectory)
+        if (self.set_init_pose == False):
+            self.init_pose[0] = x
+            self.init_pose[1] = y
+            self.file.write(str(self.t) + "," + str(x) + "," + str(y) + "\n")
+            self.set_init_pose = True
+
+        if (x != self.init_pose[0] or y != self.init_pose[1]):
+            self.t += 0.1
+            self.file.write(str(self.t) + "," + str(x) + "," + str(y) + "\n")
 
 
 if __name__ == '__main__':
