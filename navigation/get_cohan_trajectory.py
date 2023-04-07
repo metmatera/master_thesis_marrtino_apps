@@ -11,10 +11,10 @@ class CohanTrajectory(object):
         self.file.write("# " + filename + "\n")
 
     def getCohanTrajectory(self):
-        rospy.init_node('CohanTrajectory')
+        rospy.init_node('Cohan_Trajectory')
         #rospy.sleep(1)
 
-        plan_msg = rospy.wait_for_message("/move_base/GlobalPlanner/plan", Path, timeout=5)
+        plan_msg = rospy.wait_for_message("/move_base/GlobalPlanner/plan", Path, timeout=10)
 
         poses = plan_msg.poses
         t = 0.0
