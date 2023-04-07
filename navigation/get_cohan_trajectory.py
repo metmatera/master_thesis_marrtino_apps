@@ -6,31 +6,31 @@ from nav_msgs.msg import Path
 
 class CohanTrajectory(object):
 
-    def __init__(self, filename):
-        self.file = open("trajs/"+filename+"_cohan.txt", "w")
-        self.file.write("# " + filename + "\n")
+    def __init__(self, filename, type):
+        self.file = open("trajs/" + filename + "_cohan_" + type + ".txt", "w")
+        self.file.write("# " + filename + " - " + type + " plan\n")
+        self.plan = "/move_base/HATebLocalPlannerROS/" + type + "_plan"
 
     def getCohanTrajectory(self):
         rospy.init_node('Cohan_Trajectory')
-        #rospy.sleep(1)
 
-        plan_msg = rospy.wait_for_message("/move_base/GlobalPlanner/plan", Path, timeout=10)
+        # This function subscribes one single message
+        plan_msg = rospy.wait_for_message(self.plan, Path, timeout=20)
 
         poses = plan_msg.poses
-        t = 0.0
         for p in poses:
             x = p.pose.position.x
             y = p.pose.position.y
-            self.file.write(str(t) + "," + str(x) + "," + str(y) + "\n")
-            t += 0.0377
+            self.file.write(str(x) + "," + str(y) + "\n")
 
 if __name__ == '__main__':
 
-    if (len(sys.argv) != 2):
-        print "Missing filename parameter (type it without extension)"
+    if (len(sys.argv) != 3):
+        print "Missing parameters:\n1) Filename without extension (example: t1)\n2) Plan type ('global' or 'local')"
         sys.exit(0)
 
     filename = sys.argv[1]
+    type = sys.argv[2]
 
-    trajectory = CohanTrajectory(filename)
+    trajectory = CohanTrajectory(filename, type)
     trajectory.getCohanTrajectory()
