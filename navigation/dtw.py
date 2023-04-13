@@ -1,5 +1,4 @@
-import sys
-import math
+import sys, math
 
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
@@ -23,76 +22,94 @@ def dtw(t1, t2):
     dtw = C[n1, n2]
     return dtw
 
-def plot_trajectories(T1, T2, distance):
-    mpl.rcParams['legend.fontsize'] = 10
-    fig = plt.figure(figsize=(7,7))
-    ax = plt.axes(projection='3d')
-    ax.set_title(f"Distance between trajectories (DTW): {distance:.3f}", fontsize=10)
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('t')
-    ax.set_xlim((-20,20))
-    ax.set_ylim((-20,20))
-    ax.set_zlim((0,30))
-    ax.set_aspect('equal')
+def compute_avg_vel(trajectory, start, end):
+    p0 = np.array([trajectory[start][0], trajectory[start][1]])
+    p1 = np.array([trajectory[end][0], trajectory[end][1]])
+    distance = eucl_dist(p0, p1)
+    deltaT = trajectory[end][2] - trajectory[start][2]
+    return distance / deltaT
 
-    x1, y1, t1 = [], [], []
-    for elem in T1:
-        x1.append(elem[0])
-        y1.append(elem[1])
-        t1.append(elem[2])
-
-    ax.plot(x1,y1,t1,'red',label='CoHAN-planned trajectory')
-
-    x2, y2, t2 = [], [], []
-    for elem in T2:
-        x2.append(elem[0])
-        y2.append(elem[1])
-        t2.append(elem[2])
-
-    ax.plot(x2,y2,t2,'green',label='Human-controlled trajectory')
-
-    ax.legend()
-    plt.show()
 
 # main
-if (len(sys.argv) != 2):
-	sys.exit(0)
-	
+if (len(sys.argv) != 3):
+    sys.exit(0)
+
 filename = sys.argv[1]
+type = sys.argv[2]
 
 f1 = open("trajs/"+filename+".txt", "r")
-f2 = open("trajs/"+filename+"_cohan.txt", "r")
+f2 = open("trajs/"+filename+"_cohan_"+type+".txt", "r")
 
-# Trajectories (x,y)
-t1, t2 = [], []
-
-# Trajectories (x,y,t)
-T1, T2 = [], []
-
+t1 = []
 lines = f1.readlines()
 for line in lines:
-    if "#" in line:
-        t1_name = line.strip().split(" ")[1]
+    if '#' in line:
         continue
     t, x, y = line.strip().split(",")
-    t1.append([float(x),float(y)])
-    T1.append([float(x),float(y),float(t)])
+    t1.append([float(x),float(y),float(t)])
 t1 = np.array(t1)
-T1 = np.array(T1)
 
+v_m = compute_avg_vel(t1, 0, len(t1)-1)
+
+t2 = []
+last_x, last_y, t = 0.0, 0.0, 0.0
 lines = f2.readlines()
 for line in lines:
-    if "#" in line:
-        t2_name = line.strip().split(" ")[1]
+    if '#' in line:
         continue
-    t, x, y = line.strip().split(",")
-    t2.append([float(x),float(y)])
-    T2.append([float(x),float(y),float(t)])
+    x, y = line.strip().split(",")
+    x = float(x)
+    y = float(y)
+    if len(t2) == 0:
+        t2.append([x,y,t])
+        last_x = x
+        last_y = y
+    else:
+        p0 = np.array([last_x, last_y])
+        p1 = np.array([x, y])
+        deltaT = eucl_dist(p0, p1) / v_m
+        t += deltaT
+        t2.append([x,y,t])
+        last_x = x
+        last_y = y
 t2 = np.array(t2)
-T2 = np.array(T2)
 
-dtw = dtw(t1,t2)
-print("DTW: " + str(dtw))
-print("\nPress CTRL+C to close the window...")
-plot_trajectories(T1,T2,dtw)
+score = dtw(t1, t2)
+print(f"DTW score: {score:.3f}")
+print(f"Total time (Human-controlled): {t1[-1][2]:.3f} s")
+print(f"Total time (CoHAN-planned): {t2[-1][2]:.3f} s")
+print(f"Time difference: {abs(t1[-1][2] - t2[-1][2]):.3f} s")
+
+# Plot 3D trajectories [x,y,t]
+mpl.rcParams['legend.fontsize'] = 10
+fig = plt.figure(figsize=(7,7))
+ax = plt.axes(projection='3d')
+ax.set_title(f"DTW score: {score:.3f}")
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('t')
+
+delta = 2
+x_min = min([elem[0] for elem in t1] + [elem[0] for elem in t2])
+x_max = max([elem[0] for elem in t1] + [elem[0] for elem in t2])
+y_min = min([elem[1] for elem in t1] + [elem[1] for elem in t2])
+y_max = max([elem[1] for elem in t1] + [elem[1] for elem in t2])
+t_max = max([elem[2] for elem in t1] + [elem[2] for elem in t2])
+
+ax.set_xlim((x_min-delta, x_max+delta))
+ax.set_ylim((y_min-delta, y_max+delta))
+ax.set_zlim((0, t_max+delta))
+ax.set_aspect('equal')
+
+x = [elem[0] for elem in t1]
+y = [elem[1] for elem in t1]
+t = [elem[2] for elem in t1]
+ax.plot(x, y, t, 'green', label='Human-controlled trajectory')
+
+x = [elem[0] for elem in t2]
+y = [elem[1] for elem in t2]
+t = [elem[2] for elem in t2]
+ax.plot(x, y, t, 'red', label='CoHAN-planned trajectory')
+
+ax.legend()
+plt.show()
