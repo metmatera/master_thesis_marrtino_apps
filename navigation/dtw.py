@@ -31,14 +31,15 @@ def compute_avg_vel(trajectory, start, end):
 
 
 # main
-if (len(sys.argv) != 3):
+if (len(sys.argv) != 5):
     sys.exit(0)
 
 filename = sys.argv[1]
-type = sys.argv[2]
+plan_type = sys.argv[2]
+interval = [int(sys.argv[3]),int(sys.argv[4])]
 
 f1 = open("trajs/"+filename+".txt", "r")
-f2 = open("trajs/"+filename+"_cohan_"+type+".txt", "r")
+f2 = open("trajs/"+filename+"_cohan_"+plan_type+".txt", "r")
 
 t1 = []
 lines = f1.readlines()
@@ -49,7 +50,7 @@ for line in lines:
     t1.append([float(x),float(y),float(t)])
 t1 = np.array(t1)
 
-v_m = compute_avg_vel(t1, 0, len(t1)-1)
+v_m = compute_avg_vel(t1, interval[0], interval[1])
 
 t2 = []
 last_x, last_y, t = 0.0, 0.0, 0.0
@@ -96,9 +97,24 @@ y_min = min([elem[1] for elem in t1] + [elem[1] for elem in t2])
 y_max = max([elem[1] for elem in t1] + [elem[1] for elem in t2])
 t_max = max([elem[2] for elem in t1] + [elem[2] for elem in t2])
 
-ax.set_xlim((x_min-delta, x_max+delta))
-ax.set_ylim((y_min-delta, y_max+delta))
-ax.set_zlim((0, t_max+delta))
+if x_max - x_min < 10:
+	dx = 7
+else:
+	dx = 2
+	
+if y_max - y_min < 10:
+	dy = 7
+else:
+	dy = 2
+	
+if t_max < 10:
+	dt = 7
+else:
+	dt = 2
+
+ax.set_xlim((x_min-dx, x_max+dx))
+ax.set_ylim((y_min-dy, y_max+dy))
+ax.set_zlim((0, t_max+dt))
 ax.set_aspect('equal')
 
 x = [elem[0] for elem in t1]
