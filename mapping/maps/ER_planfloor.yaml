@@ -13,6 +13,6 @@ initposes: [ [17, 20, 180] ]
 door1: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 38.3, 26.3, 0, 0 ], color: "grey" }
 door2: { type: 'door', size: [1.7, 0.2, 1.0], pose: [ 42.3, 27.2, 0, -60 ], color: "grey" }
 
-john: { type: 'person', pose: [ 6, 8, 0, 0 ], body: { color: "green" } }
-mary: { type: 'person', pose: [ 10, 10, 0, 90 ],  body: { color: "red" } }
+human1: { type: 'person', pose: [ 10, 10, 0, 90 ],  body: { color: "red" } }
+human2: { type: 'person', pose: [ 6, 8, 0, 0 ], body: { color: "green" } }
 
