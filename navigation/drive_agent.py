@@ -19,13 +19,13 @@ def get_key():
 
 def move(pose, cmd):
     if (cmd == 'right'):
-        pose.position.x += 0.02
+        pose.position.x += 0.01
     elif (cmd == 'left'):
-        pose.position.x -= 0.02
+        pose.position.x -= 0.01
     elif (cmd == 'up'):
-        pose.position.y += 0.02
+        pose.position.y += 0.01
     elif (cmd == 'down'):
-        pose.position.y -= 0.02
+        pose.position.y -= 0.01
     elif (cmd == 'q'):
         print("Quit.")
     else:
