@@ -1,9 +1,11 @@
-# SCENARIO 1: Robot encounters a human from the opposite direction
-# Robot starts at (3, 13, 0)
-# Human starts at (19, 13, 180) and arrives to (7.15, 13, 180)
-# Robot detects human at (9, 13) at starts turning left to avoid him
+# SCENARIO 1:
+# Map: DIAG-B1
+# Robot encounters a human from the opposite direction in a corridor
+# Robot starts at (0, 0, 0) and arrives to (11.26, 0, 0)
+# Human starts at (16, 0, 180) and arrives to (4.15, 0, 180)
+# Robot detects human at (6, 0) at starts turning left to avoid him
 # Human always goes straight forward
-# TARGET GOAL: (14.26, 13, 0)
+# ROBOT TARGET GOAL: (11.26, 0, 0)
 
 import rospy, math, tf, sys
 
@@ -32,13 +34,13 @@ if __name__ == '__main__':
     human_setpose_pub = rospy.Publisher(TOPIC_human_setpose, Pose, queue_size=1, latch=True)
 
     robot_pose = Pose()
-    robot_pose.position = Point(3, 13, 0)
-    q = tf.transformations.quaternion_from_euler(0,0,RAD(0))
+    robot_pose.position = Point(0, 0, 0)
+    q = tf.transformations.quaternion_from_euler(0,0,0)
     robot_pose.orientation = Quaternion(q[0],q[1],q[2],q[3])
 
     human_pose = Pose()
-    human_pose.position = Point(19, 13, 0)
-    q = tf.transformations.quaternion_from_euler(0,0,RAD(180))
+    human_pose.position = Point(16, 0, 0)
+    q = tf.transformations.quaternion_from_euler(0,0,math.pi)
     human_pose.orientation = Quaternion(q[0],q[1],q[2],q[3])
 
     robot_setpose_pub.publish(robot_pose)
