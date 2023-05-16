@@ -17,11 +17,11 @@ RUN pip install scipy
 
 # Clone the git repository
 RUN cd 	~/src && \
-    git clone https://github.com/sphanit/cohan_planner_multi.git -b model && \
+    git clone https://github.com/sphanit/cohan_planner_multi.git -b main && \
     cd cohan_planner_multi && \
     git submodule update --init --recursive && \
     cd 	~/src && \
-    git clone https://github.com/wg-perception/people.git -b melodic && \
+    git clone https://github.com/metmatera/people.git -b melodic && \
     git clone https://github.com/DLu/laser_filtering.git 
 
 
@@ -53,7 +53,7 @@ RUN cd 	~/ros/catkin_ws/src && \
 
 # Build
 RUN cd 	~/ros/catkin_ws && \
-    bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j2"
+    bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
 
 WORKDIR /home/robot
 
