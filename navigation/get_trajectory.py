@@ -4,8 +4,8 @@ from nav_msgs.msg import Odometry
 
 class Trajectory(object):
 
-    def __init__(self, filename):
-        self.file = open("trajs/"+filename+".txt", "w")
+    def __init__(self, scenario, filename):
+        self.file = open("experiments/scenario"+scenario+"/test"+filename+".txt", "w")
         self.file.write("# "+filename + "\n")
         self.set_init_pos = False
         self.init_pos = [0.0, 0.0]
@@ -36,11 +36,11 @@ class Trajectory(object):
 
 if __name__ == '__main__':
 
-    if (len(sys.argv) != 2):
-        print "Missing filename parameter (type it without extension)"
+    if (len(sys.argv) != 3):
         sys.exit(0)
 
-    filename = sys.argv[1]
+    scenario = sys.argv[1]
+    filename = sys.argv[2]
 
-    trajectory = Trajectory(filename)
+    trajectory = Trajectory(scenario, filename)
     trajectory.TrajectorySub()

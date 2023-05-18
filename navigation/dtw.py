@@ -22,24 +22,17 @@ def dtw(t1, t2):
     dtw = C[n1, n2]
     return dtw
 
-def compute_avg_vel(trajectory, start, end):
-    p0 = np.array([trajectory[start][0], trajectory[start][1]])
-    p1 = np.array([trajectory[end][0], trajectory[end][1]])
-    distance = eucl_dist(p0, p1)
-    deltaT = trajectory[end][2] - trajectory[start][2]
-    return distance / deltaT
-
-
 # main
 if (len(sys.argv) != 5):
     sys.exit(0)
 
-filename = sys.argv[1]
-plan_type = sys.argv[2]
-interval = [int(sys.argv[3]),int(sys.argv[4])]
+scenario = sys.argv[1]
+testfile = sys.argv[2]
+targetfile = sys.argv[3]
+robot_vel = float(sys.argv[4])
 
-f1 = open("trajs/"+filename+".txt", "r")
-f2 = open("trajs/"+filename+"_cohan_"+plan_type+".txt", "r")
+f1 = open("experiments/scenario"+scenario+"/test/"+testfile+".txt", "r")
+f2 = open("experiments/scenario"+scenario+"/target/"+targetfile+".txt", "r")
 
 t1 = []
 lines = f1.readlines()
@@ -49,8 +42,6 @@ for line in lines:
     t, x, y = line.strip().split(",")
     t1.append([float(x),float(y),float(t)])
 t1 = np.array(t1)
-
-v_m = compute_avg_vel(t1, interval[0], interval[1])
 
 t2 = []
 last_x, last_y, t = 0.0, 0.0, 0.0
@@ -68,7 +59,7 @@ for line in lines:
     else:
         p0 = np.array([last_x, last_y])
         p1 = np.array([x, y])
-        deltaT = eucl_dist(p0, p1) / v_m
+        deltaT = eucl_dist(p0, p1) / robot_vel
         t += deltaT
         t2.append([x,y,t])
         last_x = x
@@ -77,9 +68,9 @@ t2 = np.array(t2)
 
 score = dtw(t1, t2)
 print(f"DTW score: {score:.3f}")
-print(f"Total time (Human-controlled): {t1[-1][2]:.3f} s")
-print(f"Total time (CoHAN-planned): {t2[-1][2]:.3f} s")
-print(f"Time difference: {abs(t1[-1][2] - t2[-1][2]):.3f} s")
+print(f"Total time (CoHAN-planned): {t1[-1][2]:.3f} s")
+print(f"Total time (Human-controlled): {t2[-1][2]:.3f} s")
+print(f"Time difference: {t1[-1][2] - t2[-1][2]:.3f} s")
 
 # Plot 3D trajectories [x,y,t]
 mpl.rcParams['legend.fontsize'] = 10
@@ -101,12 +92,12 @@ if x_max - x_min < 10:
 	dx = 7
 else:
 	dx = 2
-	
+
 if y_max - y_min < 10:
 	dy = 7
 else:
 	dy = 2
-	
+
 if t_max < 10:
 	dt = 7
 else:
@@ -120,12 +111,12 @@ ax.set_aspect('equal')
 x = [elem[0] for elem in t1]
 y = [elem[1] for elem in t1]
 t = [elem[2] for elem in t1]
-ax.plot(x, y, t, 'green', label='Human-controlled trajectory')
+ax.plot(x, y, t, 'red', label='CoHAN-planned trajectory')
 
 x = [elem[0] for elem in t2]
 y = [elem[1] for elem in t2]
 t = [elem[2] for elem in t2]
-ax.plot(x, y, t, 'red', label='CoHAN-planned trajectory')
+ax.plot(x, y, t, 'green', label='Human-controlled trajectory')
 
 ax.legend()
 plt.show()
