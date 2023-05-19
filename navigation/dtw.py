@@ -31,8 +31,8 @@ testfile = sys.argv[2]
 targetfile = sys.argv[3]
 robot_vel = float(sys.argv[4])
 
-f1 = open("experiments/scenario"+scenario+"/test/"+testfile+".txt", "r")
-f2 = open("experiments/scenario"+scenario+"/target/"+targetfile+".txt", "r")
+f1 = open(f'experiments/scenario{scenario}/test/{testfile}.txt', 'r')
+f2 = open(f'experiments/scenario{scenario}/target/{targetfile}.txt', 'r')
 
 t1 = []
 lines = f1.readlines()

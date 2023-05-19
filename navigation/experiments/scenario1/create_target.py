@@ -45,7 +45,7 @@ for x in X:
 
 Y2 = np.array(Y2)
 
-f1 = open(f'target/r{v_r}_h{v_h}_1.txt','w')
+f1 = open(f'target/r{v_r}_h{v_h}.txt','w')
 f1.write(f'# Total distance: {total_distance}\n')
 #f2 = open(f'target/r{v_r}_h{v_h}_2.txt','w')
 #f2.write(f'# Total distance: {total_distance}\n')
