@@ -5,7 +5,7 @@ from nav_msgs.msg import Odometry
 class Trajectory(object):
 
     def __init__(self, scenario, filename):
-        self.file = open("experiments/scenario"+scenario+"/test"+filename+".txt", "w")
+        self.file = open("experiments/scenario"+scenario+"/test/"+filename+".txt", "w")
         self.file.write("# "+filename + "\n")
         self.set_init_pos = False
         self.init_pos = [0.0, 0.0]
