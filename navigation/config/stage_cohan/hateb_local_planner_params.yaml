@@ -17,12 +17,12 @@ shrink_horizon_backup: True
 
 # Robot
 holonomic_robot: true
-max_vel_y: 0.8  # old: 0.7
+max_vel_y: 0.7  # old: 0.7
 acc_lim_y: 0.3
-max_vel_x: 0.8  # old: 0.7
+max_vel_x: 0.7  # old: 0.7
 min_vel_x: 0.02
 max_vel_x_backwards: 0.4  # old: 0.4
-max_vel_theta: 1.5  # old: 1.2
+max_vel_theta: 1.2  # old: 1.2
 min_vel_theta: 0.1
 acc_lim_x: 0.3
 acc_lim_theta: 0.4
