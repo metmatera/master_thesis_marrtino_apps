@@ -11,13 +11,13 @@ x0_h = float(sys.argv[4])
 y0_h = float(sys.argv[5])
 v_h = float(sys.argv[6])
 
-l = float(sys.argv[7])
-d = float(sys.argv[8])
+d1 = float(sys.argv[7])
+d2 = float(sys.argv[8])
 
-xf_h = 17.0
-xf_r = 15.0
+alpha = v_r / v_h
+l = (d1 + d2 + 2*math.sqrt(2)*alpha - 2) / (1 - alpha)
 
-t1 = (d + x0_h - x0_r) / (v_r - v_h)
+t1 = (d1 + x0_h - x0_r) / (v_r - v_h)
 t2 = t1 + math.sqrt(2) / v_h
 t3 = t2 + l / v_h
 t4 = t3 + math.sqrt(2) / v_h
@@ -26,6 +26,9 @@ x1_h = x0_h + v_h * t1
 x2_h = x1_h + 1
 x3_h = x2_h + l
 x4_h = x3_h + 1
+
+xf_h = x4_h + 6
+xf_r = xf_h - 2
 
 x1_r = x0_r + v_r * t1
 x2_r = x0_r + v_r * t2
@@ -68,11 +71,14 @@ Y_r = np.array(Y_r)
 total_distance = 10 + 2*math.sqrt(2)
 
 f = open(f'target/r{v_r}_h{v_h}.txt','w')
-f.write(f'# Total distance: {total_distance}\n')
+f.write(f'# alpha: {alpha:.2f} - d1: {d1:.2f} - l: {l:.2f} - d2: {d2:.2f}\n')
+f.write(f'# TARGET: Human: ({xf_h:.2f}, 0.0, 0.0) - Robot: ({xf_r:.2f}, 0.0, 0.0)\n')
 for i in range(len(X_r)):
     f.write(str(X_r[i]) + ',' + str(Y_r[i]) + '\n')
 
 f.close()
+
+print("Press CTRL+C to quit.")
 
 plt.figure(figsize=(10,7))
 
