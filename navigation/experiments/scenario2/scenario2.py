@@ -30,8 +30,11 @@ if __name__ == '__main__':
     y0_h = float(sys.argv[5])
     v_h = float(sys.argv[6])
 
-    l = float(sys.argv[7])
-    d = float(sys.argv[8])
+    d1 = float(sys.argv[7])
+    d2 = float(sys.argv[8])
+
+    alpha = v_r / v_h
+    l = (d1 + d2 + 2*math.sqrt(2)*alpha - 2) / (1 - alpha)
 
     cmdvel_pub = rospy.Publisher(TOPIC_cmd_vel, Twist, queue_size=10, latch=True)
     setpose_pub = rospy.Publisher(TOPIC_setpose, Pose, queue_size=1, latch=True)
@@ -41,7 +44,7 @@ if __name__ == '__main__':
     v.angular = Vector3(0,0,0)
 
     # All the known times
-    t1 = (d + x0_h - x0_r) / (v_r - v_h)
+    t1 = (d1 + x0_h - x0_r) / (v_r - v_h)
     x1 = x0_h + v_h*t1
     y1 = 0.0
 
@@ -57,7 +60,9 @@ if __name__ == '__main__':
     x4 = x3 + 1
     y4 = 0
 
-    #t5 = t4 + 3.0
+    t5 = t4 + 6.0 / v_h
+    x5 = x4 + 6.0
+    y5 = 0
 
     p = Pose()
     p.position = Point(x0_h, y0_h, 0)
@@ -69,7 +74,6 @@ if __name__ == '__main__':
     i = 0
     while (i < t1*f):
         v.linear.x = v_h
-        v.linear.y = 0
         cmdvel_pub.publish(v)
         i += 1
         rate.sleep()
@@ -81,8 +85,7 @@ if __name__ == '__main__':
     rate.sleep()
 
     while (i < t2*f):
-        v.linear.x = v_h / math.sqrt(2)
-        v.linear.y = v_h / math.sqrt(2)
+        v.linear.x = v_h
         cmdvel_pub.publish(v)
         i += 1
         rate.sleep()
@@ -95,7 +98,6 @@ if __name__ == '__main__':
 
     while (i < t3*f):
         v.linear.x = v_h
-        v.linear.y = 0
         cmdvel_pub.publish(v)
         i += 1
         rate.sleep()
@@ -107,8 +109,7 @@ if __name__ == '__main__':
     rate.sleep()
 
     while (i < t4*f):
-        v.linear.x = v_h / math.sqrt(2)
-        v.linear.y = -v_h / math.sqrt(2)
+        v.linear.x = v_h
         cmdvel_pub.publish(v)
         i += 1
         rate.sleep()
@@ -119,15 +120,16 @@ if __name__ == '__main__':
     setpose_pub.publish(p)
     rate.sleep()
 
-    print("Press CTRL+C to stop the human.")
-    while (1):
-        try:
-            v.linear.x = v_h
-            v.linear.y = 0
-            cmdvel_pub.publish(v)
-            i += 1
-            rate.sleep()
-        except KeyboardInterrupt:
-            break
+    while (i < t5*f):
+        v.linear.x = v_h
+        cmdvel_pub.publish(v)
+        i += 1
+        rate.sleep()
+
+    p.position = Point(x5, y5, 0)
+    q = tf.transformations.quaternion_from_euler(0,0,0)
+    p.orientation = Quaternion(q[0],q[1],q[2],q[3])
+    setpose_pub.publish(p)
+    rate.sleep()
 
     print("\nQuit.")
