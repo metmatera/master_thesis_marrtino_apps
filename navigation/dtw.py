@@ -28,11 +28,11 @@ if (len(sys.argv) != 5):
 
 scenario = sys.argv[1]
 testfile = sys.argv[2]
-targetfile = sys.argv[3]
-robot_vel = float(sys.argv[4])
+v_r = float(sys.argv[3])
+v_h = float(sys.argv[4])
 
 f1 = open(f'experiments/scenario{scenario}/test/{testfile}.txt', 'r')
-f2 = open(f'experiments/scenario{scenario}/target/{targetfile}.txt', 'r')
+f2 = open(f'experiments/scenario{scenario}/target/r{v_r}_h{v_h}.txt', 'r')
 
 t1 = []
 lines = f1.readlines()
@@ -59,7 +59,7 @@ for line in lines:
     else:
         p0 = np.array([last_x, last_y])
         p1 = np.array([x, y])
-        deltaT = eucl_dist(p0, p1) / robot_vel
+        deltaT = eucl_dist(p0, p1) / v_r
         t += deltaT
         t2.append([x,y,t])
         last_x = x
