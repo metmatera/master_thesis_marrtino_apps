@@ -59,9 +59,9 @@ for i in range(1, len(robot)):
     x_h, y_h = human[i][0], human[i][1]
     p_h = np.array([x_h, y_h])
     # distance vector between robot and human
-    p_rh = p_r - p_h
+    p_rh = p_h - p_r
     # distance vector between human and robot
-    p_hr = -p_rh
+    p_hr = p_r - p_h
 
     deltaX = x_r - robot[i-1][0]
     deltaY = y_r - robot[i-1][1]
@@ -75,6 +75,8 @@ for i in range(1, len(robot)):
     dhreff = eucl_dist(p_r, p_h) - R
     # TTC: Time To Collision
     TTC = dhreff / norm(v_rel)
+
+    # Compute cost_danger
     cost_danger += 1 / TTC
     cnt1 += 1
 

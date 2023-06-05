@@ -14,7 +14,7 @@ def RAD(a):
 
 if __name__ == '__main__':
 
-    rospy.init_node('scenario2', disable_signals=True)
+    rospy.init_node('scenario3', disable_signals=True)
     f = 10
     rate = rospy.Rate(f)
     rate.sleep()
