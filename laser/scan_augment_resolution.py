@@ -8,6 +8,7 @@ class AugmentedResolutionScan(object):
 
     def __init__(self):
         self.scan_pub = rospy.Publisher("/scan_nomap_augmented", LaserScan, queue_size=1)
+        self.max_scan_range = 10.0
 
     def ScanPub(self):
         rospy.init_node("scan_nomap_augmented_resolution", disable_signals=True)
@@ -29,13 +30,18 @@ class AugmentedResolutionScan(object):
         laser_scan.range_max = msg.range_max
         laser_scan.ranges = []
         for i in range(1, len(msg.ranges)):
-            laser_scan.ranges.append(msg.ranges[i-1])
-            new = (msg.ranges[i-1] + msg.ranges[i]) / 2.0
+            r0 = msg.ranges[i-1]
+            r1 = msg.ranges[i]
+            laser_scan.ranges.append(r0)
+            if abs(r1-r0) < 0.5:
+                new = (r0 + r1) / 2.0
+            else:
+                new = self.max_scan_range
             laser_scan.ranges.append(new)
 
         laser_scan.intensities = []
         for r in laser_scan.ranges:
-            if r < 10.0:
+            if r < max_scan_range:
                 laser_scan.intensities.append(1.0)
             else:
                 laser_scan.intensities.append(0.0)
@@ -46,5 +52,6 @@ class AugmentedResolutionScan(object):
 # main
 if __name__ == "__main__":
 
+    print("Running...")
     scan = AugmentedResolutionScan()
     scan.ScanPub()
