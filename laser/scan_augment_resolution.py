@@ -33,15 +33,15 @@ class AugmentedResolutionScan(object):
             r0 = msg.ranges[i-1]
             r1 = msg.ranges[i]
             laser_scan.ranges.append(r0)
-            if abs(r1-r0) < 0.5:
+            if r1 <= self.max_scan_range and abs(r1-r0) < 0.4:
                 new = (r0 + r1) / 2.0
             else:
-                new = self.max_scan_range
+                new = msg.range_max+1
             laser_scan.ranges.append(new)
 
         laser_scan.intensities = []
         for r in laser_scan.ranges:
-            if r < max_scan_range:
+            if r <= self.max_scan_range:
                 laser_scan.intensities.append(1.0)
             else:
                 laser_scan.intensities.append(0.0)

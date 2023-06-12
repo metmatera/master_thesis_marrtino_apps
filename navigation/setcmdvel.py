@@ -40,10 +40,9 @@ if __name__ == "__main__":
 
 	cmdvel_pub = rospy.Publisher(TOPIC_cmdvel, Twist, queue_size=10, latch=True)
 	t = Twist()
-	
-	i = 0
-	while (i < 10):
-	
+
+	while (1):
+
 		t.linear.x = v
 		t.linear.y = 0
 		t.linear.z = 0
@@ -54,8 +53,5 @@ if __name__ == "__main__":
 		print("Setting cmd_vel %s: %r" %(TOPIC_cmdvel, t))
 
 		cmdvel_pub.publish(t)
-		i += 1
-		
+
 		rate.sleep()
-		
-		

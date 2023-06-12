@@ -14,7 +14,7 @@
 
   <group if="$(arg use_map)">
     <node pkg="map_laser" type="filter.py" name="map_laser_filter" respawn="true" output="screen">
-      <remap from="base_scan_filter" to="$(arg laser_topic)_nomap_augmented" />
+      <remap from="base_scan_filter" to="$(arg laser_topic)_nomap" />
     </node>
   </group>
 
