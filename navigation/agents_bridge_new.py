@@ -10,12 +10,29 @@ import message_filters
 import tf2_ros
 import tf2_geometry_msgs
 
+def have_last(agents, last_agents):
+    if agents and last_agents:
+        return True
+    return False
+
+def predict_delta(agent, last_agent):
+    xf = agent.segments[0].pose.pose.position.x
+    xi = last_agent.segments[0].pose.pose.position.x
+    deltax = xf - xi
+    yf = agent.segments[0].pose.pose.position.y
+    yi = last_agent.segments[0].pose.pose.position.y
+    deltay = yf - yi
+    return [deltax, deltay]
+
+
 class AgentsBridge(object):
 
     def __init__(self):
         self.Segment_Type = TrackedSegmentType.TORSO
         self.Agent_State = TrackedAgent.MOVING
         self.Agent_Type = AgentType.HUMAN
+        self.last_tracked_agents = None
+        self.tracked_agents = None
 
     def AgentsPub(self):
         rospy.init_node('Agents_Bridge')
@@ -40,6 +57,17 @@ class AgentsBridge(object):
         else:
             people = leg_msg.people
             header = leg_msg.header
+
+        if len(people) == 0:
+            tracked_agents = self.tracked_agents
+            if have_last(self.tracked_agents, self.last_tracked_agents):
+                for i in range(max(len(self.tracked_agents.agents), len(self.last_tracked_agents.agents))):
+                    agent = self.tracked_agents.agents[i]
+                    last_agent = self.last_tracked_agents.agents[i]
+                    delta = predict_delta(agent, last_agent)
+                    deltax, deltay = delta[0], delta[1]
+                    tracked_agents.agents[i].segments[0].pose.pose.position.x += deltax
+                    tracked_agents.agents[i].segments[0].pose.pose.position.y += deltay
 
         i = 1
         for agent in people:
@@ -71,9 +99,11 @@ class AgentsBridge(object):
             tracked_agents.agents.append(tracked_agent)
             i += 1
 
-        if (tracked_agents.agents):
+        if tracked_agents != None and tracked_agents.agents:
             tracked_agents.header.stamp = header.stamp
             tracked_agents.header.frame_id = 'map'
+            self.last_tracked_agents = self.tracked_agents
+            self.tracked_agents = tracked_agents
             self.tracked_agents_pub.publish(tracked_agents)
 
 if __name__ == '__main__':
