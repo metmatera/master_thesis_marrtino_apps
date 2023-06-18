@@ -43,7 +43,7 @@ class AgentsBridge(object):
         rospy.spin()
 
     def AgentsCB(self, msg):
-        if msg.id != 0:
+        if msg.ns == "PEOPLE" or msg.id != 0:
             self.message.append(msg)
         elif msg.ns == "LEGS" and msg.id == 0 and len(self.message) > 0:
             n_agents = self.count_agent_detected(self.message)
