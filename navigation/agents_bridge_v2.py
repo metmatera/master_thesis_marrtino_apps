@@ -10,6 +10,10 @@ import message_filters
 import tf2_ros
 import tf2_geometry_msgs
 
+TOPIC_tracked_agents = '/tracked_agents'
+TOPIC_leg_tracker = '/leg_tracker_measurements'
+TOPIC_people_tracker = '/people_tracker_measurements'
+
 def have_last(agents, last_agents):
     if agents and last_agents:
         return True
@@ -41,10 +45,10 @@ class AgentsBridge(object):
         self.tf_buffer = tf2_ros.Buffer(rospy.Duration(10.0))  # tf buffer length
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
-        self.tracked_agents_pub = rospy.Publisher("/tracked_agents", TrackedAgents, queue_size=1)
+        self.tracked_agents_pub = rospy.Publisher(TOPIC_tracked_agents, TrackedAgents, queue_size=1)
 
-        leg_sub = message_filters.Subscriber('/leg_tracker_measurements', PositionMeasurementArray)
-        people_sub = message_filters.Subscriber('/people_tracker_measurements', PositionMeasurementArray)
+        leg_sub = message_filters.Subscriber(TOPIC_leg_tracker, PositionMeasurementArray)
+        people_sub = message_filters.Subscriber(TOPIC_people_tracker, PositionMeasurementArray)
         ts = message_filters.TimeSynchronizer([leg_sub, people_sub], 10)
         ts.registerCallback(self.AgentsCB)
         rospy.spin()

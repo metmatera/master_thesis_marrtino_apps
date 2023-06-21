@@ -10,6 +10,8 @@ import message_filters
 import tf2_ros
 import tf2_geometry_msgs
 
+TOPIC_tracked_agents = '/tracked_agents'
+TOPIC_tracker = '/people_tracker_measurements'
 
 class AgentsBridge(object):
 
@@ -26,9 +28,9 @@ class AgentsBridge(object):
         self.tf_buffer = tf2_ros.Buffer(rospy.Duration(10.0))  # tf buffer length
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
-        self.tracked_agents_pub = rospy.Publisher("/tracked_agents", TrackedAgents, queue_size=1)
+        self.tracked_agents_pub = rospy.Publisher(TOPIC_tracked_agents, TrackedAgents, queue_size=1)
 
-        ptm_sub = rospy.Subscriber("/people_tracker_measurements", PositionMeasurementArray, self.AgentsCB)
+        ptm_sub = rospy.Subscriber(TOPIC_tracker, PositionMeasurementArray, self.AgentsCB)
 
         rospy.spin()
 

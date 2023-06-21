@@ -11,11 +11,14 @@ import message_filters
 import tf2_ros
 import tf2_geometry_msgs
 
+TOPIC_tracked_agents = '/tracked_agents'
+TOPIC_marker = '/leg_marker'
+
 class AgentsBridge(object):
 
     def __init__(self):
-        self.topic_pub = '/tracked_agents'
-        self.topic_sub = '/leg_marker'
+        self.topic_pub = TOPIC_tracked_agents
+        self.topic_sub = TOPIC_marker
         self.message = []
 
     def count_agent_detected(self, message):
