@@ -13,15 +13,14 @@ TOPIC_cmdvel = '/cmd_vel_stamped'
 
 class Path(object):
 
-    def __init__(self, scenario, filename, robot_init_pos, human_init_pos, human_vel):
+    def __init__(self, scenario, filename, robot_init_pos, human_vel):
         path = 'experiments/scenario'+scenario+'/test/'+filename+'.txt'
         self.file = open(path, 'w')
         self.file.write('# Scenario: ' + scenario + '\n')
         self.file.write('# t,x_r,y_r,v_r,x_h,y_h,v_h\n')
         self.started = False
         self.robot_init_pos = robot_init_pos
-        self.human_init_pos = human_init_pos
-        self.init_time = 0.0
+        self.t = 0.0
         self.v_h = human_vel
 
     def PathSub(self):
@@ -36,7 +35,7 @@ class Path(object):
         rospy.spin()
 
     def PathCB(self, robot_msg, human_msg, vel_msg):
-        time = rospy.get_time()
+
         # Robot info
         x_r = robot_msg.pose.pose.position.x
         y_r = robot_msg.pose.pose.position.y
@@ -50,24 +49,22 @@ class Path(object):
         v_h = self.v_h
 
         if self.started == False and v_r != 0.0:
+            x0_r = self.robot_init_pos[0]
+            y0_r = self.robot_init_pos[1]
+            v0_r = 0.0
+            v0_h = 0.0
+            self.file.write(str(self.t)+','+str(x0_r)+','+str(y0_r)+','+str(v0_r)+','+str(x_h)+','+str(y_h)+','+str(v0_h)+'\n')
+            self.t += 0.1   # Time rate 10 Hz
+            self.file.write(str(self.t)+','+str(x_r)+','+str(y_r)+','+str(v_r)+','+str(x_h)+','+str(y_h)+','+str(v_h)+'\n')
             self.started = True
-            self.init_time = time
-            t = 0.0
-            x_r = self.robot_init_pos[0]
-            y_r = self.robot_init_pos[1]
-            v_r = 0.0
-            x_h = self.human_init_pos[0]
-            y_h = self.human_init_pos[1]
-            v_h = 0.0
-            self.file.write(str(t)+','+str(x_r)+','+str(y_r)+','+str(v_r)+','+str(x_h)+','+str(y_h)+','+str(v_h)+'\n')
 
         elif self.started:
-            t = time - self.init_time
-            self.file.write(str(t)+','+str(x_r)+','+str(y_r)+','+str(v_r)+','+str(x_h)+','+str(y_h)+','+str(v_h)+'\n')
+            self.t += 0.1
+            self.file.write(str(self.t)+','+str(x_r)+','+str(y_r)+','+str(v_r)+','+str(x_h)+','+str(y_h)+','+str(v_h)+'\n')
 
 if __name__ == '__main__':
 
-    if (len(sys.argv) != 8):
+    if (len(sys.argv) != 6):
         print("Missing arguments...")
         sys.exit(0)
 
@@ -76,10 +73,7 @@ if __name__ == '__main__':
     x0_r = float(sys.argv[3])
     y0_r = float(sys.argv[4])
     p0_r = [x0_r, y0_r]
-    x0_h = float(sys.argv[5])
-    y0_h = float(sys.argv[6])
-    p0_h = [x0_h, y0_h]
-    v_h = float(sys.argv[7])
+    v_h = float(sys.argv[5])
 
-    path = Path(scenario, filename, p0_r, p0_h, v_h)
+    path = Path(scenario, filename, p0_r, v_h)
     path.PathSub()
