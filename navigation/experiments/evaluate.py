@@ -69,9 +69,9 @@ def compute_discomfort_metrics(t, xr, yr, xh, yh, R):
             cost_danger += pow(norm(v_rel),2) / (term1 - sqrt(pow(term1,2) - term2))
             cnt1 += 1
 
-        term3 = sqrt(pow(norm(v_rel),2) * pow(norm(p_rh),2) - pow(term1,2))
-        if (term1 > 0) and (term3 > R*norm(v_rel)):
-            cost_passby += (norm(v_rel) * abs(term3)) / (norm(p_rh) * (term3 - R*norm(v_rel)))
+        term3 = pow(norm(v_rel),2) * pow(norm(p_rh),2) - pow(term1,2)
+        if (term1 > 0) and (term3 > 0) and (sqrt(term3) > R*norm(v_rel)):
+            cost_passby += (norm(v_rel) * abs(sqrt(term3))) / (norm(p_rh) * (sqrt(term3) - R*norm(v_rel)))
             cnt2 += 1
 
     if cnt1 > 0:
