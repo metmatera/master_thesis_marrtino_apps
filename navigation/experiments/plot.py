@@ -6,7 +6,7 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 
 # main
 if len(sys.argv) != 3:
-    print("Missing arguments: scenario (1|2|3) and filename (without extension)")
+    print("Missing arguments: scenario (1|2|3) - filename (without extension)")
     sys.exit(0)
 
 scenario = sys.argv[1]
@@ -17,6 +17,7 @@ file = open(f'scenario{scenario}/test/{filename}.txt', 'r')
 times = []
 x_r, y_r, v_r = [], [], []
 x_h, y_h, v_h = [], [], []
+v_rel = []
 lines = file.readlines()
 for line in lines:
     if '#' in line:
@@ -29,6 +30,9 @@ for line in lines:
     x_h.append(float(xh))
     y_h.append(float(yh))
     v_h.append(float(vh))
+    if (scenario == '1'):
+        vrel = float(vr) + float(vh)
+    v_rel.append(vrel)
 times = np.array(times)
 x_r = np.array(x_r)
 y_r = np.array(y_r)
@@ -36,6 +40,7 @@ v_r = np.array(v_r)
 x_h = np.array(x_h)
 y_h = np.array(y_h)
 v_h = np.array(v_h)
+v_rel = np.array(v_rel)
 
 fig, ax = plt.subplots(1, 1, figsize=(15,4.5))
 
@@ -69,7 +74,13 @@ ax.set_ylabel('y [m]')
 ax.set_aspect('equal')
 
 # Draw Robot and Human
-idx = np.argmax(y_r)
+dist = 100.0
+idx = 0
+for i in range(len(x_r)):
+    if abs(x_r[i]-x_h[i]) < dist:
+        dist = abs(x_r[i]-x_h[i])
+        idx = i
+
 ax.plot(x_r[idx], y_r[idx], c='red', marker='>', markersize=20, label='Robot')
 ax.plot(x_h[idx], y_h[idx], c='blue', marker='<', markersize=20, label='Human')
 ax.legend()
@@ -77,14 +88,15 @@ ax.legend()
 plt.savefig(f'scenario{scenario}/plots/{filename}_path.png')
 plt.show()
 
-fig, ax = plt.subplots(1, 1, figsize=(5,4.5))
+fig, ax = plt.subplots(1, 1, figsize=(8,4.5))
 
 ax.plot(times, v_r, 'red', label='Robot')
 ax.plot(times, v_h, 'blue', label='Human')
-v_min = min(v_r.min(), v_h.min())
-v_max = max(v_r.max(), v_h.max())
+ax.plot(times, v_rel, 'green', label='Relative Velocity')
+v_min = min(v_r.min(), v_h.min(), v_rel.min())
+v_max = max(v_r.max(), v_h.max(), v_rel.max())
 ax.set_xlim(0, times.max())
-ax.set_ylim(v_min-0.1, v_max+0.1)
+ax.set_ylim(v_min-0.1, v_max+0.4)
 ax.legend()
 ax.grid()
 ax.set_xlabel('Time [s]')
