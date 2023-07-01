@@ -97,27 +97,23 @@ R = human_radius + robot_radius
 file = open(f'scenario{scenario}/test/{filename}.txt','r')
 
 times = []
-x_r, y_r, v_r = [], [], []
-x_h, y_h, v_h = [], [], []
+x_r, y_r = [], []
+x_h, y_h = [], []
 lines = file.readlines()
 for line in lines:
     if '#' in line:
         continue
-    t, xr, yr, vr, xh, yh, vh = line.strip().split(',')
+    t, xr, yr, xh, yh = line.strip().split(',')
     times.append(float(t))
     x_r.append(float(xr))
     y_r.append(float(yr))
-    v_r.append(float(vr))
     x_h.append(float(xh))
     y_h.append(float(yh))
-    v_h.append(float(vh))
 times = np.array(times)
 x_r = np.array(x_r)
 y_r = np.array(y_r)
-v_r = np.array(v_r)
 x_h = np.array(x_h)
 y_h = np.array(y_h)
-v_h = np.array(v_h)
 
 path_length, path_efficiency, ttrg = compute_navigation_metrics(times, x_r, y_r, x_h, y_h)
 tspz, min_dist, TTC, cost_danger, cost_passby = compute_discomfort_metrics(times, x_r, y_r, x_h, y_h, R)
