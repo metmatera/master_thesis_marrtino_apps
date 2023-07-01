@@ -1,122 +1,78 @@
-import sys, math
+import pandas as pd
+import numpy as np
+import sys
+
+# Plotting Packages
+import matplotlib.pyplot as plt
+import seaborn as sbn
 
 import matplotlib as mpl
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-import numpy as np
+mpl.rcParams['figure.dpi'] = 150
+savefig_options = dict(format="png", dpi=150, bbox_inches="tight")
+
+# Computation packages
+from scipy.spatial.distance import euclidean
+from fastdtw import fastdtw
 
 def eucl_dist(x, y):
     return np.linalg.norm(x-y)
 
-def dtw(t1, t2):
-    n1 = len(t1)
-    n2 = len(t2)
-    C = np.zeros((n1+1, n2+1))
-    C[1:, 0] = float('inf')
-    C[0, 1:] = float('inf')
+def compute_euclidean_distance_matrix(t1, t2) -> np.array:
+    dist = np.zeros((len(t1), len(t2)))
+    for i in range(len(t2)):
+        for j in range(len(t1)):
+            dist[i,j] = eucl_dist(t1[j], t2[i])
+    return dist
 
-    for i in np.arange(n1) + 1:
-        for j in np.arange(n2) + 1:
-            C[i,j] = eucl_dist(t1[i - 1], t2[j - 1]) + min(C[i, j - 1], C[i - 1, j - 1], C[i - 1, j])
+def compute_accumulated_cost_matrix(t1, t2) -> np.array:
 
-    dtw = C[n1, n2]
-    return dtw
+    distances = compute_euclidean_distance_matrix(t1, t2)
 
-# main
-if (len(sys.argv) != 5):
-    sys.exit(0)
+    # Initialization
+    cost = np.zeros((len(t2), len(t1)))
+    cost[0,0] = distances[0,0]
+
+    for i in range(1, len(t2)):
+        cost[i, 0] = distances[i, 0] + cost[i-1, 0]
+
+    for j in range(1, len(t1)):
+        cost[0, j] = distances[0, j] + cost[0, j-1]
+
+    # Accumulated warp path cost
+    for i in range(1, len(t2)):
+        for j in range(1, len(t1)):
+            cost[i, j] = min(
+                cost[i-1, j],    # insertion
+                cost[i, j-1],    # deletion
+                cost[i-1, j-1]   # match
+            ) + distances[i, j]
+
+    return cost
 
 scenario = sys.argv[1]
-testfile = sys.argv[2]
-v_r = float(sys.argv[3])
-v_h = float(sys.argv[4])
+filename = sys.argv[2]
 
-f1 = open(f'experiments/scenario{scenario}/test/{testfile}.txt', 'r')
-f2 = open(f'experiments/scenario{scenario}/target/r{v_r}_h{v_h}.txt', 'r')
+f1 = open(f'experiments/scenario{scenario}/test/{filename}.txt','r')
+f2 = open(f'experiments/scenario{scenario}/target/{filename}.txt','r')
 
 t1 = []
 lines = f1.readlines()
 for line in lines:
     if '#' in line:
         continue
-    t, x, y = line.strip().split(",")
-    t1.append([float(x),float(y),float(t)])
+    x, y = line.strip().split(',')[1:3]
+    t1.append([float(x), float(y)])
 t1 = np.array(t1)
 
 t2 = []
-last_x, last_y, t = 0.0, 0.0, 0.0
 lines = f2.readlines()
 for line in lines:
     if '#' in line:
         continue
-    x, y = line.strip().split(",")
-    x = float(x)
-    y = float(y)
-    if len(t2) == 0:
-        t2.append([x,y,t])
-        last_x = x
-        last_y = y
-    else:
-        p0 = np.array([last_x, last_y])
-        p1 = np.array([x, y])
-        deltaT = eucl_dist(p0, p1) / v_r
-        t += deltaT
-        t2.append([x,y,t])
-        last_x = x
-        last_y = y
+    x, y = line.strip().split(',')[1:3]
+    t2.append([float(x), float(y)])
 t2 = np.array(t2)
 
-score = dtw(t1, t2)
-print(f"DTW score: {score:.3f}")
-print(f"Total time (CoHAN-planned): {t1[-1][2]:.3f} s")
-print(f"Total time (Human-controlled): {t2[-1][2]:.3f} s")
-print(f"Time difference: {t1[-1][2] - t2[-1][2]:.3f} s")
+dtw_distance, warp_path = fastdtw(t1, t2, dist=euclidean)
 
-# Plot 3D trajectories [x,y,t]
-mpl.rcParams['legend.fontsize'] = 10
-fig = plt.figure(figsize=(7,7))
-ax = plt.axes(projection='3d')
-ax.set_title(f"DTW score: {score:.3f}")
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('t')
-
-delta = 2
-x_min = min([elem[0] for elem in t1] + [elem[0] for elem in t2])
-x_max = max([elem[0] for elem in t1] + [elem[0] for elem in t2])
-y_min = min([elem[1] for elem in t1] + [elem[1] for elem in t2])
-y_max = max([elem[1] for elem in t1] + [elem[1] for elem in t2])
-t_max = max([elem[2] for elem in t1] + [elem[2] for elem in t2])
-
-if x_max - x_min < 10:
-	dx = 7
-else:
-	dx = 2
-
-if y_max - y_min < 10:
-	dy = 7
-else:
-	dy = 2
-
-if t_max < 10:
-	dt = 7
-else:
-	dt = 2
-
-ax.set_xlim((x_min-dx, x_max+dx))
-ax.set_ylim((y_min-dy, y_max+dy))
-ax.set_zlim((0, t_max+dt))
-ax.set_aspect('equal')
-
-x = [elem[0] for elem in t1]
-y = [elem[1] for elem in t1]
-t = [elem[2] for elem in t1]
-ax.plot(x, y, t, 'red', label='CoHAN-planned trajectory')
-
-x = [elem[0] for elem in t2]
-y = [elem[1] for elem in t2]
-t = [elem[2] for elem in t2]
-ax.plot(x, y, t, 'green', label='Human-controlled trajectory')
-
-ax.legend()
-plt.show()
+print("DTW distance: ", dtw_distance)
