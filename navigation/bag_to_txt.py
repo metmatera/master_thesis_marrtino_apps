@@ -10,9 +10,7 @@ x0_h = float(sys.argv[5])
 y0_h = float(sys.argv[6])
 
 robot_pose = '/base_pose_ground_truth'
-robot_vel = '/cmd_vel'
 human_pose = '/human1/base_pose_ground_truth'
-human_vel = '/human1/cmd_vel'
 topics = [robot_pose, human_pose]
 
 robot = []
