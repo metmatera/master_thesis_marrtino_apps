@@ -59,8 +59,9 @@ for i in range(len(X)):
     t += 0.1
 
 target_file.close()
-
+'''
 plt.plot(X,Y,'r')
 plt.axis('equal')
 plt.grid()
 plt.show()
+'''
