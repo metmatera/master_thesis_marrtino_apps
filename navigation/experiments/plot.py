@@ -72,8 +72,12 @@ for i in range(len(x_r)):
         dist = abs(x_r[i]-x_h[i])
         idx = i
 
+if scenario == '1':
+    human_marker = '<'
+elif scenario == '2':
+    human_marker = '>'
 ax.plot(x_r[idx], y_r[idx], c='red', marker='>', markersize=20, label='Robot')
-ax.plot(x_h[idx], y_h[idx], c='blue', marker='<', markersize=20, label='Human')
+ax.plot(x_h[idx], y_h[idx], c='blue', marker=human_marker, markersize=20, label='Human')
 ax.legend()
 
 plt.savefig(f'scenario{scenario}/plots/{filename}_path.png')
